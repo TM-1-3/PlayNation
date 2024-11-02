@@ -147,13 +147,6 @@ Open your browser and navigate to `http://localhost:4321` to access pgAdmin4.
 
 Depending on your installation setup, you might need to use the IP address from the virtual machine providing docker instead of `localhost`.
 
-Login with these credentials:
-
-```
-Email: postgres@lbaw.com
-Password: pg!password
-```
-
 On first use, add the database connection with these settings:
 
 ```
@@ -412,7 +405,7 @@ Publishing steps:
 1. Login to GitLab's Container Registry (using FEUP VPN/network):
 
 ```bash
-docker login gitlab.up.pt:5050
+docker login gitlab.up.pt:5050 # Username is upXXXXX@up.pt
 ```
 
 2. Configure `upload_image.sh` with your image name:
