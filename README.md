@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This README describes how to setup the development environment for LBAW.
+This README describes how to set up the development environment for LBAW.
 
 These instructions address the development with a local environment (with PHP installed) and Docker containers for PostgreSQL and pgAdmin.
 
@@ -30,24 +30,25 @@ These instructions address the development with a local environment (with PHP in
 
 To prepare your computer for development, you need to install:
 
-* [PHP](https://www.php.net/) version 8.1 or higher
+* [PHP](https://www.php.net/) version 8.3 or higher
 * [Composer](https://getcomposer.org/) version 2.2 or higher
 
-We recommend using an **Ubuntu** distribution (22.04 or newer) that ships with these versions.
+We recommend using an **Ubuntu** distribution (24.04 or newer) that ships with these versions.
+
 Install the required software with:
 
 ```bash
 sudo apt update
-sudo apt install git composer php8.1 php8.1-mbstring php8.1-xml php8.1-pgsql php8.1-curl
+sudo apt install git composer php8.3 php8.3-mbstring php8.3-xml php8.3-pgsql php8.3-curl
 ```
 
 On macOS, install using [Homebrew](https://brew.sh/):
 
 ```bash
-brew install php@8.1 composer
+brew install php@8.3 composer
 ```
 
-If you use [Windows WSL](https://learn.microsoft.com/en-us/windows/wsl/install), ensure you are using Ubuntu 22.04 inside WSL. Previous versions do not provide the required packages. After setting up WSL, follow the Ubuntu instructions above.
+If you use [Windows WSL](https://learn.microsoft.com/en-us/windows/wsl/install), ensure you are using Ubuntu 24.04 inside WSL. Previous versions do not provide the required packages. After setting up WSL, follow the Ubuntu instructions above.
 
 
 ## Setting up the development repository
@@ -110,7 +111,7 @@ git clone https://gitlab.up.pt/lbaw/lbawYYYY/lbawYYXX.git
 cp .env.thingy .env
 ```
 
-Note: The `.env` file contains configuration settings and is not tracked by Git (see [.gitignore](.gitignore)).
+The `.env` file contains configuration settings and is not tracked by Git (see [.gitignore](.gitignore)).
 
 
 ## Installing local PHP dependencies
@@ -129,7 +130,7 @@ If the installation fails:
 
 ## Working with PostgreSQL
 
-We've created a _Docker Compose_ file that sets up **PostgreSQL** and **pgAdmin4** as local Docker containers.
+The _Docker Compose_ file provided sets up **PostgreSQL** and **pgAdmin4** as local Docker containers.
 
 Start the containers from your project root:
 
@@ -147,7 +148,7 @@ Open your browser and navigate to `http://localhost:4321` to access pgAdmin4.
 
 Depending on your installation setup, you might need to use the IP address from the virtual machine providing docker instead of `localhost`.
 
-On first use, add the database connection with these settings:
+On first use, add a local database connection with these settings:
 
 ```
 hostname: postgres
@@ -155,7 +156,7 @@ username: postgres
 password: pg!password
 ```
 
-Note: Use `postgres` as hostname (not `localhost`) because _Docker Compose_ creates an internal DNS entry for container communication.
+Use `postgres` as hostname (not `localhost`) because _Docker Compose_ creates an internal DNS entry for container communication.
 
 
 ## Developing the project
@@ -224,7 +225,7 @@ class CardController extends Controller
         $card = Card::findOrFail($id);
 
         // Check if the current user can see (show) the card
-        $this->authorize('show', $card);  
+        $this->authorize('show', $card);
 
         // Use the pages.card template to display the card
         return view('pages.card', [
@@ -365,7 +366,7 @@ You will need to update these variables, especially those for database access (p
 Environment Files:
 
 * `.env`: Use for local development
-* `.env_production`: Bundled with Docker image, uses production database and HTTPS
+* `.env.production`: Bundled with Docker image, uses production database
 
 Note that you can use the remote database locally by updating your `.env` file accordingly.
 
@@ -379,14 +380,15 @@ php artisan config:clear
 
 ## Publishing your image
 
+To deploy your project, we'll create a container image using the [Dockerfile](Dockerfile) in your repository, which specifies how to package your application and its dependencies. This image will then be published to GitLab's Container Registry where it can be accessed for deployment and evaluation. The following steps guide you through this process.
+
 You need to have Docker installed to publish your project image for deployment.
 
 **Note for ARM CPU users**: You must explicitly build an AMD64 Docker image. Follow [this guide](https://docs.docker.com/build/building/multi-platform/) to create a multi-platform builder and update your `upload_image.sh` file.
 
-You should keep your git main branch functional and regularly deploy your code as a Docker image.
-This image will be used to test and evaluate your project.
+You should keep your git main branch functional and regularly deploy your code as a Docker image. This image will be used to test and evaluate your project.
 
-**Important**: Before building your docker image, configure your `.env_production` file with your group's `db.fe.up.pt` credentials:
+**Important**: Before building your docker image, configure your `.env.production` file with your group's `db.fe.up.pt` credentials:
 
 ```bash
 DB_CONNECTION=pgsql
@@ -414,7 +416,7 @@ docker login gitlab.up.pt:5050 # Username is upXXXXX@up.pt
 IMAGE_NAME=gitlab.up.pt:5050/lbaw/lbawYYYY/lbawYYXX # Replace with your group's image name
 ```
 
-3. Build and upload from project root:
+3. Build and upload from the project's root:
 
 ```bash
 ./upload_image.sh
@@ -425,30 +427,25 @@ Maintain one image per group. All team members can update the image after loggin
 
 ## Testing your image
 
-After building, test your image locally:
+After publishing, you can test your image locally using:
 
 ```bash
-docker run -it -p 8000:80 --name=lbawYYXX \
-    -e DB_DATABASE="lbawYYXX" \
-    -e DB_SCHEMA="lbawYYXX" \
-    -e DB_USERNAME="lbawYYXX" \
-    -e DB_PASSWORD="PASSWORD" \
-    gitlab.up.pt:5050/lbaw/lbawYYYY/lbawYYXX # Replace with your group's image name
+docker run -d --name lbawYYXX -p 8001:80 gitlab.up.pt:5050/lbaw/lbawYYYY/lbawYYXX
 ```
 
 This command:
 
-* Exposes your application on `http://localhost:8000`
-* Uses `-e` to set environment variables inside the container for database configuration
-* Overrides any database settings in your env file
+* Starts a Docker container named `lbawYYXX` with your published image (`-d` runs it in the background)
+* Maps port 8001 on your machine to port 80 in the container
+* Your application will be available at `http://localhost:8001`
 
-While running your container, you can use another terminal to run a shell inside the container by executing:
+While running your container, you can use another terminal to run a shell inside the container:
 
 ```bash
 docker exec -it lbawYYXX bash
 ```
 
-Inside the container you may, for example, see the content of the Web server logs by executing:
+Inside the container you may, for example, see the content of the web server logs:
 
 ```bash
 # Follow error logs
@@ -458,11 +455,12 @@ root@2804d54698c0:/# tail -f /var/log/nginx/error.log
 root@2804d54698c0:/# tail -f /var/log/nginx/access.log
 ```
 
-Stop the container:
+To stop and remove the container:
 
-* Press `Ctrl-C` in the running terminal, or
-* Run `docker stop lbawYYXX` in another terminal
-
+```bash
+docker stop lbawYYXX
+docker rm lbawYYXX
+```
 
 ---
 -- LBAW, 2024
