@@ -119,7 +119,7 @@ The `.env` file contains configuration settings and is not tracked by Git (see [
 After setting up your repository, install all local dependencies required for development:
 
 ```bash
-composer update
+composer install
 ```
 
 If the installation fails:
