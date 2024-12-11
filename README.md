@@ -384,7 +384,7 @@ To deploy your project, we'll create a container image using the [Dockerfile](Do
 
 You need to have Docker installed to publish your project image for deployment.
 
-**Note for ARM CPU users**: You must explicitly build an AMD64 Docker image. Follow [this guide](https://docs.docker.com/build/building/multi-platform/) to create a multi-platform builder and update your `upload_image.sh` file.
+**Note for ARM CPU users**: You must explicitly build an AMD64 Docker image. Follow [this guide](https://docs.docker.com/build/building/multi-platform/) to create a multi-platform builder and use `upload_image_multiarch.sh` file for building your docker image instead.
 
 You should keep your git main branch functional and regularly deploy your code as a Docker image. This image will be used to test and evaluate your project.
 
