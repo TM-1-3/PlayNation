@@ -334,7 +334,7 @@ To support Laravel automated tests, we extended the setup so that development an
 ### Update DatabaseSeeder.php for multi-environment support
 
 We modified `DatabaseSeeder.php` so it can seed both **development** and **testing** databases.
-It reads the schema name from `.env` / `.env.testing` (DB_SCHEMA) and replaces `{{schema}}` placeholders in `database/thingy-seed.sql`.
+It reads the schema name from `.env` / `.env.testing` (DB_SCHEMA) and replaces the literal schema token `thingy` in the SQL with the configured schema.
 
 ```php
 public function run(): void
@@ -346,8 +346,8 @@ public function run(): void
     $path = base_path('database/thingy-seed.sql');
     $sql = file_get_contents($path);
 
-    // Replace {{schema}} placeholders with the configured schema name
-    $sql = str_replace('{{schema}}', $schema, $sql);
+    // Only replace 'thingy' when it's a complete word (surrounded by non-word characters)
+    $sql = preg_replace('/\bthingy\b/', $schema, $sql);
 
     // Execute the SQL against the current connection
     DB::unprepared($sql);
@@ -355,6 +355,8 @@ public function run(): void
     $this->command->info("Database seeded using schema: {$schema}");
 }
 ```
+
+**Note**: Using a regex to replace the literal token thingy is generally safe, since the pattern only matches the standalone schema name. However, there is a minor edge case: if the word thingy appeared elsewhere in the SQL file (e.g., in a comment or as part of another identifier), it would also be replaced.
 
 
 ### Update phpunit.xml
@@ -378,16 +380,19 @@ Instead, tests only run the seeder (DatabaseSeeder) once per process.
 ```php
 abstract class TestCase extends BaseTestCase
 {
+    /** Seed only once per test process. */
+    private static bool $seeded = false;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        static $seeded = false;
+        if (! self::$seeded) {
+            // Runs DatabaseSeeder, which loads database/thingy-seed.sql
+            // and swaps {{schema}} with DB_SCHEMA from .env.testing
+            $this->seed();
 
-        if (! $seeded) {
-            // Seeds thingy-seed.sql via DatabaseSeeder (uses {{schema}} + DB_SCHEMA)
-            $this->artisan('db:seed', ['--force' => true]);
-            $seeded = true;
+            self::$seeded = true;
         }
     }
 }
