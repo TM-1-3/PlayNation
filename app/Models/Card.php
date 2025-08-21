@@ -2,22 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-// Added to define Eloquent relationships.
+// Import Eloquent relationship classes.
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Card extends Model
 {
-    use HasFactory;
-
-    // Don't add create and update timestamps in database.
-    public $timestamps  = false;
+    // Disable default created_at and updated_at timestamps for this model.
+    public $timestamps = false;
 
     /**
-     * Get the user that owns the card.
+     * Get the user who owns this card.
+     *
+     * Defines a many-to-one relationship:
+     * a card belongs to exactly one user.
      */
     public function user(): BelongsTo
     {
@@ -25,10 +25,14 @@ class Card extends Model
     }
 
     /**
-     * Get the items for the card.
+     * Get all items belonging to this card.
+     *
+     * Defines a one-to-many relationship:
+     * a card can have many items. Items are always
+     * returned ordered by their ID for consistent display.
      */
     public function items(): HasMany
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(Item::class)->orderBy('id');
     }
 }

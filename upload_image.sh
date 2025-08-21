@@ -1,7 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# -----------------------------------------------------------------------------
+# LBAW Laravel Image Build & Upload Script
+#
+# Purpose:
+#   - Installs PHP dependencies (via Composer + Artisan)
+#   - Builds a multi-architecture Docker image (amd64 + arm64)
+#   - Pushes the image to GitLab’s Container Registry
+#
+# Usage:
+#   1. Make sure you are logged in: docker login gitlab.up.pt:5050
+#   2. Update IMAGE_NAME with your group’s registry path
+#   3. Run: ./upload_image.sh
+#
+# Notes:
+#   - Fails immediately on errors (set -euo pipefail)
+#   - Uses ./Dockerfile to define the build
+#   - Requires Docker Buildx to be enabled
+# -----------------------------------------------------------------------------
 
 # Stop execution if a step fails
-set -e
+set -euo pipefail
 
 # Replace with your group's image name
 IMAGE_NAME=gitlab.up.pt:5050/lbaw/lbawYYYY/lbawYYXX
@@ -12,4 +30,9 @@ php artisan config:clear
 php artisan clear-compiled
 php artisan optimize
 
-docker buildx build --push --platform linux/amd64,linux/arm64 -t $IMAGE_NAME .
+# Build & push image
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --push \
+  -t "$IMAGE_NAME" \
+  .

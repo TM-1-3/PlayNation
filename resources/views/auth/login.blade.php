@@ -2,36 +2,49 @@
 
 @section('content')
 <form method="POST" action="{{ route('login') }}">
-    {{ csrf_field() }}
+    @csrf
 
     <label for="email">E-mail</label>
-    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
-    @if ($errors->has('email'))
-        <span class="error">
-          {{ $errors->first('email') }}
+    <input
+        id="email"
+        name="email"
+        type="email"
+        value="{{ old('email') }}"
+        required
+        autofocus
+        inputmode="email"
+        autocomplete="email"
+    >
+    @error('email')
+        <span id="email-error" class="error" role="alert">
+            {{ $message }}
         </span>
-    @endif
+    @enderror
 
     <label for="password" >Password</label>
-    <input id="password" type="password" name="password" required>
-    @if ($errors->has('password'))
-        <span class="error">
-            {{ $errors->first('password') }}
+    <input
+        id="password"
+        name="password"
+        type="password"
+        required
+        autocomplete="current-password"
+    >
+    @error('password')
+        <span id="password-error" class="error" role="alert">
+            {{ $message }}
         </span>
-    @endif
+    @enderror
 
     <label>
-        <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}> Remember Me
+        <input type="checkbox" name="remember" value="1" @checked(old('remember'))>
+        Remember me
     </label>
 
-    <button type="submit">
-        Login
-    </button>
+    <button type="submit">Login</button>
     <a class="button button-outline" href="{{ route('register') }}">Register</a>
-    @if (session('success'))
-        <p class="success">
-            {{ session('success') }}
-        </p>
+
+    @if (session('status'))
+        <p class="success" role="status">{{ session('status') }}</p>
     @endif
 </form>
 @endsection
