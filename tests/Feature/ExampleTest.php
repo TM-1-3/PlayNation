@@ -14,6 +14,9 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        // The home route ("/") should not be directly accessible.
+        // It always redirects (302) to the login page.
+        $response->assertStatus(302)
+                 ->assertRedirect('/login');
     }
 }

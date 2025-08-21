@@ -1,9 +1,9 @@
 --
 -- Use a specific schema and set it as default - thingy.
 --
-DROP SCHEMA IF EXISTS thingy CASCADE;
-CREATE SCHEMA IF NOT EXISTS thingy;
-SET search_path TO thingy;
+DROP SCHEMA IF EXISTS {{schema}} CASCADE;
+CREATE SCHEMA IF NOT EXISTS {{schema}};
+SET search_path TO {{schema}};
 
 --
 -- Drop any existing tables.

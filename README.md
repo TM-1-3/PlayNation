@@ -38,6 +38,9 @@ For a detailed explanation of how the provided Laravel template (**Thingy!**) wa
   - [Testing your image locally](#testing-your-image-locally)
     - [Inspecting the container](#inspecting-the-container)
     - [Stopping the container](#stopping-the-container)
+  - [Automated Tests](#automated-tests)
+    - [Running tests](#running-tests)
+    - [Example feature test](#example-feature-test)
 
 
 ## Installing the software dependencies
@@ -594,6 +597,65 @@ To stop and remove the container:
 docker stop lbawYYXX
 docker rm lbawYYXX
 ```
+
+
+## Automated Tests
+
+The template is configured to run automated tests using [Laravel’s built-in PHPUnit framework](https://laravel.com/docs/12.x/testing).
+
+Tests run against a dedicated schema (`thingy_test`) using the same raw SQL seed file (`database/thingy-seed.sql`) as development.
+
+### Running tests
+
+Run all tests with:
+
+```bash
+php artisan test
+```
+
+This will:
+
+* Load configuration from `.env.testing`
+* Seed the `thingy_test` schema once at the start (via `DatabaseSeeder`)
+* Run all test classes under `tests/`
+
+
+### Example feature test
+
+The template includes a feature test for cards in `tests/Feature/CardTest.php`:
+
+```php
+public function test_guest_is_redirected_when_accessing_cards(): void
+{
+    $response = $this->get('/cards');
+
+    $response->assertStatus(302);        // guest is redirected
+    $response->assertRedirect('/login'); // to login page
+}
+```
+
+```php
+public function test_authenticated_user_can_create_card(): void
+{
+    $user = User::firstOrFail(); // seeded demo user
+
+    $response = $this->actingAs($user)->postJson('/api/cards', [
+        'name' => 'My First Test Card',
+    ]);
+
+    $response->assertStatus(200);
+    $this->assertDatabaseHas('cards', [
+        'name' => 'My First Test Card',
+        'user_id' => $user->id,
+    ]);
+}
+```
+
+Notes:
+
+* Tests use an **isolated schema** (`thingy_test`) so they don’t interfere with your development data.
+* Add new tests under `tests/Feature/` for HTTP endpoints, or `tests/Unit/` for isolated class logic.
+
 
 ---
 -- LBAW, 2025
