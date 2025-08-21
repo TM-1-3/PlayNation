@@ -6,86 +6,76 @@ use Illuminate\Http\Request;
 
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 use App\Models\Card;
 
 class CardController extends Controller
 {
     /**
-     * Show the card for a given id.
+     * Display the details of a specific card.
      */
-    public function show(string $id): View
+    public function show(Card $card): View
     {
-        // Get the card.
-        $card = Card::findOrFail($id);
+        // Ensure the current user is authorized to view this card.
+        Gate::authorize('view', $card);  
 
-        // Check if the current user can see (show) the card.
-        $this->authorize('show', $card);  
+        // Preload the card's items, ordered by id.
+        $card->load('items');
 
-        // Use the pages.card template to display the card.
+        // Render the 'pages.card' view with the card and its items.
         return view('pages.card', [
             'card' => $card
         ]);
     }
 
     /**
-     * Shows all cards.
+     * Display a listing of the user's cards.
      */
-    public function list()
+    public function index()
     {
-        // Check if the user is logged in.
-        if (!Auth::check()) {
-            // Not logged in, redirect to login.
-            return redirect('/login');
+        // Ensure the current user is authorized to view card listings.
+        Gate::authorize('viewAny', Card::class);
 
-        } else {
-            // The user is logged in.
+        // The current user is authorized to list cards.
 
-            // Get cards for user ordered by id.
-            $cards = Auth::user()->cards()->orderBy('id')->get();
+        // Retrieve all cards that belong to the user, ordered by id.
+        $cards = Auth::user()
+            ->cards()
+            ->orderBy('id')
+            ->get();
 
-            // Check if the current user can list the cards.
-            $this->authorize('list', Card::class);
-
-            // The current user is authorized to list cards.
-
-            // Use the pages.cards template to display all cards.
-            return view('pages.cards', [
-                'cards' => $cards
-            ]);
-        }
+        // Render the 'pages.cards' view with the user's cards.
+        return view('pages.cards', [
+            'cards' => $cards
+        ]);
     }
 
     /**
-     * Creates a new card.
+     * Store a newly created card in storage.
      */
-    public function create(Request $request)
+    public function store(Request $request)
     {
-        // Create a blank new Card.
+        // Ensure the current user is authorized to create a card.
+        Gate::authorize('create', Card::class);
+
+        // Create and populate a new card instance.
         $card = new Card();
-
-        // Check if the current user is authorized to create this card.
-        $this->authorize('create', $card);
-
-        // Set card details.
         $card->name = $request->input('name');
-        $card->user_id = Auth::user()->id;
+        $card->user_id = Auth::id();
 
-        // Save the card and return it as JSON.
+        // Persist the card and return it as JSON.
         $card->save();
         return response()->json($card);
     }
 
     /**
-     * Delete a card.
+     * Deletes a specific card.
      */
-    public function delete(Request $request, $id)
+    public function destroy(Card $card)
     {
-        // Find the card.
-        $card = Card::find($id);
-
-        // Check if the current user is authorized to delete this card.
-        $this->authorize('delete', $card);
+        // Ensure the current user is authorized to delete this card.
+        Gate::authorize('delete', $card);
 
         // Delete the card and return it as JSON.
         $card->delete();

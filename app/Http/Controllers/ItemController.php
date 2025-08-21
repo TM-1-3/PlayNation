@@ -2,50 +2,49 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
+use App\Models\Card;
 use App\Models\Item;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ItemController extends Controller
 {
     /**
-     * Creates a new item.
+     * Creates a new item for the given card.
      */
-    public function create(Request $request, $card_id)
+    public function store(Request $request, Card $card)
     {
-        // Create a blank new item.
-        $item = new Item();
+        // Prepare a new Item instance already tied to the given Card.
+        // Using make() (instead of create()) builds the object in memory
+        // without saving it yet, so we can authorize before persisting.
+        $item = $card->items()->make([
+            'description' => $request->input('description'),
+            'done' => false,
+        ]);
 
-        // Set item's card.
-        $item->card_id = $card_id;
+        // Ensure the current user is authorized to create this specific item.
+        Gate::authorize('create', $item);
 
-        // Check if the current user is authorized to create this item.
-        $this->authorize('create', $item);
-
-        // Set item details.
-        $item->done = false;
-        $item->description = $request->input('description');
-
-        // Save the item and return it as JSON.
+        // Persist the item and return it as JSON for the frontend.
         $item->save();
         return response()->json($item);
     }
 
+
     /**
-     * Updates the state of an individual item.
+     * Updates the "done" state of a specific item.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Item $item)
     {
-        // Find the item.
-        $item = Item::find($id);
+        // Ensure the current user is authorized to update this item.
+        Gate::authorize('update', $item);
 
-        // Check if the current user is authorized to update this item.
-        $this->authorize('update', $item);
-
-        // Update the done property of the item.
+        // Apply the requested state change.
+        // We only update the "done" flag here, based on the request payload.
         $item->done = $request->input('done');
 
-        // Save the item and return it as JSON.
+        // Persist changes and return the updated item as JSON for the frontend.
         $item->save();
         return response()->json($item);
     }
@@ -53,16 +52,15 @@ class ItemController extends Controller
     /**
      * Deletes a specific item.
      */
-    public function delete(Request $request, $id)
+    public function destroy(Item $item)
     {
-        // Find the item.
-        $item = Item::find($id);
+        // Ensure the current user is authorized to delete this item.
+        Gate::authorize('delete', $item);
 
-        // Check if the current user is authorized to delete this item.
-        $this->authorize('delete', $item);
-
-        // Delete the item and return it as JSON.
+        // Remove the item from the database.
         $item->delete();
+
+        // Return the deleted item as JSON so the frontend can update its state.
         return response()->json($item);
     }
 }

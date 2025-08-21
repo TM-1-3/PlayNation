@@ -3,8 +3,11 @@
 ## Introduction
 
 This README describes how to set up the development environment for LBAW.
+It uses **Laravel 12** as the application framework.
 
 These instructions address the development with a local environment (with PHP installed) and Docker containers for PostgreSQL and pgAdmin.
+
+For a detailed explanation of how the provided Laravel template (**Thingy!**) was built from scratch, see [MAKING_OF.md](MAKING_OF.md).
 
 - [LBAW's framework](#lbaws-framework)
   - [Introduction](#introduction)
@@ -17,13 +20,24 @@ These instructions address the development with a local environment (with PHP in
     - [1) Routes](#1-routes)
     - [2) Controllers](#2-controllers)
     - [3) Database and Models](#3-database-and-models)
+      - [Disabling timestamps](#disabling-timestamps)
+      - [Defining relationships](#defining-relationships)
     - [4) Policies](#4-policies)
+      - [Using the policy in a controller](#using-the-policy-in-a-controller)
     - [5) Views](#5-views)
+      - [Template inheritance](#template-inheritance)
+      - [Organizing templates](#organizing-templates)
     - [6) CSS](#6-css)
     - [7) JavaScript](#7-javascript)
     - [8) Configuration](#8-configuration)
+      - [Environment files in this project](#environment-files-in-this-project)
+      - [Updating configuration](#updating-configuration)
   - [Publishing your image](#publishing-your-image)
-  - [Testing your image](#testing-your-image)
+    - [Configure environment for production](#configure-environment-for-production)
+    - [Publishing steps](#publishing-steps)
+  - [Testing your image locally](#testing-your-image-locally)
+    - [Inspecting the container](#inspecting-the-container)
+    - [Stopping the container](#stopping-the-container)
 
 
 ## Installing the software dependencies
@@ -153,7 +167,7 @@ On first use, add a local database connection with these settings:
 ```
 hostname: postgres
 username: postgres
-password: pg!password
+password: password
 ```
 
 Use `postgres` as hostname (not `localhost`) because _Docker Compose_ creates an internal DNS entry for container communication.
@@ -187,67 +201,68 @@ To stop the server: Press `Ctrl-C`
 
 ## Laravel code structure
 
-Before you start, familiarize yourself with [Laravel's documentation](https://laravel.com/docs/10.x).
+Before you start, familiarize yourself with [Laravel's documentation](https://laravel.com/docs/12.x).
 
 A typical web request in Laravel involves several components. Here are the key concepts.
 
 
 ### 1) Routes
 
-Laravel processes web pages through its [routing](https://laravel.com/docs/10.x/routing) mechanism.
+Laravel processes web pages through its [routing](https://laravel.com/docs/12.x/routing) mechanism.
 Routes are defined in `routes/web.php`. Example:
 
 ```php
-Route::get('cards/{id}', [CardController::class, 'show']);
+Route::get('cards/{card}', [CardController::class, 'show'])->name('cards.show');
 ```
 
 This route:
 
-* Handles GET requests to `cards/{id}`
-* Uses the parameter `id`
-* Calls the `show` method of `CardController`
+* Handles GET requests to `cards/{card}`
+* Uses **route model binding**: Laravel automatically looks up the Card model instance that matches the {card} placeholder (by primary key id)
+* Assigns the route a name: `cards.show` — useful when generating URLs in Blade with route('cards.show', $card)
+* Calls the `show` method of `CardController`, passing in the resolved Card model
 
 
 ### 2) Controllers
 
-[Controllers](https://laravel.com/docs/10.x/controllers) group related request handling logic into a single class.
+[Controllers](https://laravel.com/docs/12.x/controllers) group related request handling logic into a single class.
 Controllers are normally defined in the `app/Http/Controllers` folder.
 
 ```php
 class CardController extends Controller
 {
     /**
-     * Show the card for a given id
+     * Display the details of a specific card.
      */
-    public function show(string $id): View
+    public function show(Card $card): View
     {
-        // Get the card.
-        $card = Card::findOrFail($id);
+        // Ensure the current user is authorized to view this card.
+        Gate::authorize('view', $card);  
 
-        // Check if the current user can see (show) the card
-        $this->authorize('show', $card);
+        // Eager load the card's items, ordered by id.
+        $card->load('items');
 
-        // Use the pages.card template to display the card
+        // Render the 'pages.card' view with the card and its items.
         return view('pages.card', [
             'card' => $card
         ]);
     }
-}
 ```
 
 This particular controller contains a `show` method that:
 
-* Receives an `id` from a route
-* Searches for a card in the database
-* Checks if the user has permission to view the card
-* Returns a view with the card data
+* Uses **route model binding**: the $card parameter is automatically resolved by Laravel from the route.
+* Checks if the authenticated user is authorized to view the card via the `CardPolicy`.
+* Eager loads the related items so they are available in the view (avoiding [N+1 queries](https://laravel-news.com/laravel-n1-query-problems)).
+* Returns the Blade view `pages.card` with the card and its related data.
 
 
 ### 3) Database and Models
 
-To access the database, we will use the query builder capabilities of [Eloquent](https://laravel.com/docs/10.x/eloquent) but the initial database seeding will still be done using raw SQL (the script that creates the tables can be found in `database/thingy-seed.sql`).
+To access the database, we use [Eloquent](https://laravel.com/docs/12.x/eloquent), Laravel’s ORM (Object-Relational Mapper).
 
-One important aspect is that **we won't be using migrations in LBAW projects**.
+**Important**: In LBAW projects **we do not use Laravel migrations** to create tables.
+Instead, the schema is defined in raw SQL (see `database/thingy-seed.sql`), and we use Eloquent **only for querying and relationships**.
 
 Here is an example of Eloquent's query building syntax:
 
@@ -257,7 +272,28 @@ $card = Card::findOrFail($id);
 
 This line tells Eloquent to fetch a card from the database with a certain `id` (the primary key of the table).
 The result will be an object of the class `Card` defined in `app/Models/Card.php`.
-This class extends the `Model` class and contains information about the relation between the `card` tables and other tables:
+
+
+#### Disabling timestamps
+
+By default, Eloquent expects every table to have `created_at` and `updated_at` timestamp columns.
+Since the provided schema does not use them, you must explicitly disable timestamps in each model:
+
+```php
+class Card extends Model
+{
+    public $timestamps = false;
+}
+```
+
+This prevents Laravel from trying to insert or update non-existent timestamp columns.
+
+
+#### Defining relationships
+
+Eloquent models also describe how tables relate to each other.
+
+For example, the Card model defines:
 
 ```php
 /**
@@ -273,47 +309,83 @@ public function user(): BelongsTo
  */
 public function items(): HasMany
 {
-    return $this->hasMany(Item::class);
+    return $this->hasMany(Item::class)->orderBy('id');
 }
 ```
 
+This tells Eloquent:
+
+* A `Card` belongs to a single User (`user_id` foreign key).
+* A `Card` has many `Items`, ordered by their `id`.
+
+With these relationships defined, you can load related data easily:
+
+```php
+$card = Card::with('items')->findOrFail($id);
+```
+
+
 ### 4) Policies
 
-[Policies](https://laravel.com/docs/10.x/authorization#writing-policies) define which actions a user can take.
-You can find policies inside the `app/Policies` folder.
-For example, in the `CardPolicy.php` file we defined a `show` method that only allows a certain user to view a card if that user is the card owner:
+[Policies](https://laravel.com/docs/12.x/authorization#writing-policies) define which actions a user is authorized to perform on a given resource (e.g., a card or an item).
+They are stored in the `app/Policies` folder and are typically created with:
+
+```bash
+php artisan make:policy CardPolicy --model=Card
+```
+
+This generates a class `CardPolicy` where you can define methods such as `view`, `create`, `update`, or `delete`.
+
+
+For example, in the `CardPolicy.php` file we defined a `view` method that only allows a certain user to view a card if that user is the card owner:
 
 ```php
 /**
- * Determine if a given card can be shown to a user
+ * Determine if the given card can be viewed by the user.
  */
-public function show(User $user, Card $card): bool
+public function view(User $user, Card $card): bool
 {
-    // Only a card owner can see a card.
+    // Only the card owner can view it
     return $user->id === $card->user_id;
 }
 ```
 
 In this example:
 
-* `$user` and `$card` are models that represent their respective tables
-* `$id` and `$user_id` are columns automatically mapped into those models
+* `$user` is the authenticated user (automatically passed by Laravel).
+* `$card` is the `Card` model instance retrieved from the database.
+* `user_id` is the foreign key column in the `cards` table that links the card to its owner.
 
-To use this policy inside the `CardController`:
+
+#### Using the policy in a controller
+
+Inside a controller you can enforce this policy with:
 
 ```php
-$this->authorize('show', $card);
+$this->authorize('view', $card);
 ```
 
-As you can see, there is no need to pass the current user.
+Alternatively, you can use the `Gate` facade:
 
-If you name the controllers following the expected pattern (e.g., `CardPolicy` for the `Card` model), Laravel will [auto-discover the policies](https://laravel.com/docs/10.x/authorization#policy-auto-discovery). If you do not use the expected naming pattern, you will need to manually register the policies ([see the documentation](https://laravel.com/docs/10.x/authorization#registering-policies)).
+```php
+Gate::authorize('view', $card);
+```
+
+Both throw a **403 Forbidden** error if the user is not authorized.
+
+Notice that you don’t need to pass the current user — Laravel handles that automatically.
+
+If you follow the expected naming convention (`CardPolicy` for the `Card` model, `ItemPolicy` for the `Item` model, etc.), Laravel will [auto-discover the policies](https://laravel.com/docs/12.x/authorization#policy-auto-discovery).
+
+If you don’t follow the convention, you will need to manually register the policies ([see the documentation](https://laravel.com/docs/12.x/authorization#registering-policies)).
 
 
 ### 5) Views
 
 A controller only needs to return HTML code for it to be sent to the browser.
-However we will be using [Blade](https://laravel.com/docs/10.x/blade) templates to make this task easier:
+In Laravel, we typically use [Blade](https://laravel.com/docs/12.x/blade), Laravel’s templating engine, to simplify and organize views.
+
+Example of returning a view from a controller:
 
 ```php
 return view('pages.card', ['card' => $card]);
@@ -321,56 +393,100 @@ return view('pages.card', ['card' => $card]);
 
 In this example:
 
-* `pages.card` refers to a blade template at `resources/views/pages/card.blade.php`
-* The second parameter contains the data we are injecting into the template
+* `pages.card` refers to a Blade template at `resources/views/pages/card.blade.php`
+* The second parameter (`['card' => $card]`) is an **array of data** passed into the view. Inside the Blade file, this data is available as the variable `$card`.
 
-Templates can extend other templates:
+
+#### Template inheritance
+
+Blade supports template inheritance. For example:
 
 ```php
 @extends('layouts.app')
 ```
 
-The base template (`resources/views/layouts/app.blade.php`) serves as the foundation for all pages.
-Inside this template, the place where the page template is introduced is identified by the following command:
+This tells Laravel that the template extends a **base layout**, usually found at `resources/views/layouts/app.blade.php`.
+
+In that base layout, sections from child templates are inserted using directives like:
 
 ```php
 @yield('content')
 ```
 
-Besides the `pages` and `layouts` template folders, we also have a `partials` folder where small snippets of HTML code can be saved to be reused in other pages.
+Any child view that defines a `@section('content') ... @endsection` block will have its content inserted into this spot.
+
+
+#### Organizing templates
+
+To keep templates manageable, we use different folders:
+
+* `layouts/` -- Base templates (e.g., `app.blade.php`)
+* `pages/` -- Full-page templates (e.g., `card.blade.php`, `cards.blade.php`)
+* `partials/` -- Reusable snippets of HTML (e.g., `card.blade.php` for one card, `item.blade.php` for one item)
+
+This organization keeps code **DRY** (Don’t Repeat Yourself) and encourages reuse of common UI pieces.
 
 
 ### 6) CSS
 
-The easiest way to use CSS is just to edit the CSS file found at `public/css/app.css`.
-You can have multiple CSS files to better organize your style definitions.
+Laravel does not enforce a specific way to manage CSS.
+In this template, the simplest approach is used: plain CSS files placed under the `public/css` directory.
+
+* The main stylesheet is `public/css/app.css`.
+* You can add additional CSS files (e.g., `cards.css`, `auth.css`) if you want to organize styles by feature.
+
+All CSS files in `public/` are publicly accessible, so you can reference them from your layout file:
+
+```html
+<link href="{{ asset('css/app.css') }}" rel="stylesheet">
+```
+
+For advanced projects, you might explore tools like [Vite](https://laravel.com/docs/12.x/vite) for asset bundling, but that is not required here.
 
 
 ### 7) JavaScript
 
-To add JavaScript into your project, just edit the file found at `public/js/app.js`.
+Similarly, JavaScript files are placed in the `public/js` directory.
+The main script for this project is `public/js/app.js`.
+
+This file contains all the logic needed for interacting with the **Thingy!** application (creating/deleting cards and items dynamically via Ajax).
+
+Scripts are included in the layout file, typically with:
+
+```html
+<script src="{{ asset('js/app.js') }}" defer></script>
+```
+
+Using the defer attribute ensures the script runs after the DOM is loaded.
+
+You can split logic into multiple files if needed (`cards.js`, `auth.js`, etc.), but in this template everything lives in `app.js` for simplicity.
+
 
 
 ### 8) Configuration
 
-Laravel configurations are acquired from environment variables through:
+Laravel applications rely on **environment variables** for configuration.
+These variables are read when the Laravel process starts and are usually defined in one of two places:
 
-* The environment where Laravel process starts
-* The `.env` file in the project root
+* The **system environment** (variables exported before Laravel runs)
+* The `.env` file in the project root (most common during development)
 
-The `.env` file can set or override environment variables from the current context.
-You will need to update these variables, especially those for database access (prefixed with `DB_`).
+The `.env` file overrides the current environment and is where you should configure things like database credentials (prefixed with `DB_`).
 
-**Important**: You must manually create a schema that matches your group's username.
+#### Environment files in this project
 
-Environment Files:
+* `.env` -- Used for local development
+* `.env.production` -- Packaged inside the Docker image, points to the **production database**
 
-* `.env`: Use for local development
-* `.env.production`: Bundled with Docker image, uses production database
+**Important**: For LBAW, you must manually create a database schema that matches your group’s username (e.g., `lbawYYXX`).
 
 Note that you can use the remote database locally by updating your `.env` file accordingly.
 
-If you change the configuration, clear Laravel's cache with:
+
+#### Updating configuration
+
+Laravel caches configuration and routes for performance.
+If you change environment variables or config files, clear these caches:
 
 ```bash
 php artisan route:clear
@@ -378,17 +494,25 @@ php artisan cache:clear
 php artisan config:clear
 ```
 
+This ensures your changes take effect without restarting the development server.
+
+
 ## Publishing your image
 
-To deploy your project, we'll create a container image using the [Dockerfile](Dockerfile) in your repository, which specifies how to package your application and its dependencies. This image will then be published to GitLab's Container Registry where it can be accessed for deployment and evaluation. The following steps guide you through this process.
+To deploy your project, you must create a **Docker image** using the [Dockerfile](Dockerfile) in your repository.
+This image contains your Laravel application and all its dependencies, and will be published to **GitLab’s Container Registry** for deployment and evaluation.
 
-You need to have Docker installed to publish your project image for deployment.
+You need to have Docker installed and properly configured to build and publish images.
 
-**Note**: The provided script will build images for both AMD and ARM architectures. Follow [this guide](https://docs.docker.com/build/building/multi-platform/) to create a multi-platform builder before using the `upload_image.sh` script for building and uploading your docker image.
+**Note**: The provided script builds **multi-platform images** (for both AMD64 and ARM64).
 
-You should keep your git main branch functional and regularly deploy your code as a Docker image. This image will be used to test and evaluate your project.
+You should **keep your git main branch functional** and regularly deploy your code as a Docker image.
+This image will be used to test and evaluate your project.
 
-**Important**: Before building your docker image, configure your `.env.production` file with your group's `db.fe.up.pt` credentials:
+
+### Configure environment for production
+
+Before building your docker image, configure your `.env.production` file with your group's `db.fe.up.pt` credentials:
 
 ```bash
 DB_CONNECTION=pgsql
@@ -400,17 +524,19 @@ DB_USERNAME=lbawYYXX
 DB_PASSWORD=password
 ```
 
-Images must be published to Gitlab's Container Registry, available from the side menu option `Deploy > Container Registry`.
+**Important**: `.env.production` will be copied inside the Docker image — it must be correct for your container to connect to the database.
 
-Publishing steps:
 
-1. Login to GitLab's Container Registry (using FEUP VPN/network):
+### Publishing steps
+
+1. Login to GitLab's Container Registry (requires FEUP VPN/network):
 
 ```bash
-docker login gitlab.up.pt:5050 # Username is upXXXXX@up.pt
+docker login gitlab.up.pt:5050
+# Username is upXXXXX@up.pt
 ```
 
-2. Configure `upload_image.sh` with your image name:
+2. Edit `upload_image.sh` and set your group’s image name:
 
 ```bash
 IMAGE_NAME=gitlab.up.pt:5050/lbaw/lbawYYYY/lbawYYXX # Replace with your group's image name
@@ -422,12 +548,12 @@ IMAGE_NAME=gitlab.up.pt:5050/lbaw/lbawYYYY/lbawYYXX # Replace with your group's 
 ./upload_image.sh
 ```
 
-Maintain one image per group. All team members can update the image after logging in to GitLab's registry.
+Only **one image per group** should exist. Any member can update it after logging in.
 
 
-## Testing your image
+## Testing your image locally
 
-After publishing, you can test your image locally using:
+After publishing, you can run your image locally to test it:
 
 ```bash
 docker run -d --name lbawYYXX -p 8001:80 gitlab.up.pt:5050/lbaw/lbawYYYY/lbawYYXX
@@ -435,9 +561,13 @@ docker run -d --name lbawYYXX -p 8001:80 gitlab.up.pt:5050/lbaw/lbawYYYY/lbawYYX
 
 This command:
 
-* Starts a Docker container named `lbawYYXX` with your published image (`-d` runs it in the background)
-* Maps port 8001 on your machine to port 80 in the container
-* Your application will be available at `http://localhost:8001`
+* Starts a container named `lbawYYXX` from your published image
+* Runs it in the background (`-d`)
+* Maps **port 8001** on your machine to **port 80** inside the container
+* Makes the app available at: `http://localhost:8001`
+
+
+### Inspecting the container
 
 While running your container, you can use another terminal to run a shell inside the container:
 
@@ -455,6 +585,9 @@ root@2804d54698c0:/# tail -f /var/log/nginx/error.log
 root@2804d54698c0:/# tail -f /var/log/nginx/access.log
 ```
 
+
+### Stopping the container
+
 To stop and remove the container:
 
 ```bash
@@ -463,4 +596,4 @@ docker rm lbawYYXX
 ```
 
 ---
--- LBAW, 2024
+-- LBAW, 2025

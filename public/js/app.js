@@ -1,148 +1,188 @@
+/**
+ * Attach all event listeners to existing DOM elements.
+ * Called once when the page loads.
+ */
 function addEventListeners() {
-    let itemCheckers = document.querySelectorAll('article.card li.item input[type=checkbox]');
-    [].forEach.call(itemCheckers, function(checker) {
-      checker.addEventListener('change', sendItemUpdateRequest);
+  // When an item checkbox is toggled, send an update request
+  document.querySelectorAll('article.card li.item input[type=checkbox]')
+    .forEach(cb => cb.addEventListener('change', sendItemUpdateRequest));
+
+  // When an item form is submitted, create a new item
+  document.querySelectorAll('article.card form.new_item')
+    .forEach(form => form.addEventListener('submit', sendCreateItemRequest));
+
+  // When an item delete link is clicked, delete the item
+  document.querySelectorAll('article.card li a.delete')
+    .forEach(link => link.addEventListener('click', sendDeleteItemRequest));
+
+  // When a card delete link is clicked, delete the card
+  document.querySelectorAll('article.card header a.delete')
+    .forEach(link => link.addEventListener('click', sendDeleteCardRequest));
+
+  // Attach event listener for creating new cards (if the form exists)
+  const cardCreator = document.querySelector('article.card form.new_card');
+  if (cardCreator) {
+    cardCreator.addEventListener('submit', sendCreateCardRequest);
+  }
+}
+  
+/**
+ * Encode a data object into URL-encoded form data.
+ * Example: {a: 1, b: 2} → "a=1&b=2"
+ */
+function encodeForAjax(data) {
+  return data ? new URLSearchParams(data).toString() : null;
+}
+  
+/**
+ * Send an AJAX request using the Fetch API.
+ * Handles CSRF tokens and common headers.
+ */
+async function sendAjaxRequest(method, url, data, handler) {
+  try {
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: data ? encodeForAjax(data) : null,
     });
-  
-    let itemCreators = document.querySelectorAll('article.card form.new_item');
-    [].forEach.call(itemCreators, function(creator) {
-      creator.addEventListener('submit', sendCreateItemRequest);
-    });
-  
-    let itemDeleters = document.querySelectorAll('article.card li a.delete');
-    [].forEach.call(itemDeleters, function(deleter) {
-      deleter.addEventListener('click', sendDeleteItemRequest);
-    });
-  
-    let cardDeleters = document.querySelectorAll('article.card header a.delete');
-    [].forEach.call(cardDeleters, function(deleter) {
-      deleter.addEventListener('click', sendDeleteCardRequest);
-    });
-  
-    let cardCreator = document.querySelector('article.card form.new_card');
-    if (cardCreator != null)
-      cardCreator.addEventListener('submit', sendCreateCardRequest);
+
+    if (!response.ok) {
+      // If the server returns an error, refresh the page as fallback
+      window.location = '/';
+      return;
+    }
+
+    // Parse JSON response and pass it to the handler
+    const json = await response.json();
+    handler(json);
+  } catch (err) {
+    console.error('Request failed:', err);
+    window.location = '/';
   }
+}
   
-  function encodeForAjax(data) {
-    if (data == null) return null;
-    return Object.keys(data).map(function(k){
-      return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
-    }).join('&');
+/**
+ * Update the 'done' status of an item when its checkbox is toggled.
+ */
+function sendItemUpdateRequest() {
+  const item = this.closest('li.item');
+  const id = item.dataset.id;
+  const checked = this.checked;
+
+  sendAjaxRequest('PATCH', `/api/items/${id}`, { done: checked }, itemUpdatedHandler);
+}
+  
+
+/**
+ * Delete an item when the delete link is clicked.
+ */
+function sendDeleteItemRequest(event) {
+  event.preventDefault();
+  const id = this.closest('li.item').dataset.id;
+  sendAjaxRequest('DELETE', `/api/items/${id}`, null, itemDeletedHandler);
+}
+  
+/**
+ * Create a new item inside a card when the form is submitted.
+ */
+function sendCreateItemRequest(event) {
+  event.preventDefault();
+  const cardId = this.closest('article').dataset.id;
+  const description = this.querySelector('input[name=description]').value.trim();
+
+  if (description) {
+    sendAjaxRequest('POST', `/api/cards/${cardId}/items`, { description }, itemAddedHandler);
   }
+}
   
-  function sendAjaxRequest(method, url, data, handler) {
-    let request = new XMLHttpRequest();
+/**
+ * Delete a card when the delete link in its header is clicked.
+ */
+function sendDeleteCardRequest(event) {
+  event.preventDefault();
+  const id = this.closest('article').dataset.id;
+  sendAjaxRequest('DELETE', `/api/cards/${id}`, null, cardDeletedHandler);
+}
   
-    request.open(method, url, true);
-    request.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    request.addEventListener('load', handler);
-    request.send(encodeForAjax(data));
+/**
+ * Create a new card when the new card form is submitted.
+ */
+function sendCreateCardRequest(event) {
+  event.preventDefault();
+  const name = this.querySelector('input[name=name]').value.trim();
+
+  if (name) {
+    sendAjaxRequest('POST', '/api/cards', { name }, cardAddedHandler);
   }
+}
   
-  function sendItemUpdateRequest() {
-    let item = this.closest('li.item');
-    let id = item.getAttribute('data-id');
-    let checked = item.querySelector('input[type=checkbox]').checked;
+/**
+ * Handler: update checkbox state after server confirms change.
+ */
+function itemUpdatedHandler(item) {
+  const checkbox = document.querySelector(`li.item[data-id="${item.id}"] input[type=checkbox]`);
+  if (checkbox) checkbox.checked = item.done === "true";
+}
   
-    sendAjaxRequest('post', '/api/item/' + id, {done: checked}, itemUpdatedHandler);
-  }
+/**
+ * Handler: add a new item to the DOM after server creates it.
+ */
+function itemAddedHandler(item) {
+  const newItem = createItem(item);
+  const card = document.querySelector(`article.card[data-id="${item.card_id}"]`);
+  const form = card.querySelector('form.new_item');
+
+  // Insert the new item before the form
+  form.previousElementSibling.append(newItem);
+
+  // Reset the input field
+  form.querySelector('[type=text]').value = "";
+}
   
-  function sendDeleteItemRequest() {
-    let id = this.closest('li.item').getAttribute('data-id');
+/**
+ * Handler: remove the deleted item from the DOM.
+ */
+function itemDeletedHandler(item) {
+  document.querySelector(`li.item[data-id="${item.id}"]`)?.remove();
+}
   
-    sendAjaxRequest('delete', '/api/item/' + id, null, itemDeletedHandler);
-  }
+/**
+ * Handler: remove the deleted card from the DOM.
+ */
+function cardDeletedHandler(card) {
+  document.querySelector(`article.card[data-id="${card.id}"]`)?.remove();
+}
   
-  function sendCreateItemRequest(event) {
-    let id = this.closest('article').getAttribute('data-id');
-    let description = this.querySelector('input[name=description]').value;
+/**
+ * Handler: add a new card to the DOM after server creates it.
+ */
+function cardAddedHandler(card) {
+  const newCard = createCard(card);
+
+  // Reset the "new card" form
+  const form = document.querySelector('article.card form.new_card');
+  form.querySelector('[type=text]').value = "";
+
+  // Insert new card before the "new card" placeholder
+  const placeholder = form.parentElement;
+  placeholder.parentElement.insertBefore(newCard, placeholder);
+
+  // Focus on adding an item inside the new card
+  newCard.querySelector('[type=text]').focus();
+}
   
-    if (description != '')
-      sendAjaxRequest('put', '/api/cards/' + id, {description: description}, itemAddedHandler);
-  
-    event.preventDefault();
-  }
-  
-  function sendDeleteCardRequest(event) {
-    let id = this.closest('article').getAttribute('data-id');
-  
-    sendAjaxRequest('delete', '/api/cards/' + id, null, cardDeletedHandler);
-  }
-  
-  function sendCreateCardRequest(event) {
-    let name = this.querySelector('input[name=name]').value;
-  
-    if (name != '')
-      sendAjaxRequest('put', '/api/cards/', {name: name}, cardAddedHandler);
-  
-    event.preventDefault();
-  }
-  
-  function itemUpdatedHandler() {
-    let item = JSON.parse(this.responseText);
-    let element = document.querySelector('li.item[data-id="' + item.id + '"]');
-    let input = element.querySelector('input[type=checkbox]');
-    element.checked = item.done == "true";
-  }
-  
-  function itemAddedHandler() {
-    if (this.status != 200) window.location = '/';
-    let item = JSON.parse(this.responseText);
-  
-    // Create the new item
-    let new_item = createItem(item);
-  
-    // Insert the new item
-    let card = document.querySelector('article.card[data-id="' + item.card_id + '"]');
-    let form = card.querySelector('form.new_item');
-    form.previousElementSibling.append(new_item);
-  
-    // Reset the new item form
-    form.querySelector('[type=text]').value="";
-  }
-  
-  function itemDeletedHandler() {
-    if (this.status != 200) window.location = '/';
-    let item = JSON.parse(this.responseText);
-    let element = document.querySelector('li.item[data-id="' + item.id + '"]');
-    element.remove();
-  }
-  
-  function cardDeletedHandler() {
-    if (this.status != 200) window.location = '/';
-    let card = JSON.parse(this.responseText);
-    let article = document.querySelector('article.card[data-id="'+ card.id + '"]');
-    article.remove();
-  }
-  
-  function cardAddedHandler() {
-    if (this.status != 200) window.location = '/';
-    let card = JSON.parse(this.responseText);
-  
-    // Create the new card
-    let new_card = createCard(card);
-  
-    // Reset the new card input
-    let form = document.querySelector('article.card form.new_card');
-    form.querySelector('[type=text]').value="";
-  
-    // Insert the new card
-    let article = form.parentElement;
-    let section = article.parentElement;
-    section.insertBefore(new_card, article);
-  
-    // Focus on adding an item to the new card
-    new_card.querySelector('[type=text]').focus();
-  }
-  
-  function createCard(card) {
-    let new_card = document.createElement('article');
-    new_card.classList.add('card');
-    new_card.setAttribute('data-id', card.id);
-    new_card.innerHTML = `
-  
+/**
+ * Create a new <article> element representing a card.
+ * Includes its header, item list, and "add item" form.
+ */
+function createCard(card) {
+  const article = document.createElement('article');
+  article.className = 'card';
+  article.dataset.id = card.id;
+  article.innerHTML = `
     <header>
       <h2><a href="cards/${card.id}">${card.name}</a></h2>
       <a href="#" class="delete">&#10761;</a>
@@ -150,32 +190,56 @@ function addEventListeners() {
     <ul></ul>
     <form class="new_item">
       <input name="description" type="text">
-    </form>`;
+    </form>
+  `;
+
+  // Attach event listeners to its internal form and delete link
+  article.querySelector('form.new_item')
+    .addEventListener('submit', sendCreateItemRequest);
+
+  article.querySelector('header a.delete')
+    .addEventListener('click', sendDeleteCardRequest);
+
+  return article;
+}
   
-    let creator = new_card.querySelector('form.new_item');
-    creator.addEventListener('submit', sendCreateItemRequest);
-  
-    let deleter = new_card.querySelector('header a.delete');
-    deleter.addEventListener('click', sendDeleteCardRequest);
-  
-    return new_card;
-  }
-  
-  function createItem(item) {
-    let new_item = document.createElement('li');
-    new_item.classList.add('item');
-    new_item.setAttribute('data-id', item.id);
-    new_item.innerHTML = `
+/**
+ * Create a new <li> element representing an item inside a card.
+ */
+function createItem(item) {
+  const li = document.createElement('li');
+  li.className = 'item';
+  li.dataset.id = item.id;
+  li.innerHTML = `
     <label>
-      <input type="checkbox"> <span>${item.description}</span><a href="#" class="delete">&#10761;</a>
+      <input type="checkbox" ${item.done ? 'checked' : ''}>
+      <span>${item.description}</span>
+      <a href="#" class="delete">&#10761;</a>
     </label>
-    `;
-  
-    new_item.querySelector('input').addEventListener('change', sendItemUpdateRequest);
-    new_item.querySelector('a.delete').addEventListener('click', sendDeleteItemRequest);
-  
-    return new_item;
-  }
-  
+  `;
+
+  // Attach event listeners to the checkbox and delete link
+  li.querySelector('input').addEventListener('change', sendItemUpdateRequest);
+  li.querySelector('a.delete').addEventListener('click', sendDeleteItemRequest);
+
+  return li;
+}
+
+/**
+ * Normalize checkboxes to their default state after page load
+ * (fixes back/forward navigation restoring wrong state).
+ */
+function normalizeCheckboxesToServer() {
+  document.querySelectorAll('li.item input[type=checkbox]')
+    .forEach(cb => cb.checked = cb.defaultChecked);
+}
+
+// Run setup when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  normalizeCheckboxesToServer();
   addEventListeners();
+});
+
+// Also re-run normalization when restoring from bfcache (back/forward navigation)
+window.addEventListener('pageshow', normalizeCheckboxesToServer);
   

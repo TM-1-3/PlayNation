@@ -2,26 +2,28 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
-// Added to define Eloquent relationships.
+// Import Eloquent relationship classes.
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
-    // Don't add create and update timestamps in database.
+    // Disable default created_at and updated_at timestamps for this model.
     public $timestamps  = false;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * Only these fields may be filled using methods like create() or update().
+     * This protects against mass-assignment vulnerabilities.
+     *
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -30,9 +32,10 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * The attributes that should be hidden when serializing the model
+     * (e.g., to arrays or JSON).
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -40,17 +43,24 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * The attributes that should be cast to a specific type.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            // Ensures password is always hashed automatically when set.
+            'password' => 'hashed',
+        ];
+    }
 
     /**
-     * Get the cards for a user.
+     * Get the cards owned by this user.
+     *
+     * Defines a one-to-many relationship:
+     * a user can have multiple cards.
      */
     public function cards(): HasMany
     {
