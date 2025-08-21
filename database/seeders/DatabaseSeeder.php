@@ -10,12 +10,11 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      *
-     * This loads `database/thingy-seed.sql`, replaces the `{{schema}}` placeholder
-     * with the schema name defined in your .env (`DB_SCHEMA`), and executes it.
+     * This loads `database/thingy-seed.sql` and replaces 'thingy' 
+     * with the schema name from environment (DB_SCHEMA).
      *
-     * Example:
-     *   .env         → DB_SCHEMA=thingy
-     *   .env.testing → DB_SCHEMA=thingy_test
+     * The SQL file can be run directly in psql for development:
+     * psql -d database_name -f database/thingy-seed.sql
      */
     public function run(): void
     {
@@ -26,8 +25,8 @@ class DatabaseSeeder extends Seeder
         $path = base_path('database/thingy-seed.sql');
         $sql = file_get_contents($path);
 
-        // Replace all {{schema}} placeholders with the configured schema name
-        $sql = str_replace('{{schema}}', $schema, $sql);
+        // Only replace 'thingy' when it's a complete word (surrounded by non-word characters)
+        $sql = preg_replace('/\bthingy\b/', $schema, $sql);
 
         // Execute the SQL against the current connection
         DB::unprepared($sql);
