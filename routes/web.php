@@ -12,20 +12,20 @@ use App\Http\Controllers\Auth\LogoutController;
 // Home
 Route::redirect('/', '/login');
 
-// Cards
+// Cards (authentication required)
 Route::middleware('auth')->controller(CardController::class)->group(function () {
     Route::get('/cards', 'index')->name('cards.index');
     Route::get('/cards/{card}', 'show')->name('cards.show');
 });
 
 
-// API
-Route::controller(CardController::class)->group(function () {
+// API (authentication required)
+Route::middleware('auth')->controller(CardController::class)->group(function () {
     Route::post('/api/cards', 'store');              // create card
     Route::delete('/api/cards/{card}', 'destroy');   // delete card
 });
 
-Route::controller(ItemController::class)->group(function () {
+Route::middleware('auth')->controller(ItemController::class)->group(function () {
     Route::post('/api/cards/{card}/items', 'store'); // add item to card
     Route::patch('/api/items/{item}', 'update');     // update item
     Route::delete('/api/items/{item}', 'destroy');   // delete item
