@@ -15,7 +15,7 @@ abstract class TestCase extends BaseTestCase
 
         if (! self::$seeded) {
             // Runs DatabaseSeeder, which loads database/thingy-seed.sql
-            // and swaps {{schema}} with DB_SCHEMA from .env.testing
+            // and uses DB_SCHEMA from .env.testing via set_config('app.schema', ...)
             $this->seed();
 
             self::$seeded = true;

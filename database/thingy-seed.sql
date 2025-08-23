@@ -1,16 +1,29 @@
 --
--- Use a specific schema and set it as default - thingy.
+-- Schema selection
 --
-DROP SCHEMA IF EXISTS thingy CASCADE;
-CREATE SCHEMA IF NOT EXISTS thingy;
-SET search_path TO thingy;
+-- This script can be executed directly in psql/pgAdmin, or from PHP/Laravel.
+-- It reads the session setting `app.schema` to decide which schema to target.
+--  * If `app.schema` is set (e.g. in Laravel with DB::statement('SET app.schema TO ?')),
+--    that schema will be used.
+--  * If not set, it falls back to the default schema name "thingy".
+--
 
 --
--- Drop any existing tables.
+-- Schema (re)creation
+-- The DO block is needed because identifiers (schema names) cannot be parameterized.
 --
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS cards CASCADE;
-DROP TABLE IF EXISTS items CASCADE;
+DO $do$
+DECLARE
+  s text := COALESCE(current_setting('app.schema', true), 'thingy');
+BEGIN
+  -- identifiers require dynamic SQL
+  EXECUTE format('DROP SCHEMA IF EXISTS %I CASCADE', s);
+  EXECUTE format('CREATE SCHEMA IF NOT EXISTS %I', s);
+
+  -- set search_path for the rest of the script
+  PERFORM set_config('search_path', format('%I, public', s), false);
+END
+$do$ LANGUAGE plpgsql;
 
 --
 -- Create tables.

@@ -103,6 +103,8 @@ class DatabaseSeeder extends Seeder
 }
 ```
 
+Note: This is the minimal version, enough to get you started. For a more flexible multi-environment setup (development + testing, schema overrides, etc.), see [Section 12. Define Laravel Tests](#12-define-laravel-tests).
+
 5. Seed the database:
 
 ```bash
@@ -334,29 +336,31 @@ To support Laravel automated tests, we extended the setup so that development an
 ### Update DatabaseSeeder.php for multi-environment support
 
 We modified `DatabaseSeeder.php` so it can seed both **development** and **testing** databases.
-It reads the schema name from `.env` / `.env.testing` (DB_SCHEMA) and replaces the literal schema token `thingy` in the SQL with the configured schema.
+The SQL script reads `current_setting('app.schema', true)` and falls back to thingy if no override is provided. In Laravel, we set this variable using `set_config()` before running the SQL file.
 
 ```php
 public function run(): void
 {
-    // Get schema name from environment (.env or .env.testing)
-    $schema = env('DB_SCHEMA', 'public');
+    // Get schema name from environment (e.g., .env or .env.testing)
+    $schema = env('DB_SCHEMA');
 
     // Load the raw SQL file
     $path = base_path('database/thingy-seed.sql');
     $sql = file_get_contents($path);
 
-    // Only replace 'thingy' when it's a complete word (surrounded by non-word characters)
-    $sql = preg_replace('/\bthingy\b/', $schema, $sql);
+    // If DB_SCHEMA is set, expose it to the SQL script
+    // (the script reads it via current_setting('app.schema', true))
+    if ($schema !== null) {
+        DB::statement("SELECT set_config('app.schema', ?, false)", [$schema]);
+    }
 
-    // Execute the SQL against the current connection
+    // Run the SQL script
     DB::unprepared($sql);
 
-    $this->command->info("Database seeded using schema: {$schema}");
+    // Show a message in the Artisan console
+    $this->command?->info('Database seeded using schema: ' . ($schema ?? 'thingy (default)'));
 }
 ```
-
-**Note**: Using a regex to replace the literal token thingy is generally safe, since the pattern only matches the standalone schema name. However, there is a minor edge case: if the word thingy appeared elsewhere in the SQL file (e.g., in a comment or as part of another identifier), it would also be replaced.
 
 
 ### Update phpunit.xml

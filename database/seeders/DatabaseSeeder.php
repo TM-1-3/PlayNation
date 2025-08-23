@@ -8,29 +8,28 @@ use Illuminate\Support\Facades\DB;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
-     *
-     * This loads `database/thingy-seed.sql` and replaces 'thingy' 
-     * with the schema name from environment (DB_SCHEMA).
-     *
-     * The SQL file can be run directly in psql for development:
-     * psql -d database_name -f database/thingy-seed.sql
+     * Runs database/thingy-seed.sql as-is.
+     * The SQL reads current_setting('app.schema', true) and defaults to 'thingy'.
      */
     public function run(): void
     {
-        // Get schema name from environment (.env or .env.testing)
-        $schema = env('DB_SCHEMA', 'public');
+        // Get schema name from environment (e.g., .env or .env.testing)
+        $schema = env('DB_SCHEMA');
 
         // Load the raw SQL file
         $path = base_path('database/thingy-seed.sql');
         $sql = file_get_contents($path);
 
-        // Only replace 'thingy' when it's a complete word (surrounded by non-word characters)
-        $sql = preg_replace('/\bthingy\b/', $schema, $sql);
+        // If DB_SCHEMA is set, expose it to the SQL script
+        // (the script reads it via current_setting('app.schema', true))
+        if ($schema !== null) {
+            DB::statement("SELECT set_config('app.schema', ?, false)", [$schema]);
+        }
 
-        // Execute the SQL against the current connection
+        // Run the SQL script
         DB::unprepared($sql);
 
-        $this->command->info("Database seeded using schema: {$schema}");
+        // Show a message in the Artisan console
+        $this->command?->info('Database seeded using schema: ' . ($schema ?? 'thingy (default)'));
     }
 }
