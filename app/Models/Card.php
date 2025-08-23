@@ -14,6 +14,19 @@ class Card extends Model
     public $timestamps = false;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * Only these fields may be filled using methods like create() or update().
+     * This protects against mass-assignment vulnerabilities.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'name',
+        'user_id',
+    ];
+
+    /**
      * Get the user who owns this card.
      *
      * Defines a many-to-one relationship:

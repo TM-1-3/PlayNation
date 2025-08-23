@@ -103,6 +103,8 @@ class DatabaseSeeder extends Seeder
 }
 ```
 
+Note: This is the minimal version, enough to get you started. For a more flexible multi-environment setup (development + testing, schema overrides, etc.), see [Section 12. Define Laravel Tests](#12-define-laravel-tests).
+
 5. Seed the database:
 
 ```bash
@@ -325,6 +327,158 @@ This file will handle:
 
 - Ajax requests for creating/updating/deleting cards and items  
 - DOM manipulation for dynamically updating the interface
+
+
+## 12. Define Laravel Tests
+
+To support Laravel automated tests, we extended the setup so that development and testing share the same seeding logic.
+
+### Update DatabaseSeeder.php for multi-environment support
+
+We modified `DatabaseSeeder.php` so it can seed both **development** and **testing** databases.
+The SQL script reads `current_setting('app.schema', true)` and falls back to thingy if no override is provided. In Laravel, we set this variable using `set_config()` before running the SQL file.
+
+```php
+public function run(): void
+{
+    // Get schema name from environment (e.g., .env or .env.testing)
+    $schema = env('DB_SCHEMA');
+
+    // Load the raw SQL file
+    $path = base_path('database/thingy-seed.sql');
+    $sql = file_get_contents($path);
+
+    // If DB_SCHEMA is set, expose it to the SQL script
+    // (the script reads it via current_setting('app.schema', true))
+    if ($schema !== null) {
+        DB::statement("SELECT set_config('app.schema', ?, false)", [$schema]);
+    }
+
+    // Run the SQL script
+    DB::unprepared($sql);
+
+    // Show a message in the Artisan console
+    $this->command?->info('Database seeded using schema: ' . ($schema ?? 'thingy (default)'));
+}
+```
+
+
+### Update phpunit.xml
+
+We added a comment in phpunit.xml to clarify DB settings:
+
+```xml
+<!-- DB_* settings are loaded from .env.testing -->
+<!-- Add schema if you want to enforce it here -->
+<!-- <env name="DB_SCHEMA" value="thingy_test"/> -->
+```
+
+This way, the test environment always uses `.env.testing`, but developers can override in `phpunit.xml` if needed.
+
+
+### Disable migrations
+
+Because we are not using Laravel migrations (we seed from raw SQL), we disabled `migrate:fresh` during tests.
+Instead, tests only run the seeder (DatabaseSeeder) once per process.
+
+```php
+abstract class TestCase extends BaseTestCase
+{
+    /** Seed only once per test process. */
+    private static bool $seeded = false;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (! self::$seeded) {
+            // Runs DatabaseSeeder, which loads database/thingy-seed.sql
+            // and swaps {{schema}} with DB_SCHEMA from .env.testing
+            $this->seed();
+
+            self::$seeded = true;
+        }
+    }
+}
+```
+
+### Create a Testing Environment
+
+Create `.env.testing`:
+
+```bash
+APP_NAME=Thingy
+APP_ENV=local
+APP_KEY=base64:xWdLc4KY3iJKHCupluHuu1nDwvprk4OAqnsc6RRrGsA=
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
+
+DB_CONNECTION=pgsql
+DB_HOST=localhost
+DB_PORT=5432
+DB_SCHEMA=thingy_test
+DB_DATABASE=postgres
+DB_USERNAME=postgres
+DB_PASSWORD=password
+
+BROADCAST_DRIVER=log
+CACHE_STORE=file
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+QUEUE_CONNECTION=sync
+```
+
+### Writing Tests
+
+Generate a feature test:
+
+```bash
+php artisan make:test CardTest
+```
+
+Edit `tests/Feature/CardTest.php` accordingly to test guest redirection, card creation, and deletion.
+
+```php
+public function test_authenticated_user_can_create_card(): void
+{
+    // Grab the demo user from the seed (John Doe)
+    $user = User::firstOrFail();
+
+    // Act as this user and create a card
+    $response = $this->actingAs($user)->postJson('/api/cards', [
+        'name' => 'My First Test Card',
+    ]);
+
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas('cards', [
+        'name' => 'My First Test Card',
+        'user_id' => $user->id,
+    ]);
+}
+```
+
+#### Note on fillable attributes
+
+Laravel protects against mass assignment by default.
+
+If you want to use `Card::create([...])` in your tests, you must explicitly define which attributes can be mass-assigned in your model:
+
+```php
+class Card extends Model
+{
+    public $timestamps = false;
+
+    protected $fillable = ['name', 'user_id'];
+
+    // relationships ...
+}
+```
+
+Without this, calling `Card::create()` in tests will throw a `MassAssignmentException`.
 
 
 # Conclusion
