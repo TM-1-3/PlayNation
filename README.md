@@ -7,7 +7,7 @@ It uses **Laravel 12** as the application framework.
 
 These instructions address the development with a local environment (with PHP installed) and Docker containers for PostgreSQL and pgAdmin.
 
-For a detailed explanation of how the provided Laravel template (**Thingy!**) was built from scratch, see [MAKING_OF.md](MAKING_OF.md).
+For a detailed explanation of how the provided Laravel template (**Thingy!**) was built from scratch, see [Making of Template Laravel](MAKING_OF.md).
 
 - [LBAW's framework](#lbaws-framework)
   - [Introduction](#introduction)
