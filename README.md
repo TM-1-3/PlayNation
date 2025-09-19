@@ -49,7 +49,7 @@ To prepare your computer for development, you need to install:
 
 * [PHP](https://www.php.net/downloads) version 8.3 or higher
 * [Composer](https://getcomposer.org/) version 2.2 or higher
-* [Docker Descktop](https://docs.docker.com/desktop/)
+* [Docker Desktop](https://docs.docker.com/desktop/)
 
 
 ### Linux
@@ -120,7 +120,7 @@ git push origin main
 
 After these steps:
 
-1. You'll have the project skeleton in your local machine
+1. You'll have the project skeleton on your local machine
 2. You can remove the `template-laravel` directory
 
 For team collaboration:
@@ -151,7 +151,7 @@ composer install
 
 If the installation fails:
 
-1. Check your Composer version (should be 2 or above): `composer --version`
+1. Check your Composer version (should be 2.2 or above): `composer --version`
 2. If you see errors about missing PHP extensions, ensure they are enabled in your [php.ini file](https://www.php.net/manual/en/configuration.file.php)
 
 
@@ -189,7 +189,7 @@ Use `postgres` as hostname (not `localhost`) because _Docker Compose_ creates an
 ## Developing the project
 
 You're all set up to start developing the project.
-The provided skeleton includes a basic to-do list application -- **Thingy**, which you'll modify to implement your project.
+The provided skeleton includes a basic to-do list application -- **Thingy!**, which you'll modify to implement your project.
 
 Start the development server from your project root:
 
@@ -264,8 +264,8 @@ class CardController extends Controller
 
 This particular controller contains a `show` method that:
 
-* Uses **route model binding**: the $card parameter is automatically resolved by Laravel from the route.
-* Checks if the authenticated user is authorized to view the card via the `CardPolicy`.
+* Uses **route model binding**: the `$card` parameter is automatically resolved by Laravel from the route.
+* Checks if the authenticated user is authorized to view the card using the `CardPolicy`.
 * Eager loads the related items so they are available in the view (avoiding [N+1 queries](https://laravel-news.com/laravel-n1-query-problems)).
 * Returns the Blade view `pages.card` with the card and its related data.
 
@@ -462,7 +462,7 @@ For advanced projects, you might explore tools like [Vite](https://laravel.com/d
 Similarly, JavaScript files are placed in the `public/js` directory.
 The main script for this project is `public/js/app.js`.
 
-This file contains all the logic needed for interacting with the **Thingy!** application (creating/deleting cards and items dynamically via Ajax).
+This file contains all the logic needed for interacting with the **Thingy!** application (creating/deleting cards and items dynamically using Ajax).
 
 Scripts are included in the layout file, typically with:
 
@@ -525,7 +525,7 @@ This image will be used to test and evaluate your project.
 
 ### Configure environment for production
 
-Before building your docker image, configure your `.env.production` file with your group's `db.fe.up.pt` credentials:
+Before building your Docker image, configure your `.env.production` file with your group's `db.fe.up.pt` credentials:
 
 ```bash
 DB_CONNECTION=pgsql
@@ -626,7 +626,7 @@ php artisan test
 This will:
 
 * Load configuration from `.env.testing`
-* Seed the `thingy_test` schema once at the start (via `DatabaseSeeder`)
+* Seed the `thingy_test` schema once at the start (using `DatabaseSeeder`)
 * Run all test classes under `tests/`
 
 
