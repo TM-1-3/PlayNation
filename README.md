@@ -142,7 +142,7 @@ composer install
 If the installation fails:
 
 1. Check your Composer version (should be 2 or above): `composer --version`
-2. If you see errors about missing PHP extensions, ensure they are enabled in your [php.ini file](https://www.php.net/manual/en/configuration.file.php) file
+2. If you see errors about missing PHP extensions, ensure they are enabled in your [php.ini file](https://www.php.net/manual/en/configuration.file.php)
 
 
 ## Working with PostgreSQL
@@ -179,7 +179,7 @@ Use `postgres` as hostname (not `localhost`) because _Docker Compose_ creates an
 ## Developing the project
 
 You're all set up to start developing the project.
-The provided skeleton includes a basic todo list application -- **Thingy**, which you'll modify to implement your project.
+The provided skeleton includes a basic to-do list application -- **Thingy**, which you'll modify to implement your project.
 
 Start the development server from your project root:
 
