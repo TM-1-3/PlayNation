@@ -47,17 +47,23 @@ For a detailed explanation of how the provided Laravel template (**Thingy!**) wa
 
 To prepare your computer for development, you need to install:
 
-* [PHP](https://www.php.net/) version 8.3 or higher
+* [PHP](https://www.php.net/downloads) version 8.3 or higher
 * [Composer](https://getcomposer.org/) version 2.2 or higher
+* [Docker Descktop](https://docs.docker.com/desktop/)
 
-We recommend using an **Ubuntu** distribution (24.04 or newer) that ships with these versions.
 
-Install the required software with:
+### Linux
+
+On Ubuntu 24.04 or newer, PHP and Composer are included in the distribution.
+If necessary, install PHP and Composer with:
 
 ```bash
 sudo apt update
 sudo apt install git composer php8.3 php8.3-mbstring php8.3-xml php8.3-pgsql php8.3-curl
 ```
+
+
+### macOS
 
 On macOS, install using [Homebrew](https://brew.sh/):
 
@@ -65,8 +71,12 @@ On macOS, install using [Homebrew](https://brew.sh/):
 brew install php@8.3 composer
 ```
 
-If you use [Windows WSL](https://learn.microsoft.com/en-us/windows/wsl/install), ensure you are using Ubuntu 24.04 inside WSL. Previous versions do not provide the required packages. After setting up WSL, follow the Ubuntu instructions above.
+### Windows
 
+On Windows, you have two options:
+
+* Install PHP and Composer directly on Windows, and use Docker Desktop for Windows (**recommended**).
+* Or use [Windows WSL](https://learn.microsoft.com/en-us/windows/wsl/) with Ubuntu 24.04. If you choose WSL, make sure you are running Ubuntu 24.04 inside WSL, since previous versions do not provide the required packages. After setting up WSL, follow the Ubuntu instructions above, and install Docker inside WSL.
 
 ## Setting up the development repository
 
