@@ -20,9 +20,9 @@ DROP TABLE IF EXISTS comment_like;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS post_save;
 DROP TABLE IF EXISTS post_like;
-DROP TABLE IF EXISTS post_tag;
+DROP TABLE IF EXISTS post_label;
 DROP TABLE IF EXISTS post;
-DROP TABLE IF EXISTS user_tag;
+DROP TABLE IF EXISTS user_label;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS sport;
 DROP TABLE IF EXISTS label;
@@ -107,7 +107,7 @@ CREATE TABLE post(
 
 CREATE TABLE post_label(
     id_post INTEGER NOT NULL REFERENCES post (id_post) ON DELETE CASCADE,
-    id_label INTEGER NOT NULL REFERENCES tag (id_label) ON DELETE CASCADE,
+    id_label INTEGER NOT NULL REFERENCES label (id_label) ON DELETE CASCADE,
     PRIMARY KEY (id_post, id_label)
 );
 
