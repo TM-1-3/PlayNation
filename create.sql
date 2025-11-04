@@ -373,3 +373,261 @@ EXECUTE PROCEDURE group_search_update();
 -- Create a GIN index on tsvectors
 CREATE INDEX search_group ON groups USING GIN (tsvectors);
 
+
+
+-- TRANSACTIONS
+
+-- enviar um pedido de amizade
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO user_friend_request (id_user, id_requester)
+VALUES (6, 3); -- André e Joana
+
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (608, 6, 3, 'André Coutinho enviou-lhe um pedido de amizade.', NOW(), FALSE);
+
+INSERT INTO friend_request_notification (id_notification, accepted)
+VALUES (608, NULL);
+
+COMMIT;
+
+
+-- aceitar um pedido de amizade
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO user_friend (id_user, id_friend)
+VALUES (3, 6), (6, 3); -- André e Joana e Joana e André
+
+DELETE FROM user_friend_request
+WHERE id_user = 6 AND id_requester = 3;
+
+UPDATE friend_request_notification
+SET accepted = TRUE
+WHERE id_notification = 608;
+
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (609, 2, 1, 'Joana Marques aceitou o seu pedido de amizade!', NOW(), FALSE);
+
+INSERT INTO friend_request_result_notification (id_notification)
+VALUES (609);
+
+COMMIT;
+
+
+-- remover amizade
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+DELETE FROM user_friend
+WHERE (id_user = 1 AND id_friend = 3) OR (id_user = 3 AND id_friend = 1);
+
+COMMIT;
+
+
+-- criar um post
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO post (id_post, id_creator, image, description, date)
+VALUES (207, 1, NULL, 'Olá, mundo!', NOW());
+
+INSERT INTO post_label (id_post, id_label)
+VALUES (207, 103);
+
+COMMIT;
+
+
+-- Like Post
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO post_like (id_post, id_user)
+VALUES (206, 2);
+
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (610, 6, 2, 'Franchesco Frioli gostou do seu post.', NOW(), FALSE);
+
+INSERT INTO like_post_notification (id_notification, id_post)
+VALUES (610, 206);
+
+COMMIT;
+
+
+-- Comment on Post
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO comments (id_comment, id_post, id_user, id_reply, text, date)
+VALUES (950, 203, 5, NULL, 'Nice shot, bro!', NOW());
+
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (611, 3, 5, 'Cristiano Ronaldo comentou o seu post.', NOW(), FALSE);
+
+INSERT INTO comment_notification (id_notification, id_comment)
+VALUES (611, 950);
+
+COMMIT;
+
+
+-- Share Post (via mensagem privada)
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO message (id_message, text, image, date)
+VALUES (510, 'Vê só este post sobre a corrida de hoje!', NULL, NOW());
+
+INSERT INTO private_message (id_message, id_sender, id_receiver, id_post)
+VALUES (510, 1, 3, 201);
+
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (615, 3, 1, 'Hugo Vegano partilhou um post numa mensagem.', NOW(), FALSE);
+
+INSERT INTO private_message_notification (id_notification, id_message)
+VALUES (615, 510);
+
+COMMIT;
+
+
+-- Send Message to Friend
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO message (id_message, text, image, date)
+VALUES (505, 'Vamos correr amanhã de manhã?', NULL, NOW());
+
+INSERT INTO private_message (id_message, id_sender, id_receiver)
+VALUES (505, 6, 1);
+
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (982, 1, 6, 'Joana Marques enviou-lhe uma mensagem.', NOW(), FALSE);
+
+INSERT INTO private_message_notification (id_notification, id_message)
+VALUES (982, 505);
+
+COMMIT;
+
+    
+-- Post on Group
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO message (id_message, text, image, date)
+VALUES (970, 'Alguém para um treino longo no sábado de manhã?', NULL, NOW());
+
+INSERT INTO group_message (id_message, id_sender, id_group)
+VALUES (970, 3, 401);
+
+-- 3. Inserir a notificação base para um membro do grupo (Hugo, id_receiver=1)
+-- NOTA: Numa implementação real, esta etapa seria repetida para CADA membro do grupo (exceto o remetente).
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (986, 1, 3, 'Nova mensagem no grupo ''Vegan Runners PT''.', NOW(), FALSE);
+
+INSERT INTO group_message_notification (id_notification, id_message)
+VALUES (986, 970);
+
+COMMIT;
+
+
+-- Create Group
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO group_owner (id_group_owner)
+VALUES (3);
+
+INSERT INTO groups (id_group, id_owner, name, description, picture, is_public)
+VALUES (1000, 3, 'Basket Lovers PT', 'Comunidade para fãs de basquetebol.', 'img/groups/basket_group.png', TRUE);
+
+INSERT INTO group_membership (id_group, id_member)
+VALUES (1000, 3);
+
+COMMIT;
+
+
+-- enviar um pedido de adesão ao grupo
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO group_join_request (id_group, id_requester)
+VALUES (401, 2);
+
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (983, 1, 2, 'Franchesco Frioli quer juntar-se ao grupo ''Vegan Runners PT''.', NOW(), FALSE);
+
+INSERT INTO join_group_request_notification (id_notification, id_group, accepted)
+VALUES (983, 401, NULL);
+
+COMMIT;
+
+
+-- aceitar pedido de adesão ao grupo
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+DELETE FROM group_join_request
+WHERE id_group = 403 AND id_requester = 3;
+
+INSERT INTO group_membership (id_group, id_member)
+VALUES (403, 3);
+
+UPDATE join_group_request_notification
+SET accepted = TRUE
+WHERE id_notification = 607;
+
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (984, 3, 6, 'A sua adesão ao grupo ''Padel LBAW'' foi aceite!', NOW(), FALSE);
+
+INSERT INTO join_group_request_result_notification (id_notification, id_group)
+VALUES (984, 403);
+
+COMMIT;
+
+
+-- Report Post
+-- same logic is applied to Report a comment, Report a profile and to Report a group
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+INSERT INTO report (id_report, description)
+VALUES (703, 'Conteúdo impróprio');
+
+INSERT INTO report_post (id_report, id_post)
+VALUES (703, 204);
+
+COMMIT;
+
+
+-- Delete Account
+-- the majority will be done via ON DELETE CASCADE
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+DELETE FROM registered_user
+WHERE id_user = 7;
+
+COMMIT;
+
+
+-- Banir um utilizador
+
+
+-- Block
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+INSERT INTO user_block (id_user, id_blocked)
+VALUES (1, 3);
+
+DELETE FROM user_friend
+WHERE (id_user = 1 AND id_friend = 3)
+   OR (id_user = 3 AND id_friend = 1);
+
+
+COMMIT;
+
+-- Unblock
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+DELETE FROM user_block
+WHERE id_user = 1 AND id_blocked = 3;
+
+COMMIT;
+
+
+-- Moderate: remove reported post
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+DELETE FROM post
+WHERE id_post = 204;
+
+INSERT INTO notification (id_notification, id_receiver, id_emitter, text, date, read)
+VALUES (996, 2, NULL, 'O seu post foi removido devido a violação de regras.', NOW(), FALSE); 
+
+COMMIT;
