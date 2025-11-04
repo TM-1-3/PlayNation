@@ -1,49 +1,50 @@
 -- drop tables 
 
-DROP TABLE IF EXISTS join_group_request_result_notification;
-DROP TABLE IF EXISTS join_group_request_notification;
-DROP TABLE IF EXISTS group_message_notification;
-DROP TABLE IF EXISTS private_message_notification;
-DROP TABLE IF EXISTS like_comment_notification;
-DROP TABLE IF EXISTS comment_notification;
-DROP TABLE IF EXISTS like_post_notification;
-DROP TABLE IF EXISTS friend_request_result_notification;
-DROP TABLE IF EXISTS friend_request_notification;
-DROP TABLE IF EXISTS group_message;
-DROP TABLE IF EXISTS private_message;
-DROP TABLE IF EXISTS report_post;
-DROP TABLE IF EXISTS report_group;
-DROP TABLE IF EXISTS report_user;
-DROP TABLE IF EXISTS report_comment;
-DROP TABLE IF EXISTS report;
-DROP TABLE IF EXISTS comment_like;
-DROP TABLE IF EXISTS comments;
-DROP TABLE IF EXISTS post_save;
-DROP TABLE IF EXISTS post_like;
-DROP TABLE IF EXISTS post_label;
-DROP TABLE IF EXISTS post;
-DROP TABLE IF EXISTS user_label;
-DROP TABLE IF EXISTS category;
-DROP TABLE IF EXISTS sport;
-DROP TABLE IF EXISTS label;
-DROP TABLE IF EXISTS group_membership;
-DROP TABLE IF EXISTS group_join_request;
-DROP TABLE IF EXISTS groups;
-DROP TABLE IF EXISTS user_friend_request;
-DROP TABLE IF EXISTS user_friend;
-DROP TABLE IF EXISTS notification;
-DROP TABLE IF EXISTS group_owner;
-DROP TABLE IF EXISTS verified_user;
-DROP TABLE IF EXISTS administrator;
-DROP TABLE IF EXISTS registered_user;
-DROP TABLE IF EXISTS user_block;
-DROP TABLE IF EXISTS user_tag;
+DROP TABLE IF EXISTS join_group_request_result_notification CASCADE;
+DROP TABLE IF EXISTS join_group_request_notification CASCADE;
+DROP TABLE IF EXISTS group_message_notification CASCADE;
+DROP TABLE IF EXISTS private_message_notification CASCADE;
+DROP TABLE IF EXISTS like_comment_notification CASCADE;
+DROP TABLE IF EXISTS comment_notification CASCADE;
+DROP TABLE IF EXISTS like_post_notification CASCADE;
+DROP TABLE IF EXISTS friend_request_result_notification CASCADE;
+DROP TABLE IF EXISTS friend_request_notification CASCADE;
+DROP TABLE IF EXISTS group_message CASCADE;
+DROP TABLE IF EXISTS private_message CASCADE;
+DROP TABLE IF EXISTS report_post CASCADE;
+DROP TABLE IF EXISTS report_group CASCADE;
+DROP TABLE IF EXISTS report_user CASCADE;
+DROP TABLE IF EXISTS report_comment CASCADE;
+DROP TABLE IF EXISTS report CASCADE;
+DROP TABLE IF EXISTS comment_like CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
+DROP TABLE IF EXISTS post_save CASCADE;
+DROP TABLE IF EXISTS post_like CASCADE;
+DROP TABLE IF EXISTS post_label CASCADE;
+DROP TABLE IF EXISTS post CASCADE;
+DROP TABLE IF EXISTS user_label CASCADE;
+DROP TABLE IF EXISTS category CASCADE;
+DROP TABLE IF EXISTS sport CASCADE;
+DROP TABLE IF EXISTS label CASCADE;
+DROP TABLE IF EXISTS group_membership CASCADE;
+DROP TABLE IF EXISTS group_join_request CASCADE;
+DROP TABLE IF EXISTS groups CASCADE;
+DROP TABLE IF EXISTS user_friend_request CASCADE;
+DROP TABLE IF EXISTS user_friend CASCADE;
+DROP TABLE IF EXISTS notification CASCADE;
+DROP TABLE IF EXISTS group_owner CASCADE;
+DROP TABLE IF EXISTS verified_user CASCADE;
+DROP TABLE IF EXISTS administrator CASCADE;
+DROP TABLE IF EXISTS registered_user CASCADE;
+DROP TABLE IF EXISTS user_block CASCADE;
+DROP TABLE IF EXISTS user_tag CASCADE;
+DROP TABLE IF EXISTS message CASCADE;
 
 
 -- create tables
 
 CREATE TABLE registered_user(
-    id_user INTEGER PRIMARY KEY,
+    id_user SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
@@ -78,7 +79,7 @@ CREATE TABLE user_friend_request(
 );
 
 CREATE TABLE label(
-    id_label INTEGER PRIMARY KEY,
+    id_label SERIAL PRIMARY KEY,
     designation TEXT NOT NULL,
     image TEXT NOT NULL
 );
@@ -98,7 +99,7 @@ CREATE TABLE user_label(
 );
 
 CREATE TABLE post(
-    id_post INTEGER PRIMARY KEY,
+    id_post SERIAL PRIMARY KEY,
     id_creator INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE SET NULL,
     image TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -124,7 +125,7 @@ CREATE TABLE post_save(
 );
 
 CREATE TABLE comments(
-    id_comment INTEGER PRIMARY KEY,
+    id_comment SERIAL PRIMARY KEY,
     id_post INTEGER NOT NULL REFERENCES post (id_post) ON DELETE CASCADE,
     id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE SET NULL,
     id_reply INTEGER REFERENCES comments (id_comment) ON DELETE CASCADE,
@@ -139,7 +140,7 @@ CREATE TABLE comment_like(
 );
 
 CREATE TABLE groups(
-    id_group INTEGER PRIMARY KEY,
+    id_group SERIAL PRIMARY KEY,
     id_owner INTEGER NOT NULL REFERENCES group_owner (id_group_owner) ON DELETE SET NULL,
     name TEXT UNIQUE NOT NULL,
     description TEXT,
@@ -160,7 +161,7 @@ CREATE TABLE group_join_request(
 );
 
 CREATE TABLE message(
-    id_message INTEGER PRIMARY KEY,
+    id_message SERIAL PRIMARY KEY,
     text TEXT NOT NULL,
     image TEXT,
     date TIMESTAMP NOT NULL CHECK (date<=now())
@@ -179,7 +180,7 @@ CREATE TABLE group_message(
 );
 
 CREATE TABLE report(
-    id_report INTEGER PRIMARY KEY,
+    id_report SERIAL PRIMARY KEY,
     description TEXT NOT NULL
 );
 
@@ -209,12 +210,11 @@ CREATE TABLE report_post(
 );
 
 CREATE TABLE notification(
-    id_notification INTEGER PRIMARY KEY,
+    id_notification SERIAL PRIMARY KEY,
     id_receiver INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
     id_emitter INTEGER REFERENCES registered_user (id_user) ON DELETE SET NULL,
     text TEXT NOT NULL,
-    date TIMESTAMP NOT NULL CHECK (date<=now()),
-    read BOOLEAN NOT NULL DEFAULT FALSE
+    date TIMESTAMP NOT NULL CHECK (date<=now())
 );
 
 CREATE TABLE friend_request_notification(
@@ -274,6 +274,10 @@ CREATE TABLE user_tag(
     id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
     PRIMARY KEY (id_post, id_user)
 );
+
+DROP FUNCTION IF EXISTS post_search_update() CASCADE;
+DROP FUNCTION IF EXISTS user_search_update() CASCADE;
+DROP FUNCTION IF EXISTS group_search_update() CASCADE;
 
 CREATE INDEX idx_post_creator ON post USING btree (id_creator);
 
