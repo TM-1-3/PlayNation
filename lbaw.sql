@@ -213,7 +213,8 @@ CREATE TABLE notification(
     id_receiver INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
     id_emitter INTEGER REFERENCES registered_user (id_user) ON DELETE SET NULL,
     text TEXT NOT NULL,
-    date TIMESTAMP NOT NULL CHECK (date<=now())
+    date TIMESTAMP NOT NULL CHECK (date<=now()),
+    read BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE friend_request_notification(
