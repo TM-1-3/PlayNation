@@ -8,6 +8,7 @@ Users are organized into groups with distinct permissions. These groups include 
 The platform will be responsive to the different devices used and easy to manage, ensuring a pleasant user experience.
 
 ## Authors
+
 Carolina Alves Ferreira, up202303547@edu.fe.up.pt
 Gabriela de Mattos Barboza da Silva, up202304064@edu.fe.up.pt
 João Pedro Magalhães Marques, up202307612@edu.fe.up.pt
