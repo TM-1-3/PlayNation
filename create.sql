@@ -1,3 +1,5 @@
+CREATE SCHEMA IF NOT EXISTS lbaw2551;
+
 -- drop tables 
 
 DROP TABLE IF EXISTS join_group_request_result_notification CASCADE;
