@@ -375,6 +375,226 @@ CREATE INDEX search_group ON groups USING GIN (tsvectors);
 
 
 
+-- Triggers
+-- BR01: Profile Visibility
+CREATE FUNCTION check_profile_visibility() RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM registered_user WHERE id_user = NEW.id_user AND is_public = TRUE
+    ) AND NOT EXISTS (
+        SELECT 1 FROM user_friend WHERE id_user = NEW.id_user AND id_friend = NEW.id_friend
+    ) THEN
+        RAISE EXCEPTION 'Cannot access private profile content without being friends';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER profile_visibility_trigger
+BEFORE INSERT OR UPDATE ON user_friend
+FOR EACH ROW
+EXECUTE FUNCTION check_profile_visibility();
+
+-- BR02: Group Visibility
+CREATE FUNCTION check_group_visibility() RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM groups WHERE id_group = NEW.id_group AND is_public = TRUE
+    ) AND NOT EXISTS (
+        SELECT 1 FROM group_membership WHERE id_group = NEW.id_group AND id_member = NEW.id_member
+    ) THEN
+        RAISE EXCEPTION 'Cannot access private group without being a member';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER group_visibility_trigger
+BEFORE INSERT OR UPDATE ON group_membership
+FOR EACH ROW
+EXECUTE FUNCTION check_group_visibility();
+
+-- BR07: Group Join Restriction
+CREATE FUNCTION prevent_duplicate_group_join() RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM group_membership 
+        WHERE id_group = NEW.id_group AND id_member = NEW.id_requester
+    ) THEN
+        RAISE EXCEPTION 'User is already a member of this group';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER no_duplicate_group_join_trigger
+BEFORE INSERT ON group_join_request
+FOR EACH ROW
+EXECUTE FUNCTION prevent_duplicate_group_join();
+
+-- BR08: Self-Friending Prohibition
+CREATE FUNCTION prevent_self_friendship() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.id_user = NEW.id_friend THEN
+        RAISE EXCEPTION 'A user cannot be friends with themselves';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER no_self_friendship_trigger
+BEFORE INSERT OR UPDATE ON user_friend
+FOR EACH ROW
+EXECUTE FUNCTION prevent_self_friendship();
+
+-- BR09: Self-Request Prohibition
+CREATE FUNCTION prevent_self_friend_request() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.id_user = NEW.id_requester THEN
+        RAISE EXCEPTION 'A user cannot send a friend request to themselves';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER no_self_friend_request_trigger
+BEFORE INSERT ON user_friend_request
+FOR EACH ROW
+EXECUTE FUNCTION prevent_self_friend_request();
+
+-- BR10: Existing Friend Request Prohibition
+CREATE FUNCTION prevent_existing_friend_request() RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM user_friend 
+        WHERE (id_user = NEW.id_user AND id_friend = NEW.id_requester)
+        OR (id_user = NEW.id_requester AND id_friend = NEW.id_user)
+    ) THEN
+        RAISE EXCEPTION 'Cannot send friend request to existing friend';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER no_existing_friend_request_trigger
+BEFORE INSERT ON user_friend_request
+FOR EACH ROW
+EXECUTE FUNCTION prevent_existing_friend_request();
+
+
+-- BR12: Post Interaction Access
+CREATE FUNCTION check_post_interaction_access() RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if post creator is public
+    IF EXISTS (
+        SELECT 1 FROM post p
+        JOIN registered_user ru ON p.id_creator = ru.id_user
+        WHERE p.id_post = NEW.id_post AND ru.is_public = TRUE
+    ) THEN
+        RETURN NEW;
+    END IF;
+
+    -- Check if user is friend with post creator
+    IF EXISTS (
+        SELECT 1 FROM post p
+        JOIN user_friend uf ON p.id_creator = uf.id_user
+        WHERE p.id_post = NEW.id_post AND uf.id_friend = NEW.id_user
+    ) THEN
+        RETURN NEW;
+    END IF;
+
+    -- Check if post is in a group where user is member
+    IF EXISTS (
+        SELECT 1 FROM post p
+        JOIN group_membership gm ON p.id_group = gm.id_group
+        WHERE p.id_post = NEW.id_post AND gm.id_member = NEW.id_user
+    ) THEN
+        RETURN NEW;
+    END IF;
+
+    RAISE EXCEPTION 'User does not have permission to interact with this post';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER post_interaction_access_comments_trigger
+BEFORE INSERT ON comments
+FOR EACH ROW
+EXECUTE FUNCTION check_post_interaction_access();
+
+CREATE TRIGGER post_interaction_access_likes_trigger
+BEFORE INSERT ON post_like
+FOR EACH ROW
+EXECUTE FUNCTION check_post_interaction_access();
+
+
+-- BR13: Group Post Membership Required
+CREATE FUNCTION check_group_post_permission() RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM group_membership
+        WHERE id_group = NEW.id_group AND id_member = NEW.id_sender
+    ) THEN
+        RAISE EXCEPTION 'User must be a member of the group to send messages';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER group_post_permission_trigger
+BEFORE INSERT ON group_message
+FOR EACH ROW
+EXECUTE FUNCTION check_group_post_permission();
+
+
+-- BR14: Single Like Constraint
+CREATE FUNCTION prevent_duplicate_likes() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_TABLE_NAME = 'post_like' THEN
+        IF EXISTS (
+            SELECT 1 FROM post_like
+            WHERE id_post = NEW.id_post AND id_user = NEW.id_user
+        ) THEN
+            RAISE EXCEPTION 'User has already liked this post';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'comment_like' THEN
+        IF EXISTS (
+            SELECT 1 FROM comment_like
+            WHERE id_comment = NEW.id_comment AND id_user = NEW.id_user
+        ) THEN
+            RAISE EXCEPTION 'User has already liked this comment';
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER single_post_like_trigger
+BEFORE INSERT ON post_like
+FOR EACH ROW
+EXECUTE FUNCTION prevent_duplicate_likes();
+
+CREATE TRIGGER single_comment_like_trigger
+BEFORE INSERT ON comment_like
+FOR EACH ROW
+EXECUTE FUNCTION prevent_duplicate_likes();
+
+-- BR15: Post Content Requirement
+CREATE FUNCTION check_post_content() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.description IS NULL AND NEW.image IS NULL THEN
+        RAISE EXCEPTION 'Post must have either a description or an image';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER post_content_trigger
+BEFORE INSERT OR UPDATE ON post
+FOR EACH ROW
+EXECUTE FUNCTION check_post_content();
+
+
+
 -- TRANSACTIONS
 
 -- enviar um pedido de amizade
