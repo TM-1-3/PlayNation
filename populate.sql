@@ -79,7 +79,7 @@ INSERT INTO user_block (id_user, id_blocked) VALUES
 INSERT INTO groups (id_owner, name, description, picture, is_public) VALUES
 (1, 'Vegan Runners PT', 'Grupo para partilhar corridas e receitas vegan.', 'img/groups/group_run.png', TRUE),
 (2, 'Calcio Amatori 🇮🇹', 'Só para verdadeiros fãs da Serie A.', 'img/groups/group_calcio.png', TRUE),
-(6, 'Padel LBAW', 'Grupo privado da malta de Padel.', 'img/groups/group_padel.png', FALSE);
+(6, 'Padel LBAW', 'Grupo privado da malta de Padel.', 'img/groups/group_padel.png', TRUE);
 
 
 INSERT INTO group_membership (id_group, id_member) VALUES
