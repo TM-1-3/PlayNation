@@ -275,6 +275,8 @@ CREATE TABLE user_tag(
     PRIMARY KEY (id_post, id_user)
 );
 
+-- Indexes
+
 DROP FUNCTION IF EXISTS post_search_update() CASCADE;
 DROP FUNCTION IF EXISTS user_search_update() CASCADE;
 DROP FUNCTION IF EXISTS group_search_update() CASCADE;
@@ -286,6 +288,8 @@ CLUSTER comments USING idx_comment_post;
 
 CREATE INDEX idx_notification_receiver_date ON notification USING btree(id_receiver);
 CLUSTER notification USING idx_notification_receiver_date;
+
+-- FTS Indexes
 
 -- Add a column to store the tsvector
 ALTER TABLE post
