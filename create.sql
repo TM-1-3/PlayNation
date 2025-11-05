@@ -291,11 +291,9 @@ CLUSTER notification USING idx_notification_receiver_date;
 
 -- FTS Indexes
 
--- Add a column to store the tsvector
 ALTER TABLE post
 ADD COLUMN tsvectors TSVECTOR;
 
--- Create a function to automatically update tsvectors
 CREATE FUNCTION post_search_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
@@ -308,20 +306,16 @@ BEGIN
     RETURN NEW;
 END $$ LANGUAGE plpgsql;
 
--- Create a trigger before insert or update
 CREATE TRIGGER post_search_update
 BEFORE INSERT OR UPDATE ON post
 FOR EACH ROW
 EXECUTE PROCEDURE post_search_update();
 
--- Create a GIN index on tsvectors
 CREATE INDEX search_post ON post USING GIN (tsvectors);
 
--- Add a column to store the tsvector
 ALTER TABLE registered_user
 ADD COLUMN tsvectors TSVECTOR;
 
--- Create a function to automatically update tsvectors
 CREATE FUNCTION user_search_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
@@ -338,20 +332,16 @@ BEGIN
     RETURN NEW;
 END $$ LANGUAGE plpgsql;
 
--- Create a trigger before insert or update
 CREATE TRIGGER user_search_update
 BEFORE INSERT OR UPDATE ON registered_user
 FOR EACH ROW
 EXECUTE PROCEDURE user_search_update();
 
--- Create a GIN index on tsvectors
 CREATE INDEX search_user ON registered_user USING GIN (tsvectors);
 
--- Add a column to store the tsvector
 ALTER TABLE groups
 ADD COLUMN tsvectors TSVECTOR;
 
--- Create a function to automatically update tsvectors
 CREATE FUNCTION group_search_update() RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
@@ -368,18 +358,28 @@ BEGIN
     RETURN NEW;
 END $$ LANGUAGE plpgsql;
 
--- Create a trigger before insert or update
 CREATE TRIGGER group_search_update
 BEFORE INSERT OR UPDATE ON groups
 FOR EACH ROW
 EXECUTE PROCEDURE group_search_update();
 
--- Create a GIN index on tsvectors
 CREATE INDEX search_group ON groups USING GIN (tsvectors);
 
 
 
 -- Triggers
+
+DROP FUNCTION IF EXISTS check_profile_visibility() CASCADE;
+DROP FUNCTION IF EXISTS check_group_visibility() CASCADE;
+DROP FUNCTION IF EXISTS prevent_duplicate_group_join() CASCADE;
+DROP FUNCTION IF EXISTS prevent_self_friendship() CASCADE;
+DROP FUNCTION IF EXISTS prevent_self_friend_request() CASCADE;
+DROP FUNCTION IF EXISTS prevent_existing_friend_request() CASCADE;
+DROP FUNCTION IF EXISTS check_post_interaction_access() CASCADE;
+DROP FUNCTION IF EXISTS check_group_post_permission() CASCADE;
+DROP FUNCTION IF EXISTS prevent_duplicate_likes() CASCADE;
+DROP FUNCTION IF EXISTS check_post_content() CASCADE;
+
 -- BR01: Profile Visibility
 CREATE FUNCTION check_profile_visibility() RETURNS TRIGGER AS $$
 BEGIN
