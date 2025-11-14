@@ -109,7 +109,7 @@ paths:
 
 ######### REGISTER #########
 
-/register:
+  /register:
 
    get:
      operationId: R104
