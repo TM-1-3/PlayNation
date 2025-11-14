@@ -1489,3 +1489,568 @@ paths:
         description: 'Not authenticated.'
       '404':
         description: 'Comment not found.'
+############################################ GROUPS ############################################
+
+######### GROUP PAGE #########  
+
+  /group/{id}:
+
+    get:
+      operationId: R601
+      summary: 'R601: View Group Page'
+      description: 'Show the page for a singular group, Access: AUTH, VST, OWN, GRM, ADM'
+      tags:
+        - 'M06: Groups'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: True
+
+      responses:
+        '200':
+          description: 'Success. Show Group Page'
+        '302':
+          description: 'Redirect if user is not logged in, if user is not a group menber of that group or if group doesnt exists'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                  302Failure:
+                    description: 'Failure'
+
+######### GROUPS PAGE #########
+
+  /groups:
+
+    get:
+      operationId: R602
+      summary: 'R602: View Groups Page'
+      description: 'Show the page with all groups, Access: AUTH, OWN, GRM, ADM'
+      tags:
+        - 'M06: Groups'
+
+      responses:
+        '200':
+          description: 'Success. Show Groups Page'
+        '302':
+          description: 'Redirect if user is not logged in'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                  302Failure:
+                    description: 'User not logged in. Redirect to login page.'
+                    value: '/login'
+
+######### EDIT GROUP PAGE #########
+
+  /group/{id}/edit:
+
+    get:
+      operationId: R603
+      summary: 'R603: Edit Group Page'
+      description: 'Show the page for editing a group, Access: OWN'
+      tags:
+        - 'M06: Groups'
+
+      parameters:
+        - in: query
+          name: id
+          description: 'Group ID'
+          schema:
+            type: integer
+          required: True
+
+      responses:
+        '200':
+          description: 'Success. Show Edit Group Page'
+        '401':
+          description: 'Unauthorized. You do not have permission to edit this group.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                401Success:
+                  description: 'Unauthorized. Redirect to group page.'
+                  value: '/group/{id}'
+
+######### EDIT GROUP #########
+
+  /group/edit:
+
+    post:
+      operationId: R604
+      summary: 'R604: Edit Group Operation'
+      description: 'Saves the alterations made to a group by its owner. Access: OWN'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                picture:
+                  type: string
+                  format: binary
+                is_public:
+                  type: boolean
+
+      responses:
+        '302':
+          description: 'Redirect to group page after processing the alterations.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Success:
+                  description: 'Updated successfully. Redirect to group page.'
+                  value: '/group/{id}'
+                302Failure:
+                  description: 'Failed to update. Redirect to edit group page.'
+                  value: '/group/{id}/edit'
+
+######### CREATE GROUP #########
+
+  /group/create:
+
+    post:
+      operationId: R605
+      summary: 'R605: Create Group Operation'
+      description: 'Creates a new group. Access: AUTH'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                picture:
+                  type: string
+                  format: binary
+                is_public:
+                  type: boolean
+
+      responses:
+        '302':
+          description: 'Redirect to the new groups group page after creating it.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Success:
+                  description: 'Created successfully. Redirect to group page.'
+                  value: '/group/{id}'
+                302Failure:
+                  description: 'Failed to create. Redirect to groups page.'
+                  value: '/groups'
+
+######### JOIN GROUP #########
+
+  /group/join:
+
+    post:
+      operationId: R606
+      summary: 'R606: Join Group'
+      description: 'Joins a public group. Access: AUTH'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Group joined successfully.'
+        '401':
+          description: 'Unauthorized. You cannot join this group.'
+
+######### LEAVE GROUP #########
+
+  /group/leave:
+
+    post:
+      operationId: R607
+      summary: 'R607: Leave Group'
+      description: 'Leaves a group. Access: AUTH, GRM, OWN'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Group left successfully.'
+        '401':
+          description: 'Unauthorized. You cannot leave this group.'
+
+######### DELETE GROUP #########
+
+  /group/delete:
+
+    post:
+      operationId: R608
+      summary: 'R608: Delete Group Operation'
+      description: 'Deletes a group. Access: OWN, ADM'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                required:
+                  - group_id
+
+      responses:
+        '302':
+          description: 'Redirect to groups page after deleting the group.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Success:
+                  description: 'Deleted successfully. Redirect to groups page.'
+                  value: '/groups'
+        '401':
+          description: 'Unauthorized. You cannot delete this group.'
+
+######### JOIN GROUP REQUEST #########
+
+  /group/sendJoinRequest:
+
+    post:
+      operationId: R609
+      summary: 'R609: Join Group Request'
+      description: 'Sends a join request to a private group. Access: AUTH'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Join request sent successfully.'
+        '401':
+          description: 'Unauthorized. You cannot send a request to join this group.'
+
+######### CANCEL JOIN GROUP REQUEST #########
+
+  /group/cancelJoinRequest:
+
+    post:
+      operationId: R610
+      summary: 'R610: Cancel Join Group Request'
+      description: 'Cancels a previously sent join request to a private group. Access: AUTH'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Join request canceled successfully.'
+        '401':
+          description: 'Unauthorized. You cannot cancel this request.'
+
+######### ACCEPT JOIN GROUP REQUEST #########
+
+  /group/acceptJoinRequest:
+
+    post:
+      operationId: R611
+      summary: 'R611: Accept Join Group Request'
+      description: 'Accepts a join request from a user to a private group. Access: OWN'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Join request accepted successfully.'
+        '401':
+          description: 'Unauthorized. You cannot accept this request.'
+
+######### REJECT JOIN GROUP REQUEST #########
+
+  /group/rejectJoinRequest:
+
+    post:
+      operationId: R612
+      summary: 'R612: Reject Join Group Request'
+      description: 'Rejects a join request from a user to a private group. Access: OWN'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Join request rejected successfully.'
+        '401':
+          description: 'Unauthorized. You cannot reject this request.'
+
+######### REMOVE GROUP MEMBER #########
+
+  /group/removeMember:
+
+    post:
+      operationId: R613
+      summary: 'R613: Remove Group Member Operation'
+      description: 'Removes a member from the group. Access: OWN'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Group member removed successfully.'
+        '401':
+          description: 'Unauthorized. You cannot remove this group member.'
+
+######### INVITE TO GROUP #########
+
+  /group/invite:
+
+    post:
+      operationId: R614
+      summary: 'R614: Invite to Group'
+      description: 'Invites a user to join the group. Access: OWN'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'User invited to group successfully.'
+        '401':
+          description: 'Unauthorized. You cannot invite this user to the group.'
+
+######### CANCEL INVITE TO GROUP #########
+
+  /group/cancelInvite:
+
+    post:
+      operationId: R615
+      summary: 'R615: Cancel Invite to Group'
+      description: 'Cancels a previously sent invitation to a user to join the group. Access: OWN'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Group invitation canceled successfully.'
+        '401':
+          description: 'Unauthorized. You cannot cancel this invitation.'
+
+######### ACCEPT INVITE TO GROUP #########
+
+  /group/acceptInvite:
+
+    post:
+      operationId: R616
+      summary: 'R616: Accept Invite to Group'
+      description: 'Accepts an invitation to join the group. Access: AUTH'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Group invitation accepted successfully.'
+        '401':
+          description: 'Unauthorized. You cannot accept this invitation.'
+
+######### REJECT INVITE TO GROUP #########
+
+  /group/rejectInvite:
+
+    post:
+      operationId: R617
+      summary: 'R617: Reject Invite to Group'
+      description: 'Rejects an invitation to join the group. Access: AUTH'
+      tags:
+        - 'M06: Groups'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  group_id:
+                    type: integer
+                  user_id: 
+                    type: integer
+                required:
+                  - user_id
+                  - group_id
+
+      responses:
+        '200':
+          description: 'Group invitation rejected successfully.'
+        '401':
+          description: 'Unauthorized. You cannot reject this invitation.'
