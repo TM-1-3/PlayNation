@@ -1018,6 +1018,7 @@ paths:
           schema:
             type: integer
           required: True  
+          
       responses:
         '200':
           description: 'OK. Show Post UI.'
