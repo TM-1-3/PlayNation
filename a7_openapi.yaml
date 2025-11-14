@@ -1,0 +1,1052 @@
+openapi: 3.0.0
+
+info:
+ version: '1.0'
+ title: 'LBAW PlayNation Web API'
+ description: 'Web Resources Specification (A7) for PlayNation'
+
+servers:
+- url: http://lbaw.fe.up.pt
+  description: Production server
+
+externalDocs:
+ description: Find more info here.
+ url: https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/wikis/eap
+ 
+
+tags:
+ - name: 'M01: Authentication and Users'
+ - name: 'M02: Administration'
+ - name: 'M03: Posts'
+ - name: 'M04: Search'
+ - name: 'M05: Comments'
+ - name: 'M06: Groups'
+ 
+paths:
+
+############################################ AUTHENTICATION AND USERS ############################################
+
+######### LOGIN #########
+  /login:
+
+    get:
+      operationId: R101
+      summary: 'R101: Login Form'
+      description: 'Present Login Form. Access: VST'
+      tags:
+        - 'M01: Authentication and Users'
+
+      responses:
+        '200':
+          description: 'OK. Show Login Form'
+
+    post:
+      operationId: R102
+      summary: 'R102: Login Action'
+      description: 'Present Login Information. Access: VST'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urllencoded:
+            schema:
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                  - password
+              oneOf:
+                    - required: [username]
+                    - required: [email]
+
+      responses:
+       '302':
+         description: 'Redirect after processing the login credentials.'
+         headers:
+           Location:
+             schema:
+               type: string
+             examples:
+               302Success:
+                 description: 'Successful authentication. Redirect to timeline.'
+                 value: '/privateTimeline'
+               302Error:
+                 description: 'Failed authentication. Redirect to login form.'
+                 value: '/login'
+
+
+######### LOGOUT #########
+
+  /logout:
+
+    get:
+      operationId: R103
+      summary: 'R103 : Logout Operation'
+      description: 'Logout the current logged user. Access: AUTH, ADM, OWN, GRM'
+      tags:
+        - 'M01: Authentication and Users'
+
+      responses:
+        '302':
+          description: 'Redirect after processing logout.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Successful logout. Redirect to public timeline.'
+                  value: '/'
+
+
+######### REGISTER #########
+
+/register:
+
+   get:
+     operationId: R104
+     summary: 'R104: Register Form'
+     description: 'Provide new user registration form. Access: VST'
+     tags:
+       - 'M01: Authentication and Users'
+     responses:
+       '200':
+         description: 'Ok. Show Sign-Up UI'
+
+   post:
+     operationId: R105
+     summary: 'R105: Register Operation'
+     description: 'Processes the new user registration information. Access: VST'
+     tags:
+       - 'M01: Authentication and Users'
+
+     requestBody:
+       required: true
+       content:
+         application/x-www-form-urlencoded:
+           schema:
+             type: object
+             properties:
+               username:
+                 type: string
+               name:
+                 type: string
+               password:
+                 type: string
+                 format: password
+               email:
+                 type: string
+                 format: email
+               picture:
+                 type: string
+                 format: binary
+               description:
+                 type: string
+               labels:
+                 type: array
+                 items:
+                  type: string
+               is_public:
+                 type: boolean
+             required:
+                - name
+                - username
+                - email
+                - password
+
+     responses:
+       '302':
+         description: 'Redirect after processing the new user information.'
+         headers:
+           Location:
+             schema:
+               type: string
+             examples:
+               302Success:
+                 description: 'Successful authentication. Redirect to private timeline.'
+                 value: '/privateTimeline'
+               302Failure:
+                 description: 'Failed authentication. Redirect to login form.'
+                 value: '/login'
+
+
+######### RECOVER PASSWORD #########
+  
+/recoverPassword:
+
+    post:
+      operationId: R106
+      summary: 'R106 : Recover Password Operation'
+      description: 'Changes the current password after receiving the validation code. Access: VST'
+      tags:
+        - 'M01: Authentication and Users'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                verify_password:
+                  type: string
+                  format: password
+              required:
+                - code
+                - password
+                - verify_password;
+      responses:
+        '200':
+          description: 'Success. Your password has been changed successfully.'
+        '404':
+          description: 'Error. Wrong code.'
+
+######### SEND EMAIL #########
+
+/sendEmail:
+
+    post:
+      operationId: R107
+      summary: 'R107 : Send Email Operation'
+      description: 'Sends an email with a validation code. Access: VST'
+      tags:
+        - 'M01: Authentication and Users'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                e-mail:
+                  type: string 
+              required:
+                - email
+               
+      responses:
+        '200':
+          description: 'Success. A validation code was sent to your email.'
+        '404':
+          description: 'Error. Email not existant.'
+      
+######### PRIVATE TIMELINE #########
+
+/privateTimeline:
+
+    get:
+      operationId: R108
+      summary: 'R108: View user personalized timeline.'
+      description: 'Show the user personalized timeline, Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+      responses:
+        '200':
+          description: 'OK. Show the user personalized timeline.'
+        '302':
+          description: 'Redirect after unauthorized request. User is not logged in'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                  302Success:
+                    description: 'You need to login first. Redirect to login page.'
+                    value: '/login'
+
+######### USER PROFILE #########
+
+/user/{id}:
+
+    get:
+      operationId: R109
+      summary: 'R109: View User Profile Page'
+      description: 'Show the profile for an user, Access: AUTH, VST'
+      tags:
+        - 'M01: Authentication and Users'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: True
+
+      responses:
+        '200':
+          description: 'OK. Show the profile page for an user'
+
+
+
+######### EDIT PROFILE #########
+
+/user/{id}/edit:
+
+    get:
+      operationId: R110
+      summary: 'R110: Edit user profile page.'
+      description: 'Shows the page for edittin the profile of the user. Access: OWN'
+      tags:
+        - 'M01: Authentication and Users'
+      responses:
+        '200':
+          description: 'Ok. Show edit profile UI.'
+        '401':
+          description: 'Unauthorized. You do not have the permission to edit this profile.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                401Success:
+                  description: 'Unauthorized. Redirect to user profile.'
+                  value: '/user/{id}'
+    
+    post:
+      operationId: R111
+      summary: 'R111: Edit user profile operation'
+      description: 'Processes and saves the alterations made by user. Access: OWN'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                description:
+                  type: string
+                  format: password
+                password:
+                  type: string
+                  format: password
+                confirm_password:
+                  type: string
+                  format: password
+                image:
+                  type: string
+                  format: binary
+                is_public:
+                  type: boolean
+                labels:
+                  type: array
+                  items:
+                    type: string
+              required:
+              - name
+              - username
+              - email
+              - password
+              - is_public
+
+      responses:
+        '302':
+          description: 'Redirect after processing the changes to the user information.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Success:
+                  description: 'Successful update. Redirect to user profile page.'
+                  value: '/user/{id}'
+                302Failure:
+                  description: 'Failed update. Redirect to edit profile page.'
+                  value: '/user/{id}/edit'
+
+######### PROFILE DELETE #########
+
+/user/{id}/profileDelete:
+
+    post:
+      operationId: R112
+      summary: 'R112: Deletes an user account.'
+      description: 'Deletes an user while in the profile page. Access: OWN, ADM'
+      tags:
+        - 'M02: Authentication and Users'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                required:
+                  - id
+
+      responses:
+        '302':
+          description: 'Redirect after deleting user information.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Success:
+                  description: 'Successful account deletion. Redirect to public timeline.'
+                  value: '/'
+        '403':
+          description: 'Forbiden action.'
+
+######### BEFRIEND #########
+
+/user/{id}/befriend:
+
+    post:
+      operationId: R113
+      summary: 'R113: Is friend with another user.'
+      description: 'Is friend with another user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                required:
+                  - id
+
+      responses:
+        '200':
+          description: 'Ok. You are now friends with a user.'
+        '403':
+          description: 'Forbiden action.'
+
+######### DEFRIEND #########
+
+/user/{id}/defriend:
+
+    post:
+      operationId: R114
+      summary: 'R114: Ends friendship with another user.'
+      description: 'Ends friendship with another user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                required:
+                  - id
+
+      responses:
+        '200':
+          description: 'Ok. You defriended a user.'
+        '403':
+          description: 'Forbiden action.'
+
+######### SEND FRIEND REQUEST #########
+
+/user/{id}/sendFriendRequest:
+    post:
+      operationId: R115
+      summary: 'R115: Sends a friend request to another user.'
+      description: 'Sends a notification with a friend request to another user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                required:
+                  - id
+
+      responses:
+        '200':
+          description: 'Ok. You sent a friend request to a user.'
+        '403':
+          description: 'Forbiden action.'
+
+######### CANCEL FRIEND REQUEST #########
+
+/user/{id}/cancelFriendRequest:
+
+    post:
+      operationId: R116
+      summary: 'R116: Cancels a previously made friend request to another user.'
+      description: 'Removes the notification of the friend request to other user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                required:
+                  - id
+
+      responses:
+        '200':
+          description: 'Ok. You  successfully canceled the friend request.'
+        '403':
+          description: 'Forbiden action.'
+
+######### ACCEPT FRIEND REQUEST #########
+
+/notifications/notification/acceptFriendRequest:
+
+    post:
+      operationId: R117
+      summary: 'R117: Accept a friend request.'
+      description: 'Accepts a friend request from another user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                required:
+                  - id
+
+      responses:
+        '200':
+          description: 'Ok. You successfully accepted a friend request.'
+        '403':
+          description: 'Forbiden action.'
+
+######### REJECT FRIEND REQUEST #########
+
+/notifications/notification/rejectFriendRequest:
+
+    post:
+      operationId: R118
+      summary: 'R118: Reject a friend request.'
+      description: 'Rejects a friend request sent by another user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                required:
+                  - id
+
+      responses:
+        '200':
+          description: 'Ok. You rejected a friend request.'
+        '403':
+          description: 'Forbiden action.'
+
+######### BLOCK USER #########
+
+/user/{id}/defriend:
+
+    post:
+      operationId: R119
+      summary: 'R119: Blocks another user.'
+      description: 'Blocks another user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                required:
+                  - id
+
+      responses:
+        '200':
+          description: 'Ok. You successfully blocked a user.'
+        '403':
+          description: 'Forbiden action.'
+
+######### FRIENDS #########
+
+/friends:
+
+    get:
+      operationId: R120
+      summary: 'R120: User friends page.'
+      description: 'Show use friends. Access: AUTH, ADM'
+      tags:
+        - 'M01: Authentication and Users'
+
+      responses:
+        '200':
+          description: 'OK. Show the user friends page.'
+        '302':
+          description: 'Redirect if user is not logged in'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Failure:
+                  description: 'Failure. User not logged in.'
+                  value: '/login'
+
+######### NOTIFICATIONS #########
+
+/notifications:
+
+    get:
+      operationId: R121
+      summary: 'R121: User notifications page.'
+      description: 'Show received user notifications page. Access: AUTH, ADM'
+      tags:
+        - 'M01: Authentication and Users'
+
+      responses:
+        '200':
+          description: 'OK. Show the user notifications page.'
+        '302':
+          description: 'Redirect if user is not logged in'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Failure:
+                  description: 'Failure. User not logged in.'
+                  value: '/login'
+
+######### MARK NOTIFICATION AS READ #########
+
+/notifications/notification/read:
+
+    post:
+      operationId: R122
+      summary: 'R122: Marks notification as read.'
+      description: 'Marks notification as read. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+              required:
+                - id
+
+      responses:
+        '200':
+          description: 'Ok. Notification successfully marked as read.'
+        '403':
+          description: 'Forbiden action.'
+
+######### DIRECT MESSAGES #########
+
+/messages:
+
+    get:
+      operationId: R123
+      summary: 'R2123: User private conversations page.'
+      description: 'Show user private conversations page. Access: AUTH, ADM'
+      tags:
+        - 'M01: Authentication and Users'
+
+      responses:
+        '200':
+          description: 'OK. Show the user chats page.'
+        '302':
+          description: 'Redirect if user is not logged in'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Failure:
+                  description: 'Failure. User not logged in.'
+                  value: '/login'
+
+######### CONVERSATION #########
+
+/messages/conversation/{id}:
+
+    get:
+      operationId: R124
+      summary: 'R124: Show conversation with a user.'
+      description: 'Shows the private conversion established with another user. Access: AUTH, ADM'
+      tags:
+        - 'M01: Authentication and Users'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: True
+
+      responses:
+        '200':
+          description: 'OK. Show the conversation for an individual user'
+        '302':
+          description: 'Redirect if user is not logged in or other user doesnt exists'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Failure:
+                  description: 'Failure.'
+
+######### MESSAGE CREATE #########
+
+/messages/conversation/{id}/create:
+
+    post:
+      operationId: R125
+      summary: 'R125: Sends a new message to a user.'
+      description: 'Sends a new message to a user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                content:
+                  type: string
+                media:
+                  type: string
+                  format: binary
+              required:
+                - id
+
+      responses:
+        '302':
+          description: 'Redirect after processing the new message sent.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Success:
+                  description: 'Successful creation of message.'
+                302Failure:
+                  description: 'Error.'  
+
+
+############################################ ADMINISTRATION ############################################
+
+######### ADMIN PAGE #########
+
+/admin:
+      get:
+        operationId: R201
+        summary: 'R201: Admin Page'
+        description: 'Show Admin Page. Access: ADM'
+        tags:
+          - 'M02: Administration'
+
+        responses:
+          '200':
+            description: 'OK. Show admin page UI'
+          '403':
+            description: 'This action is forbidden.'
+
+######### USER BLOCK #########
+
+/admin/block:
+
+    post:
+      operationId: R202
+      summary: 'R202: User Block'
+      description: 'Block user. Access: ADM'
+      tags:
+        - 'M02: Administration'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                user_id:
+                  type: integer
+              required:
+                  - user_id
+## responses
+
+######### USER UNBLOCK #########
+
+/admin/unblock:
+
+    post:
+      operationId: R203
+      summary: 'R203: User Unblock'
+      description: 'Unblock user. Access: ADM'
+      tags:
+        - 'M02: Administration'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                user_id:
+                  type: integer
+              required:
+                  - user_id
+## responses
+
+
+############################################ SEARCH ############################################
+
+######### SEARCH USER #########  
+
+/api/user:
+
+    get:
+      operationId: R401
+      summary: 'R401: Search User'
+      description: 'Searches for users and returns the results as JSON. Access: VIS'
+      tags:
+        - 'M04: Search'
+
+      parameters:
+      - in: query
+        name: content
+        description: String to search for
+        schema: 
+          type: string
+        required: true
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties: 
+                    id_user: 
+                      type: string
+                    username: 
+                      type: string
+                    name: 
+                      type: string
+                    biography: 
+                      type: string
+                    profile_picture: 
+                      type: string
+                example:
+                  - id_user: 1
+                    username: Gamer87
+                    name: Marco Rossi
+                    biography: Huge fan of the local basketball league. Always ready to debate stats and predictions!
+                    profile_picture: /images/profiles/101.jpg
+
+######### SEARCH POST #########
+
+/api/post:
+
+    get:
+      operationId: R402
+      summary: 'R402: Search Post'
+      description: 'Searches for posts and returns the results as JSON. Access: VIS'
+      tags:
+        - 'M04: Search'
+
+      parameters:
+      - in: query
+        name: content
+        description: String to search for
+        schema: 
+          type: string
+        required: true
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties: 
+                    id_post: 
+                      type: string
+                    id_creator: 
+                      type: string
+                    image: 
+                      type: string
+                    description: 
+                      type: string
+                    date: 
+                      type: string
+                example:
+                  - id_post: 55
+                    id_creator: 105
+                    image: /images/posts/55_photo.png
+                    description: What a game! My team came back from two goals down in the second half. Incredible energy today!
+                    date: 2025-10-20 14:30:00
+
+######### SEARCH COMMENT #########
+
+/api/comment:
+
+    get:
+      operationId: R403
+      summary: 'R403: Search Comment'
+      description: 'Searches for comments and returns the results as JSON. Access: VIS'
+      tags:
+        - 'M04: Search'
+
+      parameters:
+      - in: query
+        name: content
+        description: String to search for
+        schema: 
+          type: string
+        required: true
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties: 
+                    id_comment: 
+                      type: string
+                    id_post: 
+                      type: string
+                    id_user: 
+                      type: string
+                    id_reply: 
+                      type: string
+                    text:
+                      type: string
+                    date: 
+                      type: string
+                example:
+                  - id_comment: 201
+                    id_post: 55
+                    id_user: 88
+                    id_reply: 
+                    text: Absolutely deserved! That striker's goal in the 85th minute was pure class.
+                    date: 2025-10-20 14:45:00
+                  - id_comment: 202
+                    id_post: 56
+                    id_user: 105
+                    id_reply: 201
+                    text: Congrats! What shoes do you use for long distance?
+                    date: 2025-10-20 20:01:00
+
+######### SEARCH GROUPS #########
+
+/api/group:
+
+    get:
+      operationId: R404
+      summary: 'R404: Search Group'
+      description: 'Searches for groups and returns the results as JSON. Access: VIS'
+      tags:
+        - 'M04: Search'
+
+      parameters:
+      - in: query
+        name: content
+        description: String to search for
+        schema: 
+          type: string
+        required: true
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties: 
+                    id_group: 
+                      type: string
+                    id_owner: 
+                      type: string
+                    name: 
+                      type: string
+                    description: 
+                      type: string
+                    picture:
+                      type: string
+                example:
+                  - id_group: 12
+                    id_owner: 10
+                    name: Sport Enthusiasts Portugal
+                    description: Official group for discussing weekly games.
+                    picture: /images/groups/strategy_icon.jpg
+
