@@ -230,8 +230,9 @@ paths:
             schema:
               type: object
               properties:
-                e-mail:
+                email:
                   type: string 
+                  format: email
               required:
                 - email
                
@@ -336,7 +337,6 @@ paths:
                   format: email
                 description:
                   type: string
-                  format: password
                 password:
                   type: string
                   format: password
@@ -383,7 +383,7 @@ paths:
       summary: 'R112: Deletes an user account.'
       description: 'Deletes an user while in the profile page. Access: OWN, ADM'
       tags:
-        - 'M02: Authentication and Users'
+        - 'M01: Authentication and Users'
 
       requestBody:
           required: true
@@ -586,7 +586,7 @@ paths:
 
 ######### BLOCK USER #########
 
-/user/{id}/defriend:
+/user/{id}/block:
 
     post:
       operationId: R119
@@ -613,14 +613,14 @@ paths:
         '403':
           description: 'Forbiden action.'
 
-######### FRIENDS #########
+######### FRIENDS PAGE #########
 
 /friends:
 
     get:
       operationId: R120
       summary: 'R120: User friends page.'
-      description: 'Show use friends. Access: AUTH, ADM'
+      description: 'Show user friends. Access: AUTH, ADM'
       tags:
         - 'M01: Authentication and Users'
 
@@ -638,7 +638,7 @@ paths:
                   description: 'Failure. User not logged in.'
                   value: '/login'
 
-######### NOTIFICATIONS #########
+######### NOTIFICATIONS PAGE #########
 
 /notifications:
 
@@ -692,7 +692,7 @@ paths:
         '403':
           description: 'Forbiden action.'
 
-######### DIRECT MESSAGES #########
+######### DIRECT MESSAGES PAGE #########
 
 /messages:
 
@@ -790,6 +790,131 @@ paths:
                   description: 'Error.'  
 
 
+################## USER VERIFY ####################
+
+/api/usernameVerify:
+
+    get:
+      operationId: R126
+      summary: 'R126 : Verify username existance'
+      description: 'Verify if username exists. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      parameters:
+        - in: query
+          name: username
+          description: 'Username account field'
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: 'Success. Returns the id of a correspondent username'
+        '403':
+          description: 'Forbiden action. You need to be logged in first'
+    
+
+################## EMAIL VERIFY ####################
+
+/api/emailVerify:
+
+    get:
+      operationId: R127
+      summary: 'R127 : Verify the exitance of an account associated with the email'
+      description: 'Verify if there is an account associated with the same email. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+
+      parameters:
+        - in: query
+          name: email
+          description: 'Email account field'
+          schema:
+            type: string
+            format: email
+          required: true
+
+      responses:
+        '200':
+          description: 'Success. Returns the id of a correspondent email'
+        '403':
+          description: 'Forbiden action. You need to be logged in first'
+
+
+################## NOTIFICATIONS ####################
+
+/api/notifications:
+
+    get:
+      operationId: R128
+      summary: 'R128 : Notifications'
+      description: 'Get user notifications. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+      parameters:
+        - in: query
+          name: id
+          description: 'User ID'
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: 'Success. Returns a list of the user notifications'
+        '403':
+          description: 'Forbiden action. You need to be logged in first'
+
+
+################## MESSAGES ####################
+
+/api/messages:
+
+    get:
+      operationId: R129
+      summary: 'R129 : Private messages'
+      description: 'Get new private messages with certain user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+      parameters:
+        - in: query
+          name: id
+          description: 'User ID'
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: 'Success. Returns a list of new received messages'
+        '403':
+          description: 'Forbiden action. You need to be logged in first'
+
+################## FRIENDS ####################
+
+/api/friends:
+
+    get:
+      operationId: R130
+      summary: 'R130 : Private messages'
+      description: 'Get the account who are friends with a certain user. Access: AUTH'
+      tags:
+        - 'M01: Authentication and Users'
+      parameters:
+        - in: query
+          name: id
+          description: 'User ID'
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: 'Success. Returns a list of friends'
+        '403':
+          description: 'Forbiden action'
+      
+
+
 ############################################ ADMINISTRATION ############################################
 
 ######### ADMIN PAGE #########
@@ -829,7 +954,17 @@ paths:
                   type: integer
               required:
                   - user_id
-## responses
+      responses:
+        '302':
+          description: 'Redirect back to admin panel after action.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                value: '/admin'
+        '403':
+          description: 'This action is forbidden.'
 
 ######### USER UNBLOCK #########
 
@@ -852,7 +987,17 @@ paths:
                   type: integer
               required:
                   - user_id
-## responses
+      responses:
+        '302':
+          description: 'Redirect back to admin panel after action.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                value: '/admin'
+        '403':
+          description: 'This action is forbidden.'
 
 
 ############################################ SEARCH ############################################
