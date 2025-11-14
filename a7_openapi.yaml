@@ -180,7 +180,7 @@ paths:
 
 ######### RECOVER PASSWORD #########
   
-/recoverPassword:
+  /recoverPassword:
 
     post:
       operationId: R106
@@ -215,7 +215,7 @@ paths:
 
 ######### SEND EMAIL #########
 
-/sendEmail:
+  /sendEmail:
 
     post:
       operationId: R107
@@ -244,7 +244,7 @@ paths:
       
 ######### PRIVATE TIMELINE #########
 
-/privateTimeline:
+  /privateTimeline:
 
     get:
       operationId: R108
@@ -268,7 +268,7 @@ paths:
 
 ######### USER PROFILE #########
 
-/user/{id}:
+  /user/{id}:
 
     get:
       operationId: R109
@@ -292,7 +292,7 @@ paths:
 
 ######### EDIT PROFILE #########
 
-/user/{id}/edit:
+  /user/{id}/edit:
 
     get:
       operationId: R110
@@ -376,7 +376,7 @@ paths:
 
 ######### PROFILE DELETE #########
 
-/user/{id}/profileDelete:
+  /user/{id}/profileDelete:
 
     post:
       operationId: R112
@@ -413,7 +413,7 @@ paths:
 
 ######### BEFRIEND #########
 
-/user/{id}/befriend:
+  /user/{id}/befriend:
 
     post:
       operationId: R113
@@ -442,7 +442,7 @@ paths:
 
 ######### DEFRIEND #########
 
-/user/{id}/defriend:
+  /user/{id}/defriend:
 
     post:
       operationId: R114
@@ -471,7 +471,7 @@ paths:
 
 ######### SEND FRIEND REQUEST #########
 
-/user/{id}/sendFriendRequest:
+  /user/{id}/sendFriendRequest:
     post:
       operationId: R115
       summary: 'R115: Sends a friend request to another user.'
@@ -499,7 +499,7 @@ paths:
 
 ######### CANCEL FRIEND REQUEST #########
 
-/user/{id}/cancelFriendRequest:
+  /user/{id}/cancelFriendRequest:
 
     post:
       operationId: R116
@@ -528,7 +528,7 @@ paths:
 
 ######### ACCEPT FRIEND REQUEST #########
 
-/notifications/notification/acceptFriendRequest:
+  /notifications/notification/acceptFriendRequest:
 
     post:
       operationId: R117
@@ -557,7 +557,7 @@ paths:
 
 ######### REJECT FRIEND REQUEST #########
 
-/notifications/notification/rejectFriendRequest:
+  /notifications/notification/rejectFriendRequest:
 
     post:
       operationId: R118
@@ -586,7 +586,7 @@ paths:
 
 ######### BLOCK USER #########
 
-/user/{id}/block:
+  /user/{id}/block:
 
     post:
       operationId: R119
@@ -615,7 +615,7 @@ paths:
 
 ######### FRIENDS PAGE #########
 
-/friends:
+  /friends:
 
     get:
       operationId: R120
@@ -640,7 +640,7 @@ paths:
 
 ######### NOTIFICATIONS PAGE #########
 
-/notifications:
+  /notifications:
 
     get:
       operationId: R121
@@ -665,7 +665,7 @@ paths:
 
 ######### MARK NOTIFICATION AS READ #########
 
-/notifications/notification/read:
+  /notifications/notification/read:
 
     post:
       operationId: R122
@@ -694,7 +694,7 @@ paths:
 
 ######### DIRECT MESSAGES PAGE #########
 
-/messages:
+  /messages:
 
     get:
       operationId: R123
@@ -719,7 +719,7 @@ paths:
 
 ######### CONVERSATION #########
 
-/messages/conversation/{id}:
+  /messages/conversation/{id}:
 
     get:
       operationId: R124
@@ -750,7 +750,7 @@ paths:
 
 ######### MESSAGE CREATE #########
 
-/messages/conversation/{id}/create:
+  /messages/conversation/{id}/create:
 
     post:
       operationId: R125
@@ -790,9 +790,9 @@ paths:
                   description: 'Error.'  
 
 
-################## USER VERIFY ####################
+################## USERNAME VERIFY ####################
 
-/api/usernameVerify:
+  /api/usernameVerify:
 
     get:
       operationId: R126
@@ -818,7 +818,7 @@ paths:
 
 ################## EMAIL VERIFY ####################
 
-/api/emailVerify:
+  /api/emailVerify:
 
     get:
       operationId: R127
@@ -845,7 +845,7 @@ paths:
 
 ################## NOTIFICATIONS ####################
 
-/api/notifications:
+  /api/notifications:
 
     get:
       operationId: R128
@@ -869,7 +869,7 @@ paths:
 
 ################## MESSAGES ####################
 
-/api/messages:
+  /api/messages:
 
     get:
       operationId: R129
@@ -892,7 +892,7 @@ paths:
 
 ################## FRIENDS ####################
 
-/api/friends:
+  /api/friends:
 
     get:
       operationId: R130
@@ -919,7 +919,7 @@ paths:
 
 ######### ADMIN PAGE #########
 
-/admin:
+  /admin:
       get:
         operationId: R201
         summary: 'R201: Admin Page'
@@ -935,7 +935,7 @@ paths:
 
 ######### USER BLOCK #########
 
-/admin/block:
+  /admin/block:
 
     post:
       operationId: R202
@@ -968,7 +968,7 @@ paths:
 
 ######### USER UNBLOCK #########
 
-/admin/unblock:
+  /admin/unblock:
 
     post:
       operationId: R203
@@ -1004,7 +1004,7 @@ paths:
 
 ######### SEARCH USER #########  
 
-/api/user:
+  /api/user:
 
     get:
       operationId: R401
@@ -1050,7 +1050,7 @@ paths:
 
 ######### SEARCH POST #########
 
-/api/post:
+  /api/post:
 
     get:
       operationId: R402
@@ -1096,7 +1096,7 @@ paths:
 
 ######### SEARCH COMMENT #########
 
-/api/comment:
+  /api/comment:
 
     get:
       operationId: R403
@@ -1151,7 +1151,7 @@ paths:
 
 ######### SEARCH GROUPS #########
 
-/api/group:
+  /api/group:
 
     get:
       operationId: R404
