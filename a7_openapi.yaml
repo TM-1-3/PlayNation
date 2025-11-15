@@ -1000,6 +1000,168 @@ paths:
           description: 'This action is forbidden.'
 
 
+############################################ POSTS ############################################
+
+######### POST #########
+
+/post/{id}:
+    get:
+      operationId: R301 
+      summary: 'R301: View Post Page'
+      description: 'Shows a single post page, including its comments and likes. Access: AUTH, VST'
+      tags:
+        - 'M03: Posts'
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: True  
+          
+      responses:
+        '200':
+          description: 'OK. Show Post UI.'
+        '404':
+          description: 'Post not found.'
+
+######### POST CREATE #########
+
+/post/create:
+    post:
+      operationId: R302
+      summary: 'R302: Create Post'
+      description: 'Creates a new post. Access: AUTH'
+      tags:
+        - 'M03: Posts' 
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                caption:
+                  type: string
+                  description: 'Post caption'
+                media:
+                  type: string
+                  format: binary
+                  description: 'media file (photo/video etc.)'
+                is_public:
+                  type: boolean
+
+      responses:
+        '302':
+          description: 'Redirect after creating the new post.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Success, redirect to the new post.'
+                  value: '/post/{id}'
+                302Failure:
+                  description: 'Failed. Redirect back to timeline.'
+                  value: '/privateTimeline'  
+
+######### POST EDIT ######### 
+
+/post/edit:
+    post:
+      operationId: R303
+      summary: 'R303: Edit Post Operation'
+      description: 'Edits an existing post. Access: OWN'
+      tags:
+        - 'M03: Posts'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: 'ID of the post to edit'
+                caption:
+                  type: string
+                  description: 'The content of the new caption for the post'
+              required:
+                - id
+                - caption
+
+      responses:
+        '200': 
+          description: 'Ok. Post edited successfully.'
+        '403':
+          description: 'Forbidden action.'
+        '404':
+          description: 'Post not found.'
+
+######### POST DELETE ######### 
+
+/post/delete:
+    post:
+      operationId: R304
+      summary: 'R304: Delete Post Operation'
+      description: 'Deletes a post. Access: OWN, ADM'
+      tags:
+        - 'M03: Posts'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: 'ID of the post to delete'
+              required:
+                - id
+
+      responses:
+        '200': 
+          description: 'Ok. Post deleted successfully.'
+        '403':
+          description: 'Forbidden action.'
+        '404':
+          description: 'Post not found.'
+
+/post/like:
+    post:
+      operationId: R305
+      summary: 'R305: Like Post Operation'
+      description: 'Likes/unlikes a post. Access: AUTH'
+      tags:
+        - 'M03: Posts'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: 'ID of the post to like'
+              required:
+                - id
+
+      responses:
+        '200':
+          description: 'Ok. Like/Unlike successful.'
+        '401':
+          description: 'Not authenticated.'
+        '404':
+          description: 'Post not found.'
+
 ############################################ SEARCH ############################################
 
 ######### SEARCH USER #########  
@@ -1196,6 +1358,138 @@ paths:
                     picture: /images/groups/strategy_icon.jpg
 
 
+############################################ COMMENTS ############################################
+
+/comment/create:
+  post:
+    operationId: R501
+    summary: 'R501: Create Comment Operation'
+    description: 'Creates a new comment on a post. Access: AUTH'
+    tags:
+      - 'M05: Comments'
+
+    requestBody:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              post_id:
+                type: integer
+                description: 'ID of the post being commented'
+              content:
+                type: string
+                description: 'The content of the comment'
+            required:
+              - post_id
+              - content
+
+    responses:
+      '302': # Redirects back to the post
+        description: 'Redirect after creating the comment.'
+        headers:
+          Location:
+            schema:
+              type: string
+            examples:
+              302Success:
+                description: 'Success. Redirect back to the post.'
+                value: '/post/{id}' # (post id)
+              302Failure:
+                  description: 'Failed. Redirect back.'
+
+/comment/edit:
+  post:
+    operationId: R502
+    summary: 'R502: Edit Comment Operation'
+    description: 'Edits an existing comment. Access: OWN'
+    tags:
+      - 'M05: Comments'
+
+    requestBody:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              id: 
+                type: integer
+                description: 'ID of the comment to edit'
+              content:
+                type: string
+                description: 'The new comment text'
+            required:
+              - id
+              - content
+
+    responses:
+      '200': 
+        description: 'Ok. Comment edited successfully.'
+      '403':
+        description: 'Forbidden action.'
+      '404':
+        description: 'Comment not found.'
+
+/comment/delete:
+  post:
+    operationId: R503
+    summary: 'R503: Delete Comment Operation'
+    description: 'Deletes a comment. Access: OWN, ADM'
+    tags:
+      - 'M05: Comments'
+
+    requestBody:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              id: 
+                type: integer
+                description: 'ID of the comment to delete'
+            required:
+              - id
+              
+    responses:
+      '200': 
+        description: 'Ok. Comment deleted successfully.'
+      '403':
+        description: 'Forbidden action.'
+      '404':
+        description: 'Comment not found.'
+
+/comment/like:
+  post:
+    operationId: R504
+    summary: 'R504: Like Comment Operation'
+    description: 'Likes/unlikes a comment. Access: AUTH'
+    tags:
+      - 'M05: Comments'
+
+    requestBody:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              id: 
+                type: integer
+                description: 'ID of the comment to like'
+            required:
+              - id
+
+    responses:
+      '200':
+        description: 'Ok. Like/Unlike successful.'
+      '401':
+        description: 'Not authenticated.'
+      '404':
+        description: 'Comment not found.'
+      
 ############################################ GROUPS ############################################
 
 ######### GROUP PAGE #########  
