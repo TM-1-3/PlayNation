@@ -292,7 +292,7 @@ paths:
 
 ######### EDIT PROFILE #########
 
-  /user/{id}/edit:
+  /user/edit:
 
     get:
       operationId: R110
@@ -376,7 +376,7 @@ paths:
 
 ######### PROFILE DELETE #########
 
-  /user/{id}/profileDelete:
+  /user/profileDelete:
 
     post:
       operationId: R112
@@ -413,7 +413,7 @@ paths:
 
 ######### BEFRIEND #########
 
-  /user/{id}/befriend:
+  /user/befriend:
 
     post:
       operationId: R113
@@ -442,7 +442,7 @@ paths:
 
 ######### DEFRIEND #########
 
-  /user/{id}/defriend:
+  /user/defriend:
 
     post:
       operationId: R114
@@ -702,7 +702,6 @@ paths:
       description: 'Show user private conversations page. Access: AUTH, ADM'
       tags:
         - 'M01: Authentication and Users'
-
       responses:
         '200':
           description: 'OK. Show the user chats page.'
@@ -750,7 +749,7 @@ paths:
 
 ######### MESSAGE CREATE #########
 
-  /messages/conversation/{id}/create:
+  /messages/conversation/create:
 
     post:
       operationId: R125
@@ -1004,7 +1003,7 @@ paths:
 
 ######### POST #########
 
-/post/{id}:
+  /post/{id}:
     get:
       operationId: R301 
       summary: 'R301: View Post Page'
@@ -1027,7 +1026,7 @@ paths:
 
 ######### POST CREATE #########
 
-/post/create:
+  /post/create:
     post:
       operationId: R302
       summary: 'R302: Create Post'
@@ -1069,7 +1068,7 @@ paths:
 
 ######### POST EDIT ######### 
 
-/post/edit:
+  /post/edit:
     post:
       operationId: R303
       summary: 'R303: Edit Post Operation'
@@ -1104,7 +1103,7 @@ paths:
 
 ######### POST DELETE ######### 
 
-/post/delete:
+  /post/delete:
     post:
       operationId: R304
       summary: 'R304: Delete Post Operation'
@@ -1133,7 +1132,7 @@ paths:
         '404':
           description: 'Post not found.'
 
-/post/like:
+  /post/like:
     post:
       operationId: R305
       summary: 'R305: Like Post Operation'
@@ -1166,7 +1165,7 @@ paths:
 
 ######### SEARCH USER #########  
 
-/api/user:
+  /api/user:
 
     get:
       operationId: R401
@@ -1212,7 +1211,7 @@ paths:
 
 ######### SEARCH POST #########
 
-/api/post:
+  /api/post:
 
     get:
       operationId: R402
@@ -1258,7 +1257,7 @@ paths:
 
 ######### SEARCH COMMENT #########
 
-/api/comment:
+  /api/comment:
 
     get:
       operationId: R403
@@ -1313,7 +1312,7 @@ paths:
 
 ######### SEARCH GROUPS #########
 
-/api/group:
+  /api/group:
 
     get:
       operationId: R404
@@ -1360,156 +1359,152 @@ paths:
 
 ############################################ COMMENTS ############################################
 
-/comment/create:
-  post:
-    operationId: R501
-    summary: 'R501: Create Comment Operation'
-    description: 'Creates a new comment on a post. Access: AUTH'
-    tags:
-      - 'M05: Comments'
+  /comment/create:
+    post:
+      operationId: R501
+      summary: 'R501: Create Comment Operation'
+      description: 'Creates a new comment on a post. Access: AUTH'
+      tags:
+        - 'M05: Comments'
 
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
-          schema:
-            type: object
-            properties:
-              post_id:
-                type: integer
-                description: 'ID of the post being commented'
-              content:
-                type: string
-                description: 'The content of the comment'
-            required:
-              - post_id
-              - content
-
-    responses:
-      '302': # Redirects back to the post
-        description: 'Redirect after creating the comment.'
-        headers:
-          Location:
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
             schema:
-              type: string
-            examples:
-              302Success:
-                description: 'Success. Redirect back to the post.'
-                value: '/post/{id}' # (post id)
-              302Failure:
-                  description: 'Failed. Redirect back.'
+              type: object
+              properties:
+                post_id:
+                  type: integer
+                  description: 'ID of the post being commented'
+                content:
+                  type: string
+                  description: 'The content of the comment'
+              required:
+              -   post_id
+                - content
 
-/comment/edit:
-  post:
-    operationId: R502
-    summary: 'R502: Edit Comment Operation'
-    description: 'Edits an existing comment. Access: OWN'
-    tags:
-      - 'M05: Comments'
-
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
-          schema:
-            type: object
-            properties:
-              id: 
-                type: integer
-                description: 'ID of the comment to edit'
-              content:
+      responses:
+        '302': 
+          description: 'Redirect after creating the comment.'
+          headers:
+            Location:
+              schema:
                 type: string
-                description: 'The new comment text'
-            required:
-              - id
-              - content
+              examples:
+                302Success:
+                  description: 'Success. Redirect back to the post.'
+                  value: '/post/{id}'
+                302Failure:
+                  description: 'Failed. Redirect back.'
+  /comment/edit:
+    post:
+      operationId: R502
+      summary: 'R502: Edit Comment Operation'
+      description: 'Edits an existing comment. Access: OWN'
+      tags:
+        - 'M05: Comments'
 
-    responses:
-      '200': 
-        description: 'Ok. Comment edited successfully.'
-      '403':
-        description: 'Forbidden action.'
-      '404':
-        description: 'Comment not found.'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id: 
+                  type: integer
+                  description: 'ID of the comment to edit'
+                content:
+                  type: string
+                  description: 'The new comment text'
+              required:
+                - id
+                - content
 
-/comment/delete:
-  post:
-    operationId: R503
-    summary: 'R503: Delete Comment Operation'
-    description: 'Deletes a comment. Access: OWN, ADM'
-    tags:
-      - 'M05: Comments'
+      responses:
+        '200': 
+          description: 'Ok. Comment edited successfully.'
+        '403':
+          description: 'Forbidden action.'
+        '404':
+          description: 'Comment not found.'
 
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
-          schema:
-            type: object
-            properties:
-              id: 
-                type: integer
-                description: 'ID of the comment to delete'
-            required:
-              - id
-              
-    responses:
-      '200': 
-        description: 'Ok. Comment deleted successfully.'
-      '403':
-        description: 'Forbidden action.'
-      '404':
-        description: 'Comment not found.'
+  /comment/delete:
+    post:
+      operationId: R503
+      summary: 'R503: Delete Comment Operation'
+      description: 'Deletes a comment. Access: OWN, ADM'
+      tags:
+        - 'M05: Comments'
 
-/comment/like:
-  post:
-    operationId: R504
-    summary: 'R504: Like Comment Operation'
-    description: 'Likes/unlikes a comment. Access: AUTH'
-    tags:
-      - 'M05: Comments'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id: 
+                  type: integer
+                  description: 'ID of the comment to delete'
+              required:
+                - id
+                
+      responses:
+        '200': 
+          description: 'Ok. Comment deleted successfully.'
+        '403':
+          description: 'Forbidden action.'
+        '404':
+          description: 'Comment not found.'
 
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
-          schema:
-            type: object
-            properties:
-              id: 
-                type: integer
-                description: 'ID of the comment to like'
-            required:
-              - id
+  /comment/like:
+    post:
+      operationId: R504
+      summary: 'R504: Like Comment Operation'
+      description: 'Likes/unlikes a comment. Access: AUTH'
+      tags:
+        - 'M05: Comments'
 
-    responses:
-      '200':
-        description: 'Ok. Like/Unlike successful.'
-      '401':
-        description: 'Not authenticated.'
-      '404':
-        description: 'Comment not found.'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id: 
+                  type: integer
+                  description: 'ID of the comment to like'
+              required:
+                - id
+
+      responses:
+        '200':
+          description: 'Ok. Like/Unlike successful.'
+        '401':
+          description: 'Not authenticated.'
+        '404':
+          description: 'Comment not found.'
       
 ############################################ GROUPS ############################################
 
 ######### GROUP PAGE #########  
 
   /group/{id}:
-
     get:
       operationId: R601
       summary: 'R601: View Group Page'
       description: 'Show the page for a singular group, Access: AUTH, VST, OWN, GRM, ADM'
       tags:
         - 'M06: Groups'
-
       parameters:
         - in: path
           name: id
           schema:
             type: integer
-          required: True
-
+          required: true
       responses:
         '200':
           description: 'Success. Show Group Page'
