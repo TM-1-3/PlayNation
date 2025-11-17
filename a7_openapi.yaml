@@ -1166,7 +1166,7 @@ paths:
 
 ######### SEARCH USER #########  
 
-  /api/user:
+/api/user:
 
     get:
       operationId: R401
@@ -1212,7 +1212,7 @@ paths:
 
 ######### SEARCH POST #########
 
-  /api/post:
+/api/post:
 
     get:
       operationId: R402
@@ -1258,7 +1258,7 @@ paths:
 
 ######### SEARCH COMMENT #########
 
-  /api/comment:
+/api/comment:
 
     get:
       operationId: R403
@@ -1313,7 +1313,7 @@ paths:
 
 ######### SEARCH GROUPS #########
 
-  /api/group:
+/api/group:
 
     get:
       operationId: R404
