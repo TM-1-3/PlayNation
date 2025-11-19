@@ -38,13 +38,15 @@ class RegisterController extends Controller
         // Validate registration input.
         $request->validate([
             'name' => 'required|string|max:250',
-            'email' => 'required|email|max:250|unique:users',
+            'username' => 'required|string|max:250|unique:registered_user',
+            'email' => 'required|email|max:250|unique:registered_user',
             'password' => 'required|min:8|confirmed'
         ]);
 
         // Create the new user.
         User::create([
             'name' => $request->name,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
@@ -56,8 +58,6 @@ class RegisterController extends Controller
         // Regenerate session for security (protection against session fixation).
         $request->session()->regenerate();
 
-        // Redirect to cards page with a success message.
-        return redirect()->route('cards.index')
-            ->withSuccess('You have successfully registered & logged in!');
+        return redirect()->route('profile.setup');
     }
 }

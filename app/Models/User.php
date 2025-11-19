@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 // Import Eloquent relationship classes.
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,6 +35,9 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'biography',
+        'profile_picture',
+        'is_public',
     ];
 
     /**
@@ -70,5 +74,10 @@ class User extends Authenticatable
     public function cards(): HasMany
     {
         return $this->hasMany(Card::class);
+    }
+
+    public function labels(): BelongsToMany
+    {
+        return $this->belongsToMany(Label::class, 'user_label', 'id_user', 'id_label');
     }
 }
