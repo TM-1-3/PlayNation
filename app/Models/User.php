@@ -14,6 +14,10 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $table = 'registered_user';
+
+    protected $primaryKey = 'id_user';
+
     // Disable default created_at and updated_at timestamps for this model.
     public $timestamps  = false;
 
@@ -27,6 +31,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
     ];

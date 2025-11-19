@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+        button { padding: 10px 20px; cursor: pointer; background-color: #e11d48; color: white; border: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>You logged in</h1>
+
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit">Log out</button>
+    </form>
+
+</body>
+</html>

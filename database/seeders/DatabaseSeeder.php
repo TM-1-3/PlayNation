@@ -8,28 +8,30 @@ use Illuminate\Support\Facades\DB;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Runs database/thingy-seed.sql as-is.
-     * The SQL reads current_setting('app.schema', true) and defaults to 'thingy'.
+     * Seed the application's database using create.sql and populate.sql
      */
     public function run(): void
     {
-        // Get schema name from environment (e.g., .env or .env.testing)
-        $schema = env('DB_SCHEMA');
+        // 1. Run the Creation Script (Schema + Tables)
+        $createPath = base_path('database/create.sql');
+        
+        if (!file_exists($createPath)) {
+            $this->command->error("File not found: $createPath");
+            return;
+        }
+        
+        DB::unprepared(file_get_contents($createPath));
+        $this->command->info('Tables created successfully.');
 
-        // Load the raw SQL file
-        $path = base_path('database/thingy-seed.sql');
-        $sql = file_get_contents($path);
+        // 2. Run the Populate Script (Insert Data)
+        $populatePath = base_path('database/populate.sql');
 
-        // If DB_SCHEMA is set, expose it to the SQL script
-        // (the script reads it via current_setting('app.schema', true))
-        if ($schema !== null) {
-            DB::statement("SELECT set_config('app.schema', ?, false)", [$schema]);
+        if (!file_exists($populatePath)) {
+            $this->command->error("File not found: $populatePath");
+            return;
         }
 
-        // Run the SQL script
-        DB::unprepared($sql);
-
-        // Show a message in the Artisan console
-        $this->command?->info('Database seeded using schema: ' . ($schema ?? 'thingy (default)'));
+        DB::unprepared(file_get_contents($populatePath));
+        $this->command->info('Database populated successfully.');
     }
 }
