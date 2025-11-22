@@ -12,7 +12,7 @@ use App\Http\Controllers\AdminController;
 
 
 // Home
-Route::redirect('/', '/admin');
+Route::redirect('/', '/login');
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {

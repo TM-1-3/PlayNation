@@ -17,5 +17,12 @@
         <button type="submit">Log out</button>
     </form>
 
+</br>
+
+    <form action="{{ route('admin') }}" method="GET">
+        @csrf
+        <button type="submit">Admin Page</button>
+    </form>
+
 </body>
 </html>
