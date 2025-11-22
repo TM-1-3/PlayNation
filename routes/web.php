@@ -8,9 +8,11 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\AdminController;
+
 
 // Home
-Route::redirect('/', '/login');
+Route::redirect('/', '/admin');
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {
@@ -25,6 +27,10 @@ Route::controller(LogoutController::class)->group(function () {
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
+});
+
+Route::controller(AdminController::class)->group(function () {
+    Route::get('/admin', 'showAdminPage')->name('admin');
 });
 
 Route::get('/cards', function () {
