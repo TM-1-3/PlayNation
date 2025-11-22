@@ -26,8 +26,10 @@ function addEventListeners() {
   }
 
   // Admin
-  searchUserAdmin =  document.getElementById('search-user-admin')
-  searchUserAdmin.addEventListener('submit', searchUserRequest);
+  const searchUserAdmin = document.getElementById('search-user-admin');
+  if (searchUserAdmin) {
+    searchUserAdmin.addEventListener('submit', searchUserRequest);
+  }
 
 }
   
@@ -240,13 +242,13 @@ function searchUserRequest(event) {
   event.stopPropagation();
   
   const str = this.querySelector('input[name=search]').value.trim();
-  const url = this.action;
+  const baseUrl = this.action;
+  
+  const url = str ? `${baseUrl}?search=${encodeURIComponent(str)}` : baseUrl;
 
-  if (str) {
-    sendAjaxRequest('GET', url , { 'search': str }, searchUserHandler);
-  } else {
-    sendAjaxRequest('GET', url, null, searchUserHandler);
-  }
+  sendAjaxRequest('GET', url, null, searchUserHandler);
+  
+  return false;
 }
 
 function searchUserHandler(str) {
