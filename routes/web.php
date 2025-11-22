@@ -29,6 +29,7 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register');
 });
 
+// Admin
 Route::controller(AdminController::class)->group(function () {
     Route::get('/admin', 'showAdminPage')->name('admin');
 });

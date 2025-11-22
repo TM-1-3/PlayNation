@@ -14,15 +14,17 @@
 
     <form action="{{ route('logout') }}" method="POST">
         @csrf
-        <button type="submit">Log out</button>
+        <button type="submit">Log out <span>{{ Auth::user()->name }}</span></button>
     </form>
 
-</br>
+    </br>
 
+    @if (auth()->check() && auth()->user()->isAdmin())
     <form action="{{ route('admin') }}" method="GET">
         @csrf
         <button type="submit">Admin Page</button>
     </form>
+    @endif
 
 </body>
 </html>
