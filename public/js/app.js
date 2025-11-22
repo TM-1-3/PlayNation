@@ -49,13 +49,16 @@ async function sendAjaxRequest(method, url, data, handler) {
       method,
       headers: {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
       },
       body: data ? encodeForAjax(data) : null,
     });
 
     if (!response.ok) {
       // If the server returns an error, refresh the page as fallback
+      console.error('Response error:', response.status, response.statusText);
       window.location = '/';
       return;
     }
@@ -234,18 +237,25 @@ function createItem(item) {
 
 function searchUserRequest(event) {
   event.preventDefault();
-  const str = this.querySelector('input[name=search-user]').value.trim();
+  event.stopPropagation();
+  
+  const str = this.querySelector('input[name=search]').value.trim();
+  const url = this.action;
 
   if (str) {
-    sendAjaxRequest('GET', '{{ route("admin.user") }}', { 'search': str }, searchUserHandler);
+    sendAjaxRequest('GET', url , { 'search': str }, searchUserHandler);
   } else {
-    sendAjaxRequest('GET', '{{ route("admin.user") }}', null, searchUserHandler);
+    sendAjaxRequest('GET', url, null, searchUserHandler);
   }
 }
 
 function searchUserHandler(str) {
   const tableBody = document.getElementById('admin-users-body');
-  tableBody.innerHTML = str.table_html;
+  
+  if (str.html && tableBody) {
+    tableBody.innerHTML = str.html;
+  }
+  
   console.log('Users list updated via AJAX.');
 }
 

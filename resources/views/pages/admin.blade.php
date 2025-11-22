@@ -28,9 +28,8 @@
         button { padding: 10px 20px; cursor: pointer; background-color: #e11d48; color: white; border: none; border-radius: 5px; }
 
     </style>
-    <!-- Scripts -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="{{ asset('js/app.js') }}" defer></script>
-    @stack('scripts')
 </head>
 <body>
 
@@ -54,7 +53,7 @@
 
                 <div class="search-controls">
                     <form id="search-user-admin" action="{{ route('admin.user') }}" method="GET">
-                        <input type="text" name="search-user" placeholder="Search by Name, Username or Email...">
+                        <input type="text" id="search-input" name="search" placeholder="Search by Name, Username or Email...">
                         <button class="btn-primary" type="submit" style="background-color: #3498db;">Search</button>
                     </form>
                     <form action="" method="POST">

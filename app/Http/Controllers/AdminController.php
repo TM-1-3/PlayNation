@@ -23,26 +23,30 @@ class AdminController extends Controller
 
     public function searchUser(Request $request)
     {
-    $search = $request->get('search');
-    $users = User::query();
-    
-    $users = $users->all();
+        $search = $request->get('search');
+        $users = User::query();
+        
+        if($search) {
+            $users->where(function($query) use ($search) {
+                $query->where('name', 'ILIKE', "%{$search}%")
+                    ->orWhere('username', 'ILIKE', "%{$search}%")
+                    ->orWhere('email', 'ILIKE', "%{$search}%");
+                    
+                if (is_numeric($search)) {
+                    $query->orWhere('id_user', (int)$search);
+                }
+            });
+        }
+        
+        $users = $users->get();
 
-    if($search) {
-        $users->where(function($query) use ($search) {
-            $query->where('name', 'LIKE', "%{$search}")
-                ->orWhere('username', 'LIKE', "%{$search}")
-                ->orWhere('email', 'LIKE', "%{$search}");
-        });
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('partials.admin-users-table', compact('users'))->render(),
+            ]);
+        }
+        
+        // If it's a standard request, return the full view
+        return view('pages.admin', compact('users'));
     }
-
-    if ($request->ajax()) {
-        return response()->json([
-            'table_html' => view('pages.admin', compact('users'))->render()
-        ]);
-    }
-    
-    // If it's a standard request, return the full view
-    return view('pages.admin', compact('users', 'search'));
-}
 }
