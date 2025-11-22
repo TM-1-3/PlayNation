@@ -251,11 +251,32 @@ function searchUserRequest(event) {
   return false;
 }
 
-function searchUserHandler(str) {
+function searchUserHandler(response) {
   const tableBody = document.getElementById('admin-users-body');
   
-  if (str.html && tableBody) {
-    tableBody.innerHTML = str.html;
+  if (response.users && tableBody) {
+    // Clear existing rows
+    tableBody.innerHTML = '';
+    
+    if (response.users.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No users found</td></tr>';
+    } else {
+      // Build rows from user data
+      response.users.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><a href="" class="action-link" style="text-decoration:none; color:black">${user.name}</a></td>
+          <td><a href="" class="action-link" style="text-decoration:none; color:black">${user.username}</a></td>
+          <td>${user.email}</td>
+          <td>${user.is_public ? 'Public' : 'Private'}</td>
+          <td>
+            <a href="" class="action-link">Edit</a>
+            <a href="" class="action-link" style="color: #e74c3c;">Delete</a>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
   }
   
   console.log('Users list updated via AJAX.');

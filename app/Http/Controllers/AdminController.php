@@ -20,6 +20,7 @@ class AdminController extends Controller
         // User is not an admin, redirect them or show an error
         //return redirect('/')->with('error', 'Unauthorized access.');
     }
+    
 
     public function searchUser(Request $request)
     {
@@ -42,7 +43,7 @@ class AdminController extends Controller
 
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('partials.admin-users-table', compact('users'))->render(),
+                'users' => $users
             ]);
         }
         
