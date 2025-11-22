@@ -65,39 +65,35 @@
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
+                            <th>Username</th>
                             <th>Email</th>
                             <th>Status</th>
-                            <th>Registered</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
+                        @forelse($users as $user)
                         <tr>
-                            <td>1</td>
-                            <td>Jane Doe</td>
-                            <td>jane@example.com</td>
-                            <td>Public</td>
-                            <td>2024-01-15</td>
+                            <td>{{ $user->id_user }}</td>
+                            <td><a href="" class="action-link" onclick="alert('View user profile'); return false;" style="text-decoration:none; color:black">{{ $user->name }}</a></td>
+                            <td><a href="" class="action-link" onclick="alert('View user profile'); return false;" style="text-decoration:none; color:black">{{ $user->username }}</a></td>
+                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->is_public ? 'Public' : 'Private' }} </td>
                             <td>
-                                <a href="" class="action-link">View</a>
-                                <a href="" class="action-link">Edit</a>
-                                <a href="" class="action-link" style="color: #e74c3c;">Delete</a>
+                                <a href="" class="action-link" onclick="alert('Edit user'); return false;">Edit</a>
+                                <a href="" class="action-link" style="color: #e74c3c;" onclick="if(confirm('Delete this user?')) alert('User deleted'); return false;">Delete</a>
                             </td>
                         </tr>
+                        @empty
                         <tr>
-                            <td>2</td>
-                            <td>John Smith</td>
-                            <td>john@example.com</td>
-                            <td>Private</td>
-                            <td>2024-02-20</td>
-                            <td>
-                                <a href="" class="action-link">View</a>
-                                <a href="" class="action-link">Edit</a>
-                                <a href="#" class="action-link" style="color: #e74c3c;">Delete</a>
-                            </td>
+                            <td colspan="6" style="text-align:center;">No users found</td>
                         </tr>
-                        </tbody>
+                        @endforelse
+                    </tbody>
                 </table>
+                <div class="pagination">
+                    {{ $users->links() }}
+                </div>
             </div>
         </div>
     </div>

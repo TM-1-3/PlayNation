@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\User;
+
 class AdminController extends Controller
 {
     public function showAdminPage()
@@ -11,8 +13,9 @@ class AdminController extends Controller
     //$user = auth()->user(); // Get the currently logged-in user
 
     //if ($user->isAdmin()) {
+        $users = User::orderBy('id_user', 'asc')->paginate(10);
         // User is an admin, proceed to the admin dashboard logic
-        return view('pages.admin');
+        return view('pages.admin', compact('users'));
     //}
     
     // User is not an admin, redirect them or show an error
