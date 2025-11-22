@@ -41,6 +41,9 @@
     <a href="{{ route('register') }}" style="display: block; text-align: center; margin-top: 15px; color: #2563eb; text-decoration: none; font-size: 0.9rem;">
         Don't have an account? Register
     </a>
+    <a href="{{ route('cards.index') }}" class="link" style="color: #6b7280; margin-top: 10px;">
+        Continue without logging in
+    </a>
 </div>
 
 </body>

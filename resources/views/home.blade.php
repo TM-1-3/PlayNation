@@ -10,12 +10,20 @@
 </head>
 <body>
 
-    <h1>You logged in</h1>
+    @auth
+        <h1>You are logged in</h1>
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit">Log out</button>
+        </form>
+    @endauth
 
-    <form action="{{ route('logout') }}" method="POST">
-        @csrf
-        <button type="submit">Log out</button>
-    </form>
+    @guest
+        <h1>You are a visitor</h1>
+        <a href="{{ route('login') }}">
+            <button>Log in</button>
+        </a>
+    @endguest
 
 </body>
 </html>
