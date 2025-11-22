@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Label;
 
-class ProfileSetupController extends Controller
+class SetupController extends Controller
 {
    
     public function show()
     {
-        // Fetch all labels to display as cards
         $labels = Label::all();
-        return view('auth.profile-setup', ['labels' => $labels]);
+        return view('auth.setup', ['labels' => $labels]);
     }
 
 

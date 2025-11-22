@@ -22,9 +22,8 @@
         @csrf
 
         <div>
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required autofocus value="{{ old('email') }}">
-        </div>
+        <label for="login">Email or Username</label>
+        <input type="text" id="login" name="usernameEmail" required autofocus value="{{ old('login') }}">
 
         <div>
             <label for="password">Password</label>

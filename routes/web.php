@@ -2,13 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\CardController;
-use App\Http\Controllers\ItemController;
-
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\ProfileSetupController;
+use App\Http\Controllers\Auth\SetupController;
 
 // Home
 Route::redirect('/', '/login');
@@ -28,11 +25,12 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register')->name('register.action');
 });
 
+Route::middleware('auth')->group(function () {
+    Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
+    Route::post('/profile/setup', [SetupController::class, 'store'])->name('profile.setup.store');
+});
+
 Route::get('/cards', function () {
     return view('home');
-})->middleware('auth')->name('cards.index');
+})->name('cards.index');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile/setup', [ProfileSetupController::class, 'show'])->name('profile.setup');
-    Route::post('/profile/setup', [ProfileSetupController::class, 'store'])->name('profile.setup.store');
-});
