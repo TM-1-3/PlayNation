@@ -28,6 +28,9 @@
         button { padding: 10px 20px; cursor: pointer; background-color: #e11d48; color: white; border: none; border-radius: 5px; }
 
     </style>
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
+    @stack('scripts')
 </head>
 <body>
 
@@ -50,8 +53,8 @@
                 <h2>User List</h2>
 
                 <div class="search-controls">
-                    <form action="#" method="GET">
-                        <input type="text" name="search" placeholder="Search by Name, Email, or ID...">
+                    <form id="search-user-admin" action="{{ route('admin.user') }}" method="GET">
+                        <input type="text" name="search-user" placeholder="Search by Name, Email, or ID...">
                         <button class="btn-primary" type="submit" style="background-color: #3498db;">Search</button>
                     </form>
                     <form action="" method="POST">
@@ -60,7 +63,7 @@
                     </form>
                 </div>
 
-                <table>
+                <table id="admin-users-table">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -70,7 +73,7 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="admin-users-body">
                         @forelse($users as $user)
                         <tr>
                             <td><a href="" class="action-link" style="text-decoration:none; color:black">{{ $user->name }}</a></td>
@@ -96,7 +99,3 @@
 
 </body>
 </html>
-
-</body>
-</html>
-

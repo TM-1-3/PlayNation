@@ -32,6 +32,7 @@ Route::controller(RegisterController::class)->group(function () {
 // Admin
 Route::controller(AdminController::class)->group(function () {
     Route::get('/admin', 'showAdminPage')->name('admin');
+    Route::get('/admin/user', 'searchUser')->name('admin.user');
 });
 
 Route::get('/cards', function () {

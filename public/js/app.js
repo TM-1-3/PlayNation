@@ -24,6 +24,11 @@ function addEventListeners() {
   if (cardCreator) {
     cardCreator.addEventListener('submit', sendCreateCardRequest);
   }
+
+  // Admin
+  searchUserAdmin =  document.getElementById('search-user-admin')
+  searchUserAdmin.addEventListener('submit', searchUserRequest);
+
 }
   
 /**
@@ -118,6 +123,7 @@ function sendCreateCardRequest(event) {
     sendAjaxRequest('POST', '/api/cards', { name }, cardAddedHandler);
   }
 }
+
   
 /**
  * Handler: update checkbox state after server confirms change.
@@ -223,6 +229,24 @@ function createItem(item) {
   li.querySelector('a.delete').addEventListener('click', sendDeleteItemRequest);
 
   return li;
+}
+
+
+function searchUserRequest(event) {
+  event.preventDefault();
+  const str = this.querySelector('input[name=search-user]').value.trim();
+
+  if (str) {
+    sendAjaxRequest('GET', '{{ route("admin.user") }}', { str }, searchUserHandler);
+  } else {
+    sendAjaxRequest('GET', '{{ route("admin.user") }}', null, searchUserHandler);
+  }
+}
+
+function searchUserHandler(str) {
+  const tableBody = document.getElementById('admin-users-body');
+  tableBody.innerHTML = str.table_html;
+  console.log('Users list updated via AJAX.');
 }
 
 /**
