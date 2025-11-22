@@ -28,16 +28,21 @@ class AdminController extends Controller
     
     $users = $users->all();
 
+    if($search) {
+        $users->where(function($query) use ($search) {
+            $query->where('name', 'LIKE', "%{$search}")
+                ->orWhere('username', 'LIKE', "%{$search}")
+                ->orWhere('email', 'LIKE', "%{$search}");
+        });
+    }
+
     if ($request->ajax()) {
         return response()->json([
-            'table_html' => view('admin.users._table_rows', compact('users'))->render(), 
-            
-            // Render the pagination links
-            'pagination_html' => $users->links()->toHtml(),
+            'table_html' => view('pages.admin', compact('users'))->render()
         ]);
     }
     
     // If it's a standard request, return the full view
-    return view('admin.users.index', compact('users', 'search'));
+    return view('pages.admin', compact('users', 'search'));
 }
 }

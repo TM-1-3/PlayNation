@@ -237,7 +237,7 @@ function searchUserRequest(event) {
   const str = this.querySelector('input[name=search-user]').value.trim();
 
   if (str) {
-    sendAjaxRequest('GET', '{{ route("admin.user") }}', { str }, searchUserHandler);
+    sendAjaxRequest('GET', '{{ route("admin.user") }}', { 'search': str }, searchUserHandler);
   } else {
     sendAjaxRequest('GET', '{{ route("admin.user") }}', null, searchUserHandler);
   }

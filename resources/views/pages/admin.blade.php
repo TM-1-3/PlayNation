@@ -54,7 +54,7 @@
 
                 <div class="search-controls">
                     <form id="search-user-admin" action="{{ route('admin.user') }}" method="GET">
-                        <input type="text" name="search-user" placeholder="Search by Name, Email, or ID...">
+                        <input type="text" name="search-user" placeholder="Search by Name, Username or Email...">
                         <button class="btn-primary" type="submit" style="background-color: #3498db;">Search</button>
                     </form>
                     <form action="" method="POST">
