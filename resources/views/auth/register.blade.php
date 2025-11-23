@@ -1,43 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="{{ asset('css/auth/auth.css') }}">
-</head>
-<body>
+@extends('layouts.app')
 
-<div class="card">
-    <h2 style="text-align: center;">Register</h2>
+@section('title', 'Register')
 
-    <form method="POST" action="{{ route('register.action') }}">
-        @csrf
+@section('content')
 
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required value="{{ old('name') }}">
-        @error('name') <div class="error">{{ $message }}</div> @enderror
+<div class="row">
+    <div class="column column-50 column-offset-25">
+        
+        <div class="card" style="margin-top: 2em; padding: 2em;">
+            <h2 style="text-align: center; color: #9b4dca;">Register</h2>
 
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required value="{{ old('username') }}">
-        @error('username') <div class="error">{{ $message }}</div> @enderror
+            
+            <form method="POST" action="{{ route('register.action') }}">
+                @csrf
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required value="{{ old('email') }}">
-        @error('email') <div class="error">{{ $message }}</div> @enderror
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required value="{{ old('name') }}">
+                @error('name') <div class="error" style="color: red;">{{ $message }}</div> @enderror
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
-        @error('password') <div class="error">{{ $message }}</div> @enderror
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required value="{{ old('username') }}">
+                @error('username') <div class="error" style="color: red;">{{ $message }}</div> @enderror
 
-        <label for="password_confirmation">Confirm Password</label>
-        <input type="password" id="password_confirmation" name="password_confirmation" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required value="{{ old('email') }}">
+                @error('email') <div class="error" style="color: red;">{{ $message }}</div> @enderror
 
-        <button type="submit">Register</button>
-    </form>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                @error('password') <div class="error" style="color: red;">{{ $message }}</div> @enderror
 
-    <a href="{{ route('login') }}" class="link">Already have an account? Login</a>
+                <label for="password_confirmation">Confirm Password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required>
+
+                <button type="submit" class="button button-block" style="width: 100%;">Register</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="{{ route('login') }}" class="link" style="color: #9b4dca;">
+                    Already have an account? Login
+                </a>
+            </div>
+        </div>
+
+    </div>
 </div>
 
-</body>
-</html>
+@endsection
