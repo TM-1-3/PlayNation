@@ -15,7 +15,7 @@
 
 <div class="row">
     {{-- center card --}}
-    <div class="column column-50 column-offset-25">
+    <div class="column column-50 column-offset-25; justify-content:center;">
         
         <div class="card" style="margin-top: 2em; padding: 2em;">
             <h2 style="text-align: center; color: #9b4dca;">Login</h2>

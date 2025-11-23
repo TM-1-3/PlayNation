@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\SetupController;
 use App\Http\Controllers\UserController; 
+use App\Http\Controllers\AdminController; 
 
 // Home
 Route::redirect('/', '/login');
@@ -26,16 +27,28 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register')->name('register.action');
 });
 
-
-Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
-Route::post('/profile/setup', [SetupController::class, 'store'])->name('profile.setup.store');
-
+// Admin
+Route::controller(AdminController::class)->group(function () {
+    Route::get('/admin', 'showAdminPage')->name('admin');
+    Route::get('/admin/user', 'searchUser')->name('admin.user');
+    Route::get('/admin/create', 'showCreateUserForm')->name('admin.create');
+    Route::post('/admin/create', 'createUser')->name('admin.create.action');
+    Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
+});
 
 Route::get('/home', function () {
-    return view('home');
+    return view('pages.home');
 })->name('home');
 
+// Groups 
+Route::get('/groups', function () {
+    return view('pages.groups');
+})->name('groups');
 
+
+// Profile
+Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
+Route::post('/profile/setup', [SetupController::class, 'store'])->name('profile.setup.store');
 
 // test route for user profile
 Route::get('/profile/{id}', [UserController::class, 'show'])->name('profile.show');

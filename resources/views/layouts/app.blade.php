@@ -24,10 +24,10 @@
             <a href="{{ url('/') }}" class="logo">PlayNation 🏀</a>
 
             <nav>
-                <a href="{{ url('/') }}">Feed</a>
+                <a href="{{ route('home') }}">Feed</a>
                 @if(Auth::check())
                     {{-- if logged in --}} <!-- add later -->
-                    <a href="{{ url('/groups') }}">Groups</a>
+                    <a href="{{ route('groups') }}">Groups</a>
                 @else
                     {{-- if visitor --}} <!-- send to login-->
                     <a href="{{ route('login') }}">Groups</a>
@@ -38,6 +38,10 @@
                     <a href="{{ route('profile.show', Auth::user()->id_user) }}">
                         👤 {{ Auth::user()->username }}
                     </a>
+
+                    {{-- i'll add constraint so that only admin's can view thi button--}}
+                    {{--@if (auth()->check() && auth()->user()->isAdmin())--}}
+                    <a href="{{ route('admin') }}">Admin</a>
                     
                     {{-- Logout form ( POST for securty) --}}
                     <form action="{{ route('logout') }}" method="POST" style="display: inline;">
@@ -51,6 +55,7 @@
                     <a href="{{ route('login') }}" class="btn-login">Login</a>
                     <a href="{{ route('register') }}">Register</a>
                 @endif
+    
             </nav>
             
         </header>

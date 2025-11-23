@@ -8,10 +8,10 @@
     <div class="column column-50 column-offset-25; justify-content:center;">
         
         <div class="card" style="margin-top: 2em; padding: 2em;">
-            <h2 style="text-align: center; color: #9b4dca;">Register</h2>
+            <h2 style="text-align: center; color: #9b4dca;">Create New USer</h2>
 
             
-            <form method="POST" action="{{ route('register.action') }}">
+            <form method="POST" action="{{ route('admin.create.action') }}">
                 @csrf
 
                 <label for="name">Name</label>
@@ -35,12 +35,6 @@
 
                 <button type="submit" class="button button-block" style="width: 100%;">Register</button>
             </form>
-
-            <div style="text-align: center; margin-top: 15px;">
-                <a href="{{ route('login') }}" class="link" style="color: #9b4dca;">
-                    Already have an account? Login
-                </a>
-            </div>
         </div>
 
     </div>
