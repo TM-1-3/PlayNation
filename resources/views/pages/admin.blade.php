@@ -7,18 +7,7 @@
 <div id="app-layout">
 
     <div id="main-content">
-        <header id="header">
-            <h1>Admin Page</h1>
-            <div id="user-info" style=" display: flex; gap:1em">
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" style="color:red; background:none; font-size:1.1em;">Log out</button>
-                </form>
-                <a href="{{ route('home') }}" style="color:black; text-decoration:none; padding-top:0.7em">Home Page</a>
-            </div>
-        </header>
-
-        <div id="container">
+        <div id="container-admin">
             <div class="card">
                 <h2>User List</h2>
 
