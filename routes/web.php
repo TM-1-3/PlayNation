@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\SetupController;
+use App\Http\Controllers\UserController; 
 
 // Home
 Route::redirect('/', '/login');
@@ -34,3 +35,7 @@ Route::get('/home', function () {
     return view('home');
 })->name('home');
 
+
+
+// teste route for user profile
+Route::get('/profile/{id}', [UserController::class, 'show'])->name('profile.show');
