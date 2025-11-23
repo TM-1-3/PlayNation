@@ -33,6 +33,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/admin/user', 'searchUser')->name('admin.user');
     Route::get('/admin/create', 'showCreateUserForm')->name('admin.create');
     Route::post('/admin/create', 'createUser')->name('admin.create.action');
+    Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
 });
 
 Route::get('/home', function () {

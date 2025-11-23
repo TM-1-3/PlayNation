@@ -80,4 +80,13 @@ class AdminController extends Controller
 
         return redirect()->route('admin');
     }
+
+    public function deleteUser($id)
+    {
+        $user = User::findOrFail($id);
+        
+        $user->delete();
+
+        return redirect()->route('admin');
+    }
 }

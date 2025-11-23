@@ -35,13 +35,20 @@
                     <tbody id="admin-users-body">
                         @forelse($users as $user)
                         <tr>
-                            <td><a href="{{ route('profile.show',$user->id_user) }}" class="action-link" style="text-decoration:none; color:black">{{ $user->name }}</a></td>
-                            <td><a href="{{ route('profile.show',$user->id_user) }}" class="action-link" style="text-decoration:none; color:black">{{ $user->username }}</a></td>
+                            <td><a href="{{ route('profile.show',$user->id_user) }}" class="action-link" style="text-decoration:none; color:black; font-size:1em;">{{ $user->name }}</a></td>
+                            <td><a href="{{ route('profile.show',$user->id_user) }}" class="action-link" style="text-decoration:none; color:black; font-size:1em;">{{ $user->username }}</a></td>
                             <td>{{ $user->email }} </td>
                             <td>{{ $user->is_public ? 'Public' : 'Private' }} </td>
                             <td>
                                 <a href="" class="action-link">Edit</a>
-                                <a href="" class="action-link" style="color: #e74c3c;">Delete</a>
+                                <form action="{{ route('admin.delete', $user->id_user) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this user?')" 
+                                            style="background:none; border:none; color:#e74c3c; cursor:pointer; text-decoration:none; font-size:1em;">
+                                        Delete
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         @empty
