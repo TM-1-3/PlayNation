@@ -24,10 +24,10 @@
             <a href="{{ url('/') }}" class="logo">PlayNation 🏀</a>
 
             <nav>
-                <a href="{{ url('/') }}">Feed</a>
+                <a href="{{ route('home') }}">Feed</a>
                 @if(Auth::check())
                     {{-- if logged in --}} <!-- add later -->
-                    <a href="{{ url('/groups') }}">Groups</a>
+                    <a href="{{ route('groups') }}">Groups</a>
                 @else
                     {{-- if visitor --}} <!-- send to login-->
                     <a href="{{ route('login') }}">Groups</a>

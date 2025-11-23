@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
-        button { padding: 10px 20px; cursor: pointer; background-color: #e11d48; color: white; border: none; border-radius: 5px; }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
 
+@section('title', 'Home Page')
+
+@section('content')
+
+<div>
     @auth
         <h1>You are logged in</h1>
         <form action="{{ route('logout') }}" method="POST">
@@ -33,6 +28,6 @@
         <button type="submit">Admin Page</button>
     </form>
     {{--@endif--}}
+</div>
 
-</body>
-</html>
+@endsection
