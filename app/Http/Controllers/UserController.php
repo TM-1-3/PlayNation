@@ -10,10 +10,14 @@ class UserController extends Controller
 {
     public function show($id)
     {
-        // Vamos buscar o user só para o nome aparecer no título
-        // Se der erro, usa findOrFail($id) que manda 404 se não existir
+        // getting user so thet name appears in the title
+        // If error, use findOrFail($id) that sends 404 if not found
         $user = User::findOrFail($id);
 
         return view('pages.profile', ['user' => $user]);
     }
+
+    public function edit($id) {
+    return "edit form placeholder"; // Placeholder
+}
 }

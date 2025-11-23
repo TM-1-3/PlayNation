@@ -37,5 +37,12 @@ Route::get('/home', function () {
 
 
 
-// teste route for user profile
+// test route for user profile
 Route::get('/profile/{id}', [UserController::class, 'show'])->name('profile.show');
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/profile/{id}/edit', [UserController::class, 'edit'])->name('profile.edit');
+    
+    Route::put('/profile/{id}', [UserController::class, 'update'])->name('profile.update');
+});
