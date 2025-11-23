@@ -31,6 +31,8 @@ Route::controller(RegisterController::class)->group(function () {
 Route::controller(AdminController::class)->group(function () {
     Route::get('/admin', 'showAdminPage')->name('admin');
     Route::get('/admin/user', 'searchUser')->name('admin.user');
+    Route::get('/admin/create', 'showCreateUserForm')->name('admin.create');
+    Route::post('/admin/create', 'createUser')->name('admin.create.action');
 });
 
 Route::get('/home', function () {

@@ -16,7 +16,7 @@
                         <input type="text" id="search-input" name="search" placeholder="Search by Name, Username or Email...">
                         <button class="btn-primary" type="submit" style="background-color: #3498db;">Search</button>
                     </form>
-                    <form action="" method="POST">
+                    <form action="{{ route('admin.create') }}" method="GET">
                         @csrf
                         <button type="submit" style="background:green">Create New User</button>
                     </form>
@@ -35,8 +35,8 @@
                     <tbody id="admin-users-body">
                         @forelse($users as $user)
                         <tr>
-                            <td><a href="" class="action-link" style="text-decoration:none; color:black">{{ $user->name }}</a></td>
-                            <td><a href="" class="action-link" style="text-decoration:none; color:black">{{ $user->username }}</a></td>
+                            <td><a href="{{ route('profile.show',$user->id_user) }}" class="action-link" style="text-decoration:none; color:black">{{ $user->name }}</a></td>
+                            <td><a href="{{ route('profile.show',$user->id_user) }}" class="action-link" style="text-decoration:none; color:black">{{ $user->username }}</a></td>
                             <td>{{ $user->email }} </td>
                             <td>{{ $user->is_public ? 'Public' : 'Private' }} </td>
                             <td>
