@@ -46,6 +46,7 @@
                     <a href="{{ route('register') }}">Register</a>
                 @endif
             </nav>
+            
         </header>
         
         {{-- 2. Main Content --}}
