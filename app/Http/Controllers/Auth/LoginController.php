@@ -11,48 +11,44 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
 
-    /**
-     * Show the login form.
-     *
-     * If the user is already authenticated, redirect them
-     * to the cards dashboard instead of showing the form.
-     */
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('cards.index');
+            return redirect()->route('home');
         } else {
             return view('auth.login');
         }
     }
 
-    /**
-     * Process an authentication attempt.
-     *
-     * Validates the incoming request, checks the provided
-     * credentials, and logs the user in if successful.
-     * The session is regenerated to protect against session fixation.
-     */
     public function authenticate(Request $request): RedirectResponse
     {
-        // Validate the request data.
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
+        
+        $request->validate([
+            'usernameEmail' => ['required', 'string'],
             'password' => ['required'],
         ]);
+
+        $inputValue = $request->input('usernameEmail');
+
+        if (filter_var($inputValue, FILTER_VALIDATE_EMAIL)) {
+            $fieldType = 'email';
+        }
+        else {
+            $fieldType = 'username';
+        }
+        
+        $credentials = [
+            $fieldType => $inputValue,
+            'password' => $request->input('password')
+        ];
  
-        // Attempt to authenticate and log in the user.
         if (Auth::attempt($credentials, $request->filled('remember'))) {
-            // Regenerate the session ID to prevent session fixation attacks.
             $request->session()->regenerate();
- 
-            // Redirect the user to their intended destination (default: /cards).
-            return redirect()->intended(route('cards.index'));
+            return redirect()->intended(route('home'));
         }
  
-        // Authentication failed: return back with an error message.
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => 'Wrong email or password',
         ])->onlyInput('email');
     }
 }
