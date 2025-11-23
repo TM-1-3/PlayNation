@@ -74,9 +74,9 @@ footer {
     margin-top: auto; 
     font-size: 0.9rem;
 }
-
+/**---------------------------------------------------------*/
 /* components */
-
+/**---------------------------------------------------------*/
 
 #cards {
     display: grid;
@@ -193,18 +193,12 @@ input:focus {
     outline: none;
 }
 
-.profile-avatar {
-    width: 150px;           /* Largura fixa */
-    height: 150px;          /* Altura IGUAL à largura */
-    border-radius: 50%;     /* Faz o círculo perfeito */
-    object-fit: cover;      /* Garante que a imagem não fica espalmada */
-    border: 4px solid #d2afe7; /* O teu roxo para dar estilo */
-    display: block;         /* Ajuda a centrar */
-    margin: 0 auto 15px auto; /* Centrar horizontalmente e dar espaço em baixo */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra suave */
-}
 
-/* 5. media */
+
+/**---------------------------------------------------------*/
+/* media */
+/**---------------------------------------------------------*/
+
 
 @media (max-width: 70em) {
     #cards {
@@ -224,5 +218,76 @@ input:focus {
     
     header nav {
         margin-top: 1em;
+    }
+}
+
+/**---------------------------------------------------------*/
+/* profle page */
+/**---------------------------------------------------------*/
+
+/* sidebar */
+.profile-sidebar {
+    text-align: center;
+    padding-right: 2em;
+}
+
+/*avatar pfp*/
+.profile-avatar {
+    width: 150px;          
+    height: 150px;          
+    border-radius: 50%;     
+    object-fit: cover;      
+    border: 4px solid #d2afe7; 
+    display: block;         
+    margin: 0 auto 15px auto; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+}
+
+/* Name n Username */
+.profile-name { margin-bottom: 0.2rem; }
+.profile-username { color: #888; font-weight: normal; margin-bottom: 1.5rem; }
+
+/*button area (Edit, Add Friend, etc) */
+.profile-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap; /* Se o ecrã for pequeno, os botões descem */
+}
+
+/* stats area (Posts, Followers) */
+.profile-stats {
+    margin-bottom: 2em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1em;
+}
+
+.stat-item {
+    text-align: center; 
+}
+
+.stat-item h3 {
+    margin-bottom: 0;
+    color: #9b4dca;
+}
+
+/* no posts */
+.empty-state {
+    text-align: center;
+    padding: 2em;
+    background-color: #f9f9f9;
+    color: #888;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+}
+
+/* corrects padding in small screens*/
+@media (max-width: 40em) {
+    .profile-sidebar {
+        padding-right: 0;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 2em;
+        margin-bottom: 2em;
     }
 }

@@ -7,14 +7,14 @@
 {{-- profile principal block --}}
 <div class="row">
     {{-- left column photo and data --}}
-    <div class="column column-33">
-        <div style="text-align: center;">
+    <div class="column column-33 profile-sidebar">
+
             <img src="{{ $user->profile_picture ? asset($user->profile_picture) : asset('img/default-user.png') }}" 
-                 alt="Profile Picture" 
-                 style="profile-avatar">
+                alt="{{ $user->name }}" 
+                class="profile-avatar">
             
-            <h1>{{ $user->name }}</h1>
-            <h4 style="color: gray;">@ {{ $user->username }}</h4>
+            <h1 class="profile-name">{{ $user->name }}</h1>
+            <h4 class="profile-username">@ {{ $user->username }}</h4>
             
             {{-- Bio --}}
             <p>
@@ -22,7 +22,7 @@
             </p>
 
             
-            <div class="actions" style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+            <div class="profile-actions">
                 
                 @if(Auth::check() && Auth::id() == $user->id_user)
                     {{-- My profile --}}
@@ -52,33 +52,33 @@
                 @endif
 
             </div>
-        </div>
+        
     </div>
 
-    {{-- stats and personal posts feed --}}
+    {{-- right cloumn stats and personal posts feed --}}
     <div class="column column-67">
         
         {{-- stats --}}
-        <div class="row" style="margin-bottom: 2em; border-bottom: 1px solid #eee; padding-bottom: 1em;">
-            <div class="column" style="text-align: center;">
+        <div class="row profile-stats">
+            <div class="column stat-item">
                 <h3>0</h3>
                 <small>Posts</small>
             </div>
-            <div class="column" style="text-align: center;">
+            <div class="column stat-item">
                 <h3>0</h3>
                 <small>Followers</small>
             </div>
-            <div class="column" style="text-align: center;">
+            <div class="column stat-item">
                 <h3>0</h3>
                 <small>Following</small>
             </div>
         </div>
 
         {{-- users feed posts --}}
-        <h3>Publicações Recentes</h3>
+        <h3>Recent Posts</h3>
         
         {{-- posts loop for later --}}
-        <div class="card">
+        <div class="card empty-state">
             <p>No posts yet.</p>
         </div>
 
