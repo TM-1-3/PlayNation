@@ -11,16 +11,6 @@
         <link rel="stylesheet" href="{{ asset('css/milligram.css') }}">
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
-        <style>
-            body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f6f8; }
-            header { background-color: #ffffffff; padding: 15px 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-            .logo { font-weight: bold; font-size: 1.5rem; color: #ff4500; text-decoration: none; }
-            nav a { text-decoration: none; color: #333; margin-left: 20px; font-weight: 500; }
-            nav a:hover { color: #ff4500; }
-            main { padding: 30px; min-height: 80vh; } /* Onde o conteúdo entra */
-            footer { background-color: #333; color: white; text-align: center; padding: 20px; margin-top: auto; }
-            .btn-login { background-color: #ff4500; color: white; padding: 8px 15px; border-radius: 4px; }
-        </style>
 
         @stack('styles')
 
