@@ -25,5 +25,14 @@
         </a>
     @endguest
 
+    </br>
+
+    {{--@if (auth()->check() && auth()->user()->isAdmin())--}}
+    <form action="{{ route('admin') }}" method="GET">
+        @csrf
+        <button type="submit">Admin Page</button>
+    </form>
+    {{--@endif--}}
+
 </body>
 </html>
