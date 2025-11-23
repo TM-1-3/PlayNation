@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\SetupController;
 use App\Http\Controllers\UserController; 
+use App\Http\Controllers\AdminController; 
 
 // Home
 Route::redirect('/', '/login');
@@ -24,6 +25,11 @@ Route::controller(LogoutController::class)->group(function () {
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register')->name('register.action');
+});
+
+Route::controller(AdminController::class)->group(function () {
+    Route::get('/admin', 'showAdminPage')->name('admin');
+    Route::get('/admin/user', 'searchUser')->name('admin.user');
 });
 
 

@@ -43,7 +43,7 @@
                     @csrf
                     <button type="submit" style="color:red; background:none; font-size:1.1em;">Log out</button>
                 </form>
-                <a href="{{ route('cards.index') }}" style="color:black; text-decoration:none; padding-top:0.7em">Home Page</a>
+                <a href="{{ route('home') }}" style="color:black; text-decoration:none; padding-top:0.7em">Home Page</a>
             </div>
         </header>
 
