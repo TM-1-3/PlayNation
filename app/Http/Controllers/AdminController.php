@@ -70,8 +70,14 @@ class AdminController extends Controller
 
         $validatedData['password'] = Hash::make($validatedData['password']);
 
-        $request->session()->put('registration_data', $validatedData);
+        $user = new User();
+        $user->name = $validatedData['name'];
+        $user->username = $validatedData['username'];
+        $user->email = $validatedData['email'];
+        $user->password = $validatedData['password'];
+        
+        $user->save();
 
-        return redirect()->route('profile.setup');
+        return redirect()->route('admin');
     }
 }
