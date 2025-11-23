@@ -303,6 +303,7 @@ input:focus {
     width: 100%;
     min-width: 100vw; 
     box-sizing: border-box;
+    align-content: baseline;
 }
 
 #app-layout #user-info {
@@ -340,7 +341,7 @@ input:focus {
 }
 
 #app-layout #container-admin {
-    max-width: 100vw;
+    min-width: 100vw;
     margin: 0 auto;
     padding: 0 2em;
 }
