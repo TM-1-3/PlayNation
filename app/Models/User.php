@@ -65,19 +65,9 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Get the cards owned by this user.
-     *
-     * Defines a one-to-many relationship:
-     * a user can have multiple cards.
-     */
-    public function cards(): HasMany
-    {
-        return $this->hasMany(Card::class);
-    }
-
     public function labels(): BelongsToMany
     {
         return $this->belongsToMany(Label::class, 'user_label', 'id_user', 'id_label');
     }
+
 }

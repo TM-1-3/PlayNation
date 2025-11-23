@@ -25,12 +25,12 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register')->name('register.action');
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
-    Route::post('/profile/setup', [SetupController::class, 'store'])->name('profile.setup.store');
-});
 
-Route::get('/cards', function () {
+Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
+Route::post('/profile/setup', [SetupController::class, 'store'])->name('profile.setup.store');
+
+
+Route::get('/home', function () {
     return view('home');
-})->name('cards.index');
+})->name('home');
 

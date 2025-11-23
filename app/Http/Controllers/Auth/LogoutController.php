@@ -18,6 +18,6 @@ class LogoutController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->route('cards.index')->withSuccess('You have logged out successfully!');
+        return redirect()->route('home')->withSuccess('You have logged out successfully!');
     }
 }

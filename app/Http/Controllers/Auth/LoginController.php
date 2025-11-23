@@ -14,7 +14,7 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('cards.index');
+            return redirect()->route('home');
         } else {
             return view('auth.login');
         }
@@ -44,7 +44,7 @@ class LoginController extends Controller
  
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('cards.index'));
+            return redirect()->intended(route('home'));
         }
  
         return back()->withErrors([

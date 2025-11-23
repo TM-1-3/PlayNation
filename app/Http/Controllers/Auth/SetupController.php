@@ -6,29 +6,42 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Label;
+use App\Models\User;
 
 class SetupController extends Controller
 {
-   
-    public function show()
+    public function show(Request $request)
     {
+        if (!$request->session()->has('registration_data')) {
+            return redirect()->route('register');
+        }
+
         $labels = Label::all();
         return view('auth.setup', ['labels' => $labels]);
     }
 
-
     public function store(Request $request)
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+
+        $registrationData = $request->session()->get('registration_data');
+
+        if (!$registrationData) {
+            return redirect()->route('register')->withErrors(['msg' => 'Session expired. Please register again.']);
+        }
 
         $request->validate([
             'biography' => 'nullable|string|max:1000',
-            'profile_picture' => 'nullable|image|max:2048', 
-            'labels' => 'array', 
+            'profile_picture' => 'nullable|image|max:2048',
+            'labels' => 'array',
             'labels.*' => 'exists:label,id_label',
         ]);
 
+        $user = new User();
+        $user->name = $registrationData['name'];
+        $user->username = $registrationData['username'];
+        $user->email = $registrationData['email'];
+        $user->password = $registrationData['password'];
+        
         $user->biography = $request->biography;
         $user->is_public = $request->has('is_public');
 
@@ -43,6 +56,11 @@ class SetupController extends Controller
             $user->labels()->sync($request->labels);
         }
 
-        return redirect()->route('cards.index');
+        Auth::login($user);
+
+        $request->session()->forget('registration_data');
+        $request->session()->regenerate();
+
+        return redirect()->route('home');
     }
 }
