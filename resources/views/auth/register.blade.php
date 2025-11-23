@@ -9,8 +9,8 @@
 <body>
 
 <div class="card">
+    <img class="logo" src = "/img/logo.png">
     <h2 style="text-align: center;">Register</h2>
-
     <form method="POST" action="{{ route('register.action') }}">
         @csrf
 

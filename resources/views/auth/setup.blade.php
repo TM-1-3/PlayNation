@@ -10,6 +10,7 @@
 <body>
 
 <div class="card setup-container">
+    <img class="logo" src = "/img/logo.png">
     <h2>Profile Setup</h2>
     <p style="text-align: center; color: #666; margin-bottom: 20px;">Finish Setting Up Your Profile</p>
 

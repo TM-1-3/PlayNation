@@ -9,8 +9,8 @@
 <body>
 
 <div class="card">
+    <img class="logo" src = "/img/logo.png">
     <h2 style="text-align: center;">Login</h2>
-
     <form method="POST" action="{{ route('login.action') }}">
         @csrf
 
