@@ -11,7 +11,7 @@
         <div style="text-align: center;">
             <img src="{{ $user->profile_picture ? asset($user->profile_picture) : asset('img/default-user.png') }}" 
                  alt="Profile Picture" 
-                 style="border-radius: 50%; width: 200px; height: 200px; object-fit: cover; border: 5px solid #d2afe7;">
+                 style="profile-avatar">
             
             <h1>{{ $user->name }}</h1>
             <h4 style="color: gray;">@ {{ $user->username }}</h4>
@@ -22,13 +22,20 @@
             </p>
 
             
-            <div class="actions" style="margin-top: 20px;">
+            <div class="actions" style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
                 
                 @if(Auth::check() && Auth::id() == $user->id_user)
                     {{-- My profile --}}
+
+                    {{-- left edit profile button --}}
                     <a href="{{ route('profile.edit', $user->id_user) }}" class="button">
                         ✏️ Edit Profile
                     </a>
+
+                    {{-- right placeholder button --}} <!-- eddit later but i like a setting ideia -->
+                    <button class="button button-outline" title="Feature para breve">
+                        ⚙️ Settings
+                    </button>                    
                     
                 @elseif(Auth::check())
                     {{-- others profile --}}
@@ -41,7 +48,7 @@
                 
                 @else
                     {{-- not logged in--}}
-                    <p><small>Login to add your athlete profile</small></p>
+                    <a href="{{ route('login') }}" class="button button-outline">Login to start interacting</a>
                 @endif
 
             </div>

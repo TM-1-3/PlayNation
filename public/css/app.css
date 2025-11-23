@@ -193,6 +193,17 @@ input:focus {
     outline: none;
 }
 
+.profile-avatar {
+    width: 150px;           /* Largura fixa */
+    height: 150px;          /* Altura IGUAL à largura */
+    border-radius: 50%;     /* Faz o círculo perfeito */
+    object-fit: cover;      /* Garante que a imagem não fica espalmada */
+    border: 4px solid #d2afe7; /* O teu roxo para dar estilo */
+    display: block;         /* Ajuda a centrar */
+    margin: 0 auto 15px auto; /* Centrar horizontalmente e dar espaço em baixo */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra suave */
+}
+
 /* 5. media */
 
 @media (max-width: 70em) {

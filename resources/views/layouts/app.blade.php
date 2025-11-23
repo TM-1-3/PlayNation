@@ -25,7 +25,13 @@
 
             <nav>
                 <a href="{{ url('/') }}">Feed</a>
-                <a href="#">Grupos</a>
+                @if(Auth::check())
+                    {{-- if logged in --}} <!-- add later -->
+                    <a href="{{ url('/groups') }}">Groups</a>
+                @else
+                    {{-- if visitor --}} <!-- send to login-->
+                    <a href="{{ route('login') }}">Groups</a>
+                @endif
                 
                 @if(Auth::check())
                     {{-- if logged in --}}
@@ -51,7 +57,7 @@
         
         {{-- 2. Main Content --}}
         <main>
-            {{-- Se houver mensagens de erro/sucesso --}}
+            {{-- error/sucess messages --}}
             @if (session('status'))
                 <div style="background: #d4edda; color: #155724; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
                     {{ session('status') }}
