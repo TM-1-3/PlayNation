@@ -38,6 +38,10 @@
                     <a href="{{ route('profile.show', Auth::user()->id_user) }}">
                         👤 {{ Auth::user()->username }}
                     </a>
+
+                    {{-- i'll add constraint so that only admin's can view thi button--}}
+                    {{--@if (auth()->check() && auth()->user()->isAdmin())--}}
+                    <a href="{{ route('admin') }}">Admin</a>
                     
                     {{-- Logout form ( POST for securty) --}}
                     <form action="{{ route('logout') }}" method="POST" style="display: inline;">
@@ -51,6 +55,7 @@
                     <a href="{{ route('login') }}" class="btn-login">Login</a>
                     <a href="{{ route('register') }}">Register</a>
                 @endif
+    
             </nav>
             
         </header>
