@@ -25,9 +25,9 @@
     </div>
 
     @auth
-    <div class="feed-toggle">
-        <a href="{{ route('home', ['feed' => 'public']) }}" class="feed-tab @if (isset($activeFeed) && $activeFeed === 'public') active @endif"> Recent</a>
-        <a href="{{ route('home', ['feed' => 'personalized']) }}" class="feed-tab @if(isset($activeFeed) && $activeFeed === 'personalized') active @endif">For You</a>
+    <div class="timeline-toggle">
+        <a href="{{ route('home', ['timeline' => 'public']) }}" class="timeline-tab @if (isset($activeTimeline) && $activeTimeline === 'public') active @endif"> Recent</a>
+        <a href="{{ route('home', ['timeline' => 'personalized']) }}" class="timeline-tab @if(isset($activeTimeline) && $activeTimeline === 'personalized') active @endif">For You</a>
     </div>
     @endauth
 

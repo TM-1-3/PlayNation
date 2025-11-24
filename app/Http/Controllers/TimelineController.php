@@ -14,11 +14,11 @@ class TimelineController extends Controller {
         /** @var User|null $user */
         $user = Auth::user();
 
-        $feedType = $request->query('feed', 'public');
+        $timelineType = $request->query('timeline', 'public');
 
         $query = Post::with(['user', 'labels']);
 
-        if ($user && $feedType === 'personalized') {
+        if ($user && $timelineType === 'personalized') {
 
             $userLabels = $user->labels()->pluck('label.id_label')->toArray();
             if (!empty($userLabels)) {
@@ -35,9 +35,9 @@ class TimelineController extends Controller {
         else {
             $query->orderByDesc('date');
         }
-        
+
         $posts = $query->get();
 
-        return view('home', ['posts' => $posts, 'activeFeed' => $feedType]);
+        return view('home', ['posts' => $posts, 'activeTimeline' => $timelineType]);
     }
 }

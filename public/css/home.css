@@ -100,7 +100,7 @@ button {
     letter-spacing: 0.5px;
 }
 
-.feed-toggle {
+.timeline-toggle {
     max-width: 470px;
     margin: 20px auto 10px auto; 
     display: flex;
@@ -108,7 +108,7 @@ button {
     border-bottom: 1px solid #dbdbdb; 
 }
 
-.feed-tab {
+.timeline-tab {
     flex: 1;                     
     text-align: center;
     padding: 12px 0;            
@@ -122,11 +122,11 @@ button {
     transition: all 0.2s ease;  
 }
 
-.feed-tab:hover {
+.timeline-tab:hover {
     color: #262626;             
 }
 
-.feed-tab.active {
+.timeline-tab.active {
     color: #262626;              
     border-bottom: 1px solid #262626; 
     margin-bottom: -1px;         
