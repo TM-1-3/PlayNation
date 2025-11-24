@@ -11,16 +11,16 @@ body {
     display: flex; 
     flex-direction: row; 
     min-height: 100vh;
-    overflow-x: hidden; /* Evita scroll lateral */
+    overflow-x: hidden; 
 }
 
-/* 2. sidebar */
+/* sidebar */
 aside.sidebar {
-    width: 250px;           /* Largura fixa */
+    width: 250px;           
     background-color: #c5e1fc;
     border-right: 1px solid #e0e0e0;
-    height: 100vh;          /* Ocupa a altura toda */
-    position: fixed;        /* Fica sempre visível */
+    height: 100vh;          
+    position: fixed;       
     top: 0;
     left: 0;
     display: flex;
@@ -61,7 +61,7 @@ aside.sidebar {
 
 .nav-item:hover {
     background-color: #f4f6f8;
-    color: #9b4dca; 
+    color: #1e00ff; 
 }
 
 /* icons */
@@ -75,10 +75,10 @@ aside.sidebar {
 /* active item */
 .nav-item.active {
     font-weight: bold;
-    color: #9b4dca;
+    color: #1e00ff;
 }
 
-/* 3. sidebar footer */
+/*sidebar footer */
 .sidebar-footer {
     border-top: 1px solid #b3b3b3;
     padding-top: 20px;
@@ -178,7 +178,7 @@ main {
 
 
 #cards article.card input:checked + span {
-    text-decoration: 2px solid #9b4dca line-through;
+    text-decoration: 2px solid #1e00ff line-through;
     color: #888;
 }
 
@@ -214,13 +214,18 @@ button, a.button {
 }
 
 button:hover, a.button:hover {
-    background-color: #8a40b5; 
+    background-color: #1e00ff; 
 }
 
-a.button.button-outline {
+button.button-outline {
     background-color: transparent;
-    color: #9b4dca;
-    border: 1px solid #9b4dca;
+    color: #1e00ff;
+    border: 1px solid #1e00ff;
+}
+
+a.button.button-outline:hover {
+    background-color: #1e00ff;
+    color: white;
 }
 
 input[type=text], input[type=email], input[type=password] {
@@ -232,7 +237,7 @@ input[type=text], input[type=email], input[type=password] {
 }
 
 input:focus {
-    border-color: #9b4dca;
+    border-color: #1e00ff;
     outline: none;
 }
 
@@ -280,7 +285,7 @@ input:focus {
     height: 150px;          
     border-radius: 50%;     
     object-fit: cover;      
-    border: 4px solid #d2afe7; 
+    border: 4px solid #2b4a65; 
     display: block;         
     margin: 0 auto 15px auto; 
     box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
@@ -313,7 +318,7 @@ input:focus {
 
 .stat-item h3 {
     margin-bottom: 0;
-    color: #9b4dca;
+    color: #1e00ff;
 }
 
 /* no posts */
@@ -378,7 +383,7 @@ input:focus {
 }
 
 #app-layout #user-info a:hover {
-    color: #9b4dca;
+    color: #1e00ff;
 }
 
 #app-layout #container-admin {
@@ -398,7 +403,7 @@ input:focus {
 #app-layout .card h2 {
     margin: 0 0 1.5em 0;
     font-size: 1.5rem;
-    color: #9b4dca;
+    color: #1e00ff;
     border-bottom: 2px solid #d2afe7;
     padding-bottom: 0.5em;
 }
@@ -430,7 +435,7 @@ input:focus {
 }
 
 #search-user-admin #search-input:focus {
-    border-color: #9b4dca;
+    border-color: #1e00ff;
     outline: none;
     box-shadow: 0 0 0 3px rgba(155, 77, 202, 0.1);
 }
