@@ -74,7 +74,8 @@
 
         {{-- 3. Footer --}}
         <footer>
-            <p>&copy; 2024 PlayNation - LBAW Project</p>
+            {{-- date('Y') prints current year from server --}}
+            <p>&copy; {{ date('Y') }} PlayNation - LBAW Project</p>
         </footer>
 
     </body>
