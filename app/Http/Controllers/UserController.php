@@ -82,7 +82,7 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('profile.show', $user->id_user)
-            ->with('status', 'Profile updated successfully! ✅');
+            ->with('status', 'Profile updated successfully!');
     }
 }
 
