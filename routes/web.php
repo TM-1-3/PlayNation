@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\SetupController;
+use App\Http\Controllers\TimelineController;
 
 // Home
 Route::redirect('/', '/login');
@@ -30,7 +31,5 @@ Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.se
 Route::post('/profile/setup', [SetupController::class, 'store'])->name('profile.setup.store');
 
 
-Route::get('/home', function () {
-    return view('home');
-})->name('home');
+Route::get('/home', [TimelineController::class, 'index'])->name('home');
 

@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\View\View;
+use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
+class TimelineController extends Controller {
+
+    public function index(Request $request): View {
+
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        $feedType = $request->query('feed', 'public');
+
+        $query = Post::with(['user', 'labels']);
+
+        if ($user && $feedType === 'personalized') {
+
+            $userLabels = $user->labels()->pluck('label.id_label')->toArray();
+            if (!empty($userLabels)) {
+                $query->withCount(['labels as relevance' => function ($q) use ($userLabels) {
+                    $q->whereIn('label.id_label', $userLabels);
+                }])
+                ->orderByDesc('relevance')
+                ->orderByDesc('date');
+            } 
+            else {
+                $query->orderByDesc('date');
+            }
+        } 
+        else {
+            $query->orderByDesc('date');
+        }
+        
+        $posts = $query->get();
+
+        return view('home', ['posts' => $posts, 'activeFeed' => $feedType]);
+    }
+}
