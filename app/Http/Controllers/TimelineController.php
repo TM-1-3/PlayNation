@@ -38,6 +38,6 @@ class TimelineController extends Controller {
 
         $posts = $query->get();
 
-        return view('home', ['posts' => $posts, 'activeTimeline' => $timelineType]);
+        return view('pages.home', ['posts' => $posts, 'activeTimeline' => $timelineType]);
     }
 }

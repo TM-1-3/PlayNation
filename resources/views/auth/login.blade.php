@@ -13,50 +13,36 @@
 
 @section('content')
 
-<div class="row">
-    {{-- center card --}}
-    <div class="column column-50 column-offset-25; justify-content:center;">
-        
-        <div class="card" style="margin-top: 2em; padding: 2em;">
-            <h2 style="text-align: center; color: #9b4dca;">Login</h2>
+<div class="card">
+    <img class="logo" src = "/img/logo.png">
+    <h2 style="text-align: center;">Login</h2>
+    <form method="POST" action="{{ route('login.action') }}">
+        @csrf
 
-            <!-- mantive a logica do form e csrf -->
-            <form method="POST" action="{{ route('login.action') }}">
-                @csrf
+        <div>
+        <label for="login">Email or Username</label>
+        <input type="text" id="login" name="usernameEmail" required autofocus value="{{ old('login') }}">
 
-                <div>
-                    <label for="login">Email or Username</label>
-                    <input type="text" id="login" name="usernameEmail" required autofocus value="{{ old('login') }}">
-                </div>
-
-                <div>
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-
-                <!-- mantive a logica dos erros mas mudei um cadinho o style -->
-                @if ($errors->any())
-                    <div class="error" style="color: red; font-weight: bold; margin-bottom: 1em;">
-                        {{ $errors->first('email') }}
-                    </div>
-                @endif
-
-                <button type="submit" class="button button-block" style="width: 100%;">Log in</button>
-            </form>
-
-            <!-- mantive os links de relação ao register originais -->
-            <div style="text-align: center; margin-top: 15px;">
-                <a href="{{ route('register') }}" style="color: #9b4dca;">
-                    Don't have an account? Register
-                </a>
-                <br>
-                <a href="{{ route('home') }}" class="link" style="color: #6b7280; font-size: 0.9em; display: inline-block; margin-top: 10px;">
-                    Continue without logging in
-                </a>
-            </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
         </div>
 
-    </div>
+        @if ($errors->any())
+            <div class="error">
+                {{ $errors->first('email') }}
+            </div>
+        @endif
+
+        <button type="submit">Log in</button>
+    </form>
+    <a href="{{ route('register') }}" style="display: block; text-align: center; margin-top: 15px; color: #2563eb; text-decoration: none; font-size: 0.9rem;">
+        Don't have an account? Register
+    </a>
+    <a href="{{ route('home') }}" class="link" style="color: #6b7280; margin-top: 10px;">
+        Continue without logging in
+    </a>
 </div>
+
 
 @endsection

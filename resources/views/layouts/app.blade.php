@@ -9,6 +9,8 @@
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/milligram.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth/auth.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth/setup.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     @stack('styles')
@@ -26,7 +28,7 @@
 
         <nav class="nav-links">
             
-            <a href="{{ url('/') }}" class="nav-item">
+            <a href="{{ url('/home') }}" class="nav-item">
                 <i class="fa-solid fa-house nav-icon"></i> 
                 Feed
             </a>
