@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\SetupController;
+use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\AdminController; 
 
@@ -36,9 +37,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
 });
 
-Route::get('/home', function () {
-    return view('pages.home');
-})->name('home');
+Route::get('/home', [TimelineController::class, 'index'])->name('home');
 
 // Groups 
 Route::get('/groups', function () {
