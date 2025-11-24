@@ -17,7 +17,7 @@ body {
 /* 2. sidebar */
 aside.sidebar {
     width: 250px;           /* Largura fixa */
-    background-color: #ffffff;
+    background-color: #c5e1fc;
     border-right: 1px solid #e0e0e0;
     height: 100vh;          /* Ocupa a altura toda */
     position: fixed;        /* Fica sempre visível */
@@ -80,7 +80,7 @@ aside.sidebar {
 
 /* 3. sidebar footer */
 .sidebar-footer {
-    border-top: 1px solid #eee;
+    border-top: 1px solid #b3b3b3;
     padding-top: 20px;
     font-size: 0.8rem;
     color: #888;
@@ -199,8 +199,8 @@ main {
 #content > form .success { font-weight: bold; color: #106af1; }
 
 button, a.button {
-    background-color: #9b4dca;
-    border-color: #9b4dca;
+    background-color: #1d6fb8;
+    border-color: #0059ff;
     color: white;
     padding: 0.5em 1em;
     border-radius: 4px;
@@ -210,7 +210,7 @@ button, a.button {
     justify-content: center;
     cursor: pointer;
     text-align: center;
-    border: 1px solid #9b4dca;
+    border: 1px solid #00d6fc;
 }
 
 button:hover, a.button:hover {

@@ -117,7 +117,7 @@
     {{-- main content --}}
     <main>
         @if (session('status'))
-            <div style="background: #d4edda; color: #155724; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+            <div style="background: #486d50ff; color: #777777ff; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
                 {{ session('status') }}
             </div>
         @endif
