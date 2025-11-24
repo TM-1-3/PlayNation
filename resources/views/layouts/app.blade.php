@@ -55,7 +55,7 @@
                 </a>
 
                 <a href="{{ route('notifications.index') }}" class="nav-item">
-                    <i class="fa-regular fa-bell nav-icon"></i> 
+                    <i class="fa-solid fa-bell nav-icon"></i> 
                     Notifications 
                     <span style="background:red; color:white; font-size:0.7em; padding:2px 6px; border-radius:50%; margin-left:auto;">3</span>
                 </a>
