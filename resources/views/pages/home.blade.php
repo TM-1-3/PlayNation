@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div>
+<div class="centered-content">
     @auth
         <h1>You are logged in</h1>
         <form action="{{ route('logout') }}" method="POST">

@@ -16,7 +16,7 @@
 
 main {
     flex: 1;
-    padding-top: 2em;
+    padding-top: 1.5em;
     width: 100%;
     margin: 0 auto;    /* center content */
     box-sizing: border-box;
@@ -254,9 +254,10 @@ input:focus {
 .profile-actions {
     margin-top: 20px;
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap; /* Se o ecrã for pequeno, os botões descem */
+    justify-content: center; /* horizontalmente */
+    align-items: center;     /* alinhados verticalmente */
+    gap: 15px;               
+    flex-wrap: wrap;
 }
 
 /* stats area (Posts, Followers) */
@@ -511,7 +512,8 @@ input:focus {
 /* Home and Groups Pages */
 /**---------------------------------------------------------*/
 
-main > div {
+/* MUDEI de 'main > div' para '.centered-content' para não partir o Perfil */
+.centered-content { 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -520,15 +522,15 @@ main > div {
     min-height: 60vh;
 }
 
-main > div h1 {
+.centered-content h1 {
     margin-bottom: 1.5em;
 }
 
-main > div form,
-main > div a {
+.centered-content form,
+.centered-content a {
     margin: 0.5em 0;
 }
 
-main > div button {
+.centered-content button {
     min-width: 150px;
 }
