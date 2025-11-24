@@ -47,7 +47,7 @@ class SetupController extends Controller
 
         if ($request->hasFile('profile_picture')) {
             $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $user->profile_picture = $path; 
+            $user->profile_picture = 'storage/' . $path;
         }
 
         $user->save();
