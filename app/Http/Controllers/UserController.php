@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Models\User;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+
 
 class UserController extends Controller
 {
@@ -16,8 +21,68 @@ class UserController extends Controller
 
         return view('pages.profile', ['user' => $user]);
     }
+    
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
 
-    public function edit($id) {
-    return "edit form placeholder"; // Placeholder
+        // only profile owner can edit
+        if (Auth::id() !== $user->id_user) {
+            return redirect()->route('profile.show', $id)
+                ->with('status', 'Não tens permissão para editar este perfil.');
+        }
+
+        return view('pages.edit_profile', ['user' => $user]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        if (Auth::id() !== $user->id_user) { // only profile owner can update
+            return redirect()->route('profile.show', $id)->with('status', 'Unauthorized action.');
+        }
+
+        // validation
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => ['required', 'string', 'max:255', Rule::unique('registered_user')->ignore($user->id_user, 'id_user')],
+            'email' => ['required', 'email', 'max:255', Rule::unique('registered_user')->ignore($user->id_user, 'id_user')],
+            'biography' => 'nullable|string|max:500',
+            'profile_picture' => 'nullable|image|max:4096', // Max 4MB
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        // update user data
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->biography = $request->biography;
+        
+        $user->is_public = $request->has('is_public');
+
+        // Password updates only if provided
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Upload Image
+        if ($request->hasFile('profile_picture')) {
+    
+            if ($user->profile_picture && $user->profile_picture !== 'img/default-user.png') {
+                
+                $oldPath = str_replace('storage/', '', $user->profile_picture);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $user->profile_picture = 'storage/' . $path;
+        }
+
+        $user->save();
+
+        return redirect()->route('profile.show', $user->id_user)
+            ->with('status', 'Profile updated successfully! ✅');
+    }
 }
-}
+

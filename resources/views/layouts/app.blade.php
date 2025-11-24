@@ -116,10 +116,48 @@
 
     {{-- main content --}}
     <main>
+        {{-- toast notification--}}
         @if (session('status'))
-            <div style="background: #486d50ff; color: #777777ff; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
-                {{ session('status') }}
+            <div id="toast-notification" class="toast-success">
+                
+                {{-- sucess icon --}}
+                <i class="fa-solid fa-circle-check" style="font-size: 1.2em;"></i>
+                
+                {{-- Menssage --}}
+                <span style="flex: 1;">{{ session('status') }}</span>
+
+                {{-- close X --}}
+                <button onclick="closeToast()" class="toast-close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
+
+            {{-- disapear --}}
+            <script>
+                // waits for page to load
+                document.addEventListener('DOMContentLoaded', function() {
+                    const toast = document.getElementById('toast-notification');
+                    
+                    if (toast) {
+                        // takes 10 sec (10000 ms)
+                        setTimeout(function() {
+                            closeToast();
+                        }, 10000);
+                    }
+                });
+
+                function closeToast() {
+                    const toast = document.getElementById('toast-notification');
+                    if (toast) {
+                        
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateY(20px)';
+                        
+                        // remove after animation (0.5s)
+                        setTimeout(() => toast.remove(), 500);
+                    }
+                }
+            </script>
         @endif
 
         @yield('content')

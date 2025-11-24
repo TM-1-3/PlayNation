@@ -78,4 +78,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', function () {
         return view('pages.placeholder', ['title' => 'Settings']);
     })->name('settings.index');
+
+
 });
