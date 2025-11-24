@@ -579,3 +579,72 @@ input:focus {
 .centered-content button {
     min-width: 150px;
 }
+
+/**---------------------------------------------------------*/
+/* toast notifications   (for now its for edit profile success only)  */ 
+/**---------------------------------------------------------*/
+
+.toast-success {
+    position: fixed;
+    bottom: 30px;
+
+    left: 280px; /*acounting for sidebar*/
+    
+    background-color: #2ecc71; 
+    color: white;              
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 300px;
+    max-width: 500px;
+    z-index: 9999; /* above all layers*/
+    
+    /* apear animation */
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    animation: slideInToast 0.5s ease-out;
+}
+
+/* close X */
+.toast-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font-size: 1.1em;
+    min-width: auto; 
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.toast-close-btn:hover {
+    background: none; /* to not be affected by glogal css */
+    opacity: 1;
+}
+
+/* animation keyframe */
+@keyframes slideInToast {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* if there is no sidebar, align with left */
+@media (max-width: 768px) {
+    .toast-success {
+        left: 20px;
+        right: 20px; /* Ocupa a largura quase toda */
+        min-width: auto;
+    }
+}
