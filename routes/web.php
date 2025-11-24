@@ -58,4 +58,24 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/{id}/edit', [UserController::class, 'edit'])->name('profile.edit');
     
     Route::put('/profile/{id}', [UserController::class, 'update'])->name('profile.update');
+
+    Route::get('/post/create', function () {
+        return view('pages.placeholder', ['title' => 'Create New Post']);
+    })->name('post.create');
+
+    Route::get('/messages', function () {
+        return view('pages.placeholder', ['title' => 'My Conversations']);
+    })->name('messages.index');
+
+    Route::get('/notifications', function () {
+        return view('pages.placeholder', ['title' => 'Notifications']);
+    })->name('notifications.index');
+
+    Route::get('/saved', function () {
+        return view('pages.placeholder', ['title' => 'Saved Posts']);
+    })->name('saved.index');
+
+    Route::get('/settings', function () {
+        return view('pages.placeholder', ['title' => 'Settings']);
+    })->name('settings.index');
 });

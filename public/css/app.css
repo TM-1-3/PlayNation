@@ -1,78 +1,118 @@
 /*  global layout */
 
- body {
+body {
     background-color: #ffffff;
-    color: #9b4dca;
-    
+    color: #333; 
     margin: 0;
     padding: 0;
-    font-family: 'Roboto', sans-serif; /* font selector might change in the future  */
+    font-family: 'Roboto', sans-serif;
+    
+    /*  Horizontal Layout: Sidebar to the left | Content to the right */
+    display: flex; 
+    flex-direction: row; 
+    min-height: 100vh;
+    overflow-x: hidden; /* Evita scroll lateral */
+}
 
-    /* fixed footer */
+/* 2. sidebar */
+aside.sidebar {
+    width: 250px;           /* Largura fixa */
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    height: 100vh;          /* Ocupa a altura toda */
+    position: fixed;        /* Fica sempre visível */
+    top: 0;
+    left: 0;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    padding: 20px;
+    z-index: 1000;
 }
 
+/* Logo in Sidebar *LATER* */
+.sidebar-logo {
+    display: block;
+    margin-bottom: 2em;
+    text-align: center;
+}
+
+.sidebar-logo img {
+    height: 60px; /* adjusts for later logo */
+}
+
+/* navigation links */
+.nav-links {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: #f4f6f8;
+    color: #9b4dca; 
+}
+
+/* icons */
+.nav-icon {
+    margin-right: 15px;
+    font-size: 1.5rem;
+    width: 24px;
+    text-align: center;
+}
+
+/* active item */
+.nav-item.active {
+    font-weight: bold;
+    color: #9b4dca;
+}
+
+/* 3. sidebar footer */
+.sidebar-footer {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    font-size: 0.8rem;
+    color: #888;
+    text-align: center;
+}
+
+.sidebar-footer a {
+    color: #888;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.sidebar-footer a:hover {
+    text-decoration: underline;
+}
+/* main contente area */
 main {
     flex: 1;
-    padding-top: 1.5em;
-    width: 100%;
-    margin: 0 auto;    /* center content */
-    box-sizing: border-box;
+    margin-left: 250px; 
+    padding: 2em 4em;   
+    width: calc(100% - 250px);
+    background-color: #fafafa; 
 }
 
-
- /* Header n navigation */
-
-
-header {
-    background-color: #d2afe7; /* header bg colour */
-    padding: 1em 2em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+@media (max-width: 768px) {
+    body { flex-direction: column; }
+    aside.sidebar {
+        display: none; /* Por agora escondemos em mobile, foco no desktop */
+    }
+    main { margin-left: 0; width: 100%; padding: 1em; }
 }
 
-header h1 {
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-header .logo {               /* header logo */
-    font-weight: bold; 
-    font-size: 1.5rem; 
-    color: #9b4dca; 
-    text-decoration: none;
-}
-
-header nav a {
-    margin-left: 1em;
-    text-decoration: none;
-    color: #9b4dca;
-    font-weight: bold;
-}
-
-header nav a:hover {
-    color: #ffffff;
-}
-
-/* Header Buttons */
-header a.button {
-    margin-left: 1em;
-}
-
-/* Footer */
-
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 1em;
-    margin-top: auto; 
-    font-size: 0.9rem;
-}
 /**---------------------------------------------------------*/
 /* components */
 /**---------------------------------------------------------*/
