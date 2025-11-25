@@ -40,11 +40,6 @@ Route::controller(AdminController::class)->group(function () {
 
 Route::get('/home', [TimelineController::class, 'index'])->name('home');
 
-// Groups 
-Route::get('/groups', function () {
-    return view('pages.groups');
-})->name('groups');
-
 
 // Profile
 Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
@@ -78,6 +73,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', function () {
         return view('pages.placeholder', ['title' => 'Settings']);
     })->name('settings.index');
+
+    Route::get('/groups', function () {
+        return view('pages.placeholder', ['title' => 'Groups']);
+    })->name('groups.index');
 
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
 });
