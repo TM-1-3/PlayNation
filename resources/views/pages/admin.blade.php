@@ -8,7 +8,6 @@
 
     <div id="main-content">
         <div id="container-admin">
-            <div class="card">
                 <h2>User List</h2>
 
                 <div class="search-controls">
@@ -58,7 +57,6 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
         </div>
     </div>
 </div>

@@ -13,14 +13,14 @@
     <link rel="stylesheet" href="{{ asset('css/auth/auth.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth/setup.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ asset('js/home.js') }}?v={{ time() }}" defer></script>
-
     @stack('styles')
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('js/home.js') }}?v={{ time() }}" defer></script>
+    <script src="{{ asset('js/admin.js') }}" defer></script>
     @stack('scripts')
+    
 </head>
 <body>
     {{-- SIDEBAR  --}}

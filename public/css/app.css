@@ -350,6 +350,11 @@ input:focus {
     min-width: 100vw; 
     box-sizing: border-box;
     align-content: baseline;
+    overflow-y: auto;
+}
+
+#container-admin {
+    overflow-y: auto;
 }
 
 #app-layout #user-info {
@@ -389,10 +394,10 @@ input:focus {
 #app-layout #container-admin {
     min-width: 100vw;
     margin: 0 auto;
-    padding: 0 2em;
+    background-color: #0059ff;
 }
 
-#app-layout .card {
+#main-content {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
@@ -400,7 +405,7 @@ input:focus {
     margin-bottom: 2em;
 }
 
-#app-layout .card h2 {
+#main-content h2 {
     margin: 0 0 1.5em 0;
     font-size: 1.5rem;
     color: #1e00ff;
