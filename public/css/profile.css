@@ -1,0 +1,71 @@
+/**---------------------------------------------------------*/
+/* Profile Page */
+/**---------------------------------------------------------*/
+
+/* sidebar */
+.profile-sidebar {
+    text-align: center;
+    padding-right: 2em;
+}
+
+/*avatar pfp*/
+.profile-avatar {
+    width: 150px;          
+    height: 150px;          
+    border-radius: 50%;     
+    object-fit: cover;      
+    border: 4px solid #2b4a65; 
+    display: block;         
+    margin: 0 auto 15px auto; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+}
+
+/* Name n Username */
+.profile-name { margin-bottom: 0.2rem; }
+.profile-username { color: #888; font-weight: normal; margin-bottom: 1.5rem; }
+
+/*button area (Edit, Add Friend, etc) */
+.profile-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center; /* horizontalmente */
+    align-items: center;     /* alinhados verticalmente */
+    gap: 15px;               
+    flex-wrap: wrap;
+}
+
+/* stats area (Posts, Followers) */
+.profile-stats {
+    margin-bottom: 2em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1em;
+}
+
+.stat-item {
+    text-align: center; 
+}
+
+.stat-item h3 {
+    margin-bottom: 0;
+    color: #1e00ff;
+}
+
+/* no posts */
+.empty-state {
+    text-align: center;
+    padding: 2em;
+    background-color: #f9f9f9;
+    color: #888;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+}
+
+/* corrects padding in small screens*/
+@media (max-width: 40em) {
+    .profile-sidebar {
+        padding-right: 0;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 2em;
+        margin-bottom: 2em;
+    }
+}

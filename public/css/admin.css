@@ -1,0 +1,210 @@
+/**---------------------------------------------------------*/
+/* Admin Page */
+/**---------------------------------------------------------*/
+
+#app-layout {
+    width: 100%;
+    box-sizing: border-box;
+    align-content: baseline;
+    overflow-y: auto;
+    max-height: 100vh;
+}
+
+#container-admin {
+    width: 100%;
+    overflow-y: auto;
+}
+
+#app-layout #user-info {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+}
+
+#app-layout #user-info button {
+    color: #e74c3c;
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 0.5em 1em;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+#app-layout #user-info button:hover {
+    color: #c0392b;
+    text-decoration: underline;
+}
+
+#app-layout #user-info a {
+    color: #333;
+    text-decoration: none;
+    padding: 0.5em 1em;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+#app-layout #user-info a:hover {
+    color: #1e00ff;
+}
+
+#app-layout #container-admin {
+    width: 100%;
+    margin: 0 auto;
+    background-color: transparent;
+}
+
+#main-content {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 2em;
+    margin-bottom: 2em;
+}
+
+#main-content h2 {
+    margin: 0 0 1.5em 0;
+    font-size: 1.5rem;
+    color: #1e00ff;
+    border-bottom: 2px solid #d2afe7;
+    padding-bottom: 0.5em;
+}
+
+/* Search Controls */
+.search-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+    margin-bottom: 2em;
+    flex-wrap: wrap;
+}
+
+#search-user-admin {
+    display: flex;
+    gap: 0.5em;
+    flex: 1;
+    min-width: 400px;
+    align-items: stretch;
+}
+
+#search-user-admin #search-input {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.7em 1em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    height: auto;
+    line-height: normal;
+}
+
+#search-user-admin #search-input:focus {
+    border-color: #1e00ff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 0, 255, 0.1);
+}
+
+#search-user-admin button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.7em 1.2em;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+    width: auto;
+    box-sizing: border-box;
+}
+
+#search-user-admin button:hover {
+    background-color: #2980b9;
+}
+
+.search-controls form:last-child button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 0.7em 1.5em;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.search-controls form:last-child button:hover {
+    background-color: #229954;
+}
+
+/* Admin Users Table */
+#admin-users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+}
+
+#admin-users-table thead {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #d2afe7;
+}
+
+#admin-users-table thead th {
+    padding: 1em;
+    text-align: left;
+    font-weight: 600;
+    color: #9b4dca;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#admin-users-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+#admin-users-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+#admin-users-table tbody td {
+    padding: 1em;
+    color: #333;
+    font-size: 0.9em;
+}
+
+#admin-users-table tbody td:first-child,
+#admin-users-table tbody td:nth-child(2) {
+    font-weight: 500;
+}
+
+/* Action Links */
+#admin-users-table .action-link {
+    color: #3498db;
+    text-decoration: none;
+    margin-right: 1em;
+    transition: color 0.3s ease;
+}
+
+#admin-users-table a[style*="color: #e74c3c"] {
+    color: #e74c3c !important;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+/* Empty State */
+#admin-users-table tbody td[colspan] {
+    text-align: center;
+    padding: 2em;
+    color: #888;
+    font-style: italic;
+}
