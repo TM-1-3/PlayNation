@@ -77,7 +77,7 @@ paths:
              examples:
                302Success:
                  description: 'Successful authentication. Redirect to timeline.'
-                 value: '/privateTimeline'
+                 value: '/home'
                302Error:
                  description: 'Failed authentication. Redirect to login form.'
                  value: '/login'
@@ -104,7 +104,7 @@ paths:
               examples:
                 302Success:
                   description: 'Successful logout. Redirect to public timeline.'
-                  value: '/'
+                  value: '/home'
 
 
 ######### REGISTER #########
@@ -171,8 +171,8 @@ paths:
                type: string
              examples:
                302Success:
-                 description: 'Successful authentication. Redirect to private timeline.'
-                 value: '/privateTimeline'
+                 description: 'Account created. Redirect to profile setup.'
+                 value: '/profile/setup'
                302Failure:
                  description: 'Failed authentication. Redirect to login form.'
                  value: '/login'
@@ -242,19 +242,27 @@ paths:
         '404':
           description: 'Error. Email not existant.'
       
-######### PRIVATE TIMELINE #########
+######### TIMELINE #########
 
-  /privateTimeline:
+  /home:
 
     get:
       operationId: R108
-      summary: 'R108: View user personalized timeline.'
-      description: 'Show the user personalized timeline, Access: AUTH'
+      summary: 'R108: View timeline.'
+      description: 'Show the timeline, Access: AUTH'
+      parameters:
+        - in: query
+          name: feed
+          schema:
+            type: string
+            enum: [public, personalized]
+            default: public
+          description: 'Type of timeline.'
       tags:
         - 'M01: Authentication and Users'
       responses:
         '200':
-          description: 'OK. Show the user personalized timeline.'
+          description: 'OK. Show the timeline.'
         '302':
           description: 'Redirect after unauthorized request. User is not logged in'
           headers:
@@ -912,6 +920,52 @@ paths:
         '403':
           description: 'Forbiden action'
       
+######### SETUP #########
+
+  /profile/setup:
+
+    get:
+      operationId: R131
+      summary: 'R131: Profile Setup Form'
+      description: 'Show the profile setup wizard (Bio, Picture, Labels). Access: AUTH (Partial)'
+      tags:
+        - 'M01: Authentication and Users'
+      responses:
+        '200':
+          description: 'OK. Show Setup UI.'
+
+    post:
+      operationId: R132
+      summary: 'R132: Complete Profile Setup'
+      description: 'Saves bio, picture, and selected interest labels. Access: AUTH (Partial)'
+      tags:
+        - 'M01: Authentication and Users'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                biography:
+                  type: string
+                profile_picture:
+                  type: string
+                  format: binary
+                is_public:
+                  type: string 
+                'labels[]':
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '302':
+          description: 'Setup complete. Redirect to Home.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example: '/home'
 
 
 ############################################ ADMINISTRATION ############################################
@@ -1103,34 +1157,35 @@ paths:
 
 ######### POST DELETE ######### 
 
-  /post/delete:
-    post:
+  /post/{id}:
+    delete:
       operationId: R304
-      summary: 'R304: Delete Post Operation'
-      description: 'Deletes a post. Access: OWN, ADM'
+      summary: 'R304: Delete Post'
+      description: 'Deletes a specific post. Access: OWN, ADM'
       tags:
         - 'M03: Posts'
-
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  description: 'ID of the post to delete'
-              required:
-                - id
-
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
       responses:
-        '200': 
-          description: 'Ok. Post deleted successfully.'
+        '200':
+          description: 'Post deleted successfully.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
         '403':
-          description: 'Forbidden action.'
-        '404':
-          description: 'Post not found.'
+          description: 'Unauthorized.'
+        '500':
+          description: 'Internal Server Error.'
 
   /post/like:
     post:
