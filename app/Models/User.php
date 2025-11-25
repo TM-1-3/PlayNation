@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Post;
+use App\Models\User;
 
 
 class User extends Authenticatable
@@ -72,6 +75,24 @@ class User extends Authenticatable
     public function labels(): BelongsToMany
     {
         return $this->belongsToMany(Label::class, 'user_label', 'id_user', 'id_label');
+    }
+    
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class, 'id_creator', 'id_user');
+    }
+
+    public function followers(): BelongsToMany
+    {
+        // users that have this user as friend
+        return $this->belongsToMany(User::class, 'user_friend', 'id_friend', 'id_user');
+    }
+
+    public function following(): BelongsToMany
+    {
+        // users this user has as friend
+        return $this->belongsToMany(User::class, 'user_friend', 'id_user', 'id_friend');
     }
 
 }
