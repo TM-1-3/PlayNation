@@ -41,7 +41,7 @@ Route::controller(AdminController::class)->group(function () {
 });
 
 Route::get('/home', [TimelineController::class, 'index'])->name('home');
-
+Route::get('/search/posts', [TimelineController::class, 'searchPost'])->name('search.posts');
 
 // Profile
 Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');

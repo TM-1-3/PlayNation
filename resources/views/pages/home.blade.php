@@ -11,7 +11,12 @@
         <a href="{{ route('home', ['timeline' => 'personalized']) }}" class="feed-tab @if(isset($activeTimeline) && $activeTimeline === 'personalized') active @endif">For You</a>
     </div>
     @endauth
-    <div class="timeline">
+    <div class="search-home">
+        <form id="search-home" action="{{ route('search.posts') }}" method="GET">
+            <input type="text" id="search-input-home" name="search" placeholder="Search for posts by username, tags or description...">
+        </form>
+    </div>
+    <div id="timeline">
             @if(isset($posts) && $posts->isEmpty())
                 <div class="no-posts">
                     <p>No posts found.</p>

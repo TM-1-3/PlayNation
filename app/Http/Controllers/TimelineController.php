@@ -40,4 +40,32 @@ class TimelineController extends Controller {
 
         return view('pages.home', ['posts' => $posts, 'activeTimeline' => $timelineType]);
     }
+
+    public function searchPost(Request $request)
+    {
+        $search = $request->get('search');
+        $posts = Post::with(['user', 'labels']);
+        
+        if($search) {
+            $posts->where(function($query) use ($search) {
+                $query->where('description', 'ILIKE', "%{$search}%")
+                    ->orWhereHas('labels', function($q) use ($search) {
+                        $q->where('designation', 'ILIKE', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function($q) use ($search) {
+                        $q->where('username', 'ILIKE', "%{$search}%");
+                    });
+            });
+        }
+        
+        $posts = $posts->get();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'posts' => $posts
+            ]);
+        }
+        
+        return view('pages.home', ['posts' => $posts]);
+    }
 }
