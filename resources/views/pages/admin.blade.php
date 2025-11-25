@@ -39,7 +39,7 @@
                             <td>{{ $user->email }} </td>
                             <td>{{ $user->is_public ? 'Public' : 'Private' }} </td>
                             <td>
-                                <a href="" class="action-btn edit-btn">EDIT</a>
+                                <a href="{{ route('admin.edit', $user->id_user) }}" class="action-btn edit-btn">EDIT</a>
                                 <form action="{{ route('admin.delete', $user->id_user) }}" method="POST">
                                     @csrf
                                     @method('DELETE')

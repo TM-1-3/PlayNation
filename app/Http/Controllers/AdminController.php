@@ -89,4 +89,31 @@ class AdminController extends Controller
 
         return redirect()->route('admin');
     }
+
+    public function showEditUserForm()
+    {
+        return view('partials.create');
+    }
+
+    public function editUser($id)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:250',
+            'username' => 'required|string|max:250|unique:registered_user',
+            'email' => 'required|email|max:250|unique:registered_user',
+            'password' => 'required|min:8|confirmed'
+        ]);
+
+        $validatedData['password'] = Hash::make($validatedData['password']);
+
+        $user = new User();
+        $user->name = $validatedData['name'];
+        $user->username = $validatedData['username'];
+        $user->email = $validatedData['email'];
+        $user->password = $validatedData['password'];
+        
+        $user->save();
+
+        return redirect()->route('admin');
+    }
 }
