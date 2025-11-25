@@ -9,10 +9,12 @@
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/milligram.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/auth/auth.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth/setup.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('js/home.js') }}?v={{ time() }}" defer></script>
 
     @stack('styles')
 
