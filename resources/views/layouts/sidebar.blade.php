@@ -1,15 +1,21 @@
+@extends('layouts.app')
+
+@section('sidebar')
+    @parent
+
 <aside class="sidebar">
-    <a href="{{ url('/') }}" class="sidebar-logo">
-        <img src="{{ asset('img/playnation_logo.svg') }}" alt="PlayNation" style="height: 170px;"> 
-    </a>
-    <nav class="nav-links">
-        
-        <a href="{{ url('/home') }}" class="nav-item {{ request()->is('/') || request()->routeIs('home') ? 'active' : '' }}">
-            <i class="fa-solid fa-house nav-icon"></i> 
-            Feed
+        <a href="{{ url('/') }}" class="sidebar-logo">
+            <img src="{{ asset('img/playnation_logo.svg') }}" alt="PlayNation">
         </a>
 
-        @if(Auth::check())
+        <nav class="nav-links">
+            
+            <a href="{{ url('/home') }}" class="nav-item">
+                <i class="fa-solid fa-house nav-icon"></i> 
+                Feed
+            </a>
+
+            @if(Auth::check())
                 {{-- auth user zone --}}
 
                 <a href="{{ route('profile.show', Auth::user()->id_user) }}" class="nav-item">
@@ -43,12 +49,12 @@
                     Saved Posts
                 </a>
 
-                {{-- @if(Auth::user()->isAdmin()) --}}
+                @if(Auth::user()->isAdmin())
                 <a href="{{ route('admin') }}" class="nav-item" style="color: #e67e22;">
                     <i class="fa-solid fa-shield-halved nav-icon"></i>
                     Admin Panel
                 </a>
-                {{-- @endif --}}
+                @endif
 
                 <a href="{{ route('settings.index') }}" class="nav-item">
                     <i class="fa-solid fa-gear nav-icon"></i> 
@@ -81,11 +87,15 @@
                 </a>
             @endif
 
-    </nav>
+        </nav>
 
-    <div class="sidebar-footer">
-        <a href="#">About</a> | <a href="#">Help</a>
-        <br>
-        <p style="margin-top: 10px;">&copy; {{ date('Y') }} PlayNation</p>
-    </div>
+        <div class="sidebar-footer">
+            <a href="#">About</a> | 
+            <a href="#">Contact</a> | 
+            <a href="#">Help</a>
+            <br>
+            <p style="margin-top: 10px;">&copy; {{ date('Y') }} PlayNation</p>
+        </div>
 </aside>
+
+@endsection

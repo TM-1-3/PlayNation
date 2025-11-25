@@ -39,12 +39,11 @@
                             <td>{{ $user->email }} </td>
                             <td>{{ $user->is_public ? 'Public' : 'Private' }} </td>
                             <td>
-                                <a href="" class="action-link">Edit</a>
-                                <form action="{{ route('admin.delete', $user->id_user) }}" method="POST" style="display:inline;">
+                                <a href="" class="action-btn edit-btn">EDIT</a>
+                                <form action="{{ route('admin.delete', $user->id_user) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this user?')" 
-                                            style="background:none; border:none; color:#e74c3c; cursor:pointer; text-decoration:none; font-size:1em;">
+                                    <button type="submit" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this user?')">
                                         Delete
                                     </button>
                                 </form>
