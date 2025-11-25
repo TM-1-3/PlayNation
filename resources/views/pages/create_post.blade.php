@@ -23,6 +23,21 @@
       <textarea id="description" name="description" style="height:100px; width:100%;">{{ old('description') }}</textarea>
       @error('description') <div style="color:red">{{ $message }}</div> @enderror
 
+      <label for="label">Label (select existing)</label>
+      <select id="labels" name="labels[]" multiple style="width:100%; min-height:100px;">
+        @foreach($labels as $label)
+          <option value="{{ $label->id_label }}" {{ (collect(old('labels'))->contains($label->id_label)) ? 'selected' : '' }}>
+            {{ $label->designation }}
+          </option>
+        @endforeach
+      </select>
+      <small>Hold Ctrl/Cmd to select multiple</small>
+      @error('labels') <div style="color:red">{{ $message }}</div> @enderror
+
+      <label for="new_label">Or create new label</label>
+      <input type="text" id="new_label" name="new_label" value="{{ old('new_label') }}">
+      @error('new_label') <div style="color:red">{{ $message }}</div> @enderror
+
       <hr>
       <div style="margin-top:2em; display:flex; gap:10px;">
         <button type="submit" class="button">Create Post</button>
