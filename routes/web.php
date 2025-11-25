@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\SetupController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\AdminController; 
+use App\Http\Controllers\PostController; 
 
 // Home
 Route::redirect('/', '/login');
@@ -78,5 +79,5 @@ Route::middleware(['auth'])->group(function () {
         return view('pages.placeholder', ['title' => 'Settings']);
     })->name('settings.index');
 
-
+    Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
 });

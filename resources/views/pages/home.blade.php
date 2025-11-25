@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Home Page</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ time() }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <script src="{{ asset('js/home.js') }}?v={{ time() }}" defer></script>
 </head>
 <body>
 <div class="app-layout">
@@ -28,7 +31,7 @@
                     </div>
                 @elseif(isset($posts))
                     @foreach($posts as $post)
-                        <div class="post">
+                        <div class="post" id="post-{{ $post->id_post }}">
                             <div class="post-header">
                                 @if($post->user)
                                     <a href="{{ route('profile.show', $post->user->id_user) }}">
@@ -45,6 +48,13 @@
                                 @endif
                                 
                                 <span class="post-time">{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</span>
+
+                                @if(Auth::check() && $post->user && Auth::user()->id_user == $post->user->id_user)
+                                    <button class="button-delete" data-id="{{ $post->id_post }}" title="Delete Post">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                @endif
+
                             </div>
 
                             @if($post->image)
