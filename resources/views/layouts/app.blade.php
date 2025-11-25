@@ -85,7 +85,7 @@
 
                     <form action="{{ route('logout') }}" method="POST" style="margin-top: 10px;">
                         @csrf
-                        <button type="submit" class="nav-item" style="background:none; border:none; width:100%; color:#e74c3c; cursor:pointer;">
+                        <button type="submit" class="nav-item" style="background:none; border:none; width:100%; color:#e74c3c; cursor:pointer; font-size:0.7em; margin:0;">
                             <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i>
                             Log Out
                         </button>

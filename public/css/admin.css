@@ -6,7 +6,6 @@
     width: 100%;
     box-sizing: border-box;
     align-content: baseline;
-    overflow-y: auto;
     max-height: 100vh;
 }
 
@@ -86,19 +85,19 @@
     gap: 0.5em;
     flex: 1;
     min-width: 400px;
-    align-items: stretch;
+    align-items: center;
 }
 
 #search-user-admin #search-input {
     flex: 1;
-    min-width: 100px;
+    width: 100px;
     padding: 0.7em 1em;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
     box-sizing: border-box;
-    height: auto;
+    height: 40px;
     line-height: normal;
 }
 
@@ -121,6 +120,7 @@
     flex-shrink: 0;
     width: auto;
     box-sizing: border-box;
+    margin-bottom: 2em;
 }
 
 #search-user-admin button:hover {
@@ -139,7 +139,9 @@
     font-weight: 600;
     white-space: nowrap;
     box-sizing: border-box;
+    margin-bottom: 2em;
 }
+
 
 .search-controls form:last-child button:hover {
     background-color: #229954;

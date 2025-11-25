@@ -108,10 +108,11 @@ aside.sidebar {
 /*sidebar footer */
 .sidebar-footer {
     border-top: 1px solid #b3b3b3;
-    padding-top: 20px;
     font-size: 0.8rem;
     color: #888;
     text-align: center;
+    margin-top: 0;
+    padding-top: 10px;
 }
 
 .sidebar-footer a {
@@ -129,7 +130,9 @@ main {
     margin-left: 250px; 
     padding: 2em 4em;   
     width: 100vw;
+    min-height: 100vh;
     background-color: #fafafa; 
+    align-content: center;
 }
 
 @media (max-width: 768px) {
