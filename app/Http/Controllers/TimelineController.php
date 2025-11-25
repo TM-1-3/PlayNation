@@ -49,8 +49,12 @@ class TimelineController extends Controller {
         if($search) {
             $posts->where(function($query) use ($search) {
                 $query->where('description', 'ILIKE', "%{$search}%")
-                $query->orWhere('label.designation', 'ILIKE', "%{$search}%")
-                $query->orWhere('user.username', 'ILIKE', "%{$search}%");
+                    ->orWhereHas('labels', function($q) use ($search) {
+                        $q->where('designation', 'ILIKE', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function($q) use ($search) {
+                        $q->where('username', 'ILIKE', "%{$search}%");
+                    });
             });
         }
         

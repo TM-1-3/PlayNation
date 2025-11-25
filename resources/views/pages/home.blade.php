@@ -12,8 +12,8 @@
     </div>
     @endauth
     <div class="search-home">
-        <form id="search-home" action="" method="GET">
-            <input type="text" id="search-input-home" name="search" placeholder="Search for users, posts or tags...">
+        <form id="search-home" action="{{ route('search.posts') }}" method="GET">
+            <input type="text" id="search-input-home" name="search" placeholder="Search for posts by username, tags or description...">
         </form>
     </div>
     <div id="timeline">
