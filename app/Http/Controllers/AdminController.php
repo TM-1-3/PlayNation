@@ -13,15 +13,15 @@ class AdminController extends Controller
 {
     public function showAdminPage()
     {
-        //$user = auth()->user(); // Get the currently logged-in user
+        $user = auth()->user(); // Get the currently logged-in user
 
-        //if ($user->isAdmin()) {
+        if ($user->isAdmin()) {
             $users = User::all();
             return view('pages.admin', compact('users'));
-        //}
+        }
         
         // User is not an admin, redirect them or show an error
-        //return redirect('/')->with('error', 'Unauthorized access.');
+        return redirect('/')->with('error', 'Unauthorized access.');
     }
     
 
