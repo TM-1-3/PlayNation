@@ -83,7 +83,13 @@
             </div>
         @else
             @foreach($posts as $post)
-                <div class="card">
+                <div class="card" style="position:relative;">
+                    @if(Auth::check() && Auth::id() == $post->id_creator)
+                        <div style="position:absolute; top:8px; right:8px;">
+                            <a href="{{ route('post.edit', $post->id_post) }}" class="button button-small" title="Edit post">Edit Post</a>
+                        </div>
+                    @endif
+
                     @if($post->image)
                         <img src="{{ asset('storage/' . ltrim($post->image, '/')) }}" alt="post image" style="max-width:100%;">
                     @endif
