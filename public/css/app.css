@@ -347,13 +347,14 @@ input:focus {
 
 #app-layout {
     width: 100%;
-    min-width: 100vw; 
     box-sizing: border-box;
     align-content: baseline;
     overflow-y: auto;
+    max-height: 100vh;
 }
 
 #container-admin {
+    width: 100%;
     overflow-y: auto;
 }
 
@@ -392,9 +393,9 @@ input:focus {
 }
 
 #app-layout #container-admin {
-    min-width: 100vw;
+    width: 100%;
     margin: 0 auto;
-    background-color: #0059ff;
+    background-color: transparent;
 }
 
 #main-content {
