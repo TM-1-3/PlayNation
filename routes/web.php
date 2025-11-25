@@ -42,10 +42,6 @@ Route::controller(AdminController::class)->group(function () {
 
 Route::get('/home', [TimelineController::class, 'index'])->name('home');
 
-// Search home
-Route::get('/home/search', [SearchController::class, 'search'])->name('home.search');
-
-
 // Profile
 Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
 Route::post('/profile/setup', [SetupController::class, 'store'])->name('profile.setup.store');

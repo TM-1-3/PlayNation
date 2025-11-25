@@ -12,7 +12,7 @@
     </div>
     @endauth
     <div class="search-home">
-        <form id="search-home" action="{{ route('home.search') }}" method="GET">
+        <form id="search-home" action="" method="GET">
             <input type="text" id="search-input-home" name="search" placeholder="Search for users, posts or tags...">
         </form>
     </div>
