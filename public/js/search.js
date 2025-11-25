@@ -15,6 +15,31 @@ if (searchHome) {
 function encodeForAjax(data) {
   return data ? new URLSearchParams(data).toString() : null;
 }
+
+/**
+ * Get human-readable time ago from a date
+ */
+function getTimeAgo(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60
+  };
+  
+  for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+    const interval = Math.floor(seconds / secondsInUnit);
+    if (interval >= 1) {
+      return `${interval} ${unit}${interval === 1 ? '' : 's'} ago`;
+    }
+  }
+  
+  return 'just now';
+}
   
 /**
  * Send an AJAX request using the Fetch API.
@@ -93,7 +118,66 @@ function searchHandler(response, searchType) {
     }
   } else if (searchType === 'search-home') {
     // Handle home page search (posts, users, etc.)
-    console.log('Home search results:', response);
+    const timeline = document.getElementById('timeline');
+
+    if (response.posts && timeline) {
+      timeline.innerHTML = '';
+      if (response.posts.length === 0) {
+        timeline.innerHTML = '<p style="text-align:center;">No posts found</p>';
+      } else {
+        response.posts.forEach(post => {
+          const postElement = document.createElement('div');
+          postElement.className = 'post';
+          postElement.id = `post-${post.id_post}`;
+          
+          const userProfilePic = post.user?.profile_picture || 'img/default_avatar.png';
+          const username = post.user?.username || 'Unknown User';
+          const userId = post.user?.id_user;
+          const postDate = new Date(post.date);
+          const timeAgo = getTimeAgo(postDate);
+          
+          let postHTML = `
+            <div class="post-header">
+              ${userId ? `<a href="/profile/${userId}">` : ''}
+                <img class="author" src="${userProfilePic}" alt="avatar">
+              ${userId ? '</a>' : ''}
+              ${userId ? `<a href="/profile/${userId}" class="username">${username}</a>` : `<span class="username">${username}</span>`}
+              <span class="post-time">${timeAgo}</span>
+          `;
+          
+          if (post.is_owner) {
+            postHTML += `
+              <button class="button-delete" data-id="${post.id_post}" title="Delete Post">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            `;
+          }
+          
+          postHTML += '</div>';
+          
+          if (post.image) {
+            postHTML += `<img class="post-image" src="${post.image}" alt="Post Content">`;
+          }
+          
+          postHTML += '<div class="caption">';
+          if (userId) {
+            postHTML += `<a href="/profile/${userId}" class="caption-user">${username}</a> `;
+          }
+          postHTML += `${post.description}</div>`;
+          
+          if (post.labels && post.labels.length > 0) {
+            postHTML += '<div class="post-tags">';
+            post.labels.forEach(label => {
+              postHTML += `<span class="tag">${label.designation}</span>`;
+            });
+            postHTML += '</div>';
+          }
+          
+          postElement.innerHTML = postHTML;
+          timeline.appendChild(postElement);
+        });
+      }
+    }
   }
   
   console.log('Search results updated via AJAX.');

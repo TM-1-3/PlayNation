@@ -16,7 +16,7 @@
             <input type="text" id="search-input-home" name="search" placeholder="Search for users, posts or tags...">
         </form>
     </div>
-    <div class="timeline">
+    <div id="timeline">
             @if(isset($posts) && $posts->isEmpty())
                 <div class="no-posts">
                     <p>No posts found.</p>
