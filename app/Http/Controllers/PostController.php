@@ -28,7 +28,7 @@ class PostController extends Controller
             return back()->withErrors(['form' => 'Post must have a description or an image.'])->withInput();
         }
 
-        $imagePath = '';
+        $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('posts', 'public');
         }
@@ -42,7 +42,7 @@ class PostController extends Controller
 
         return redirect()->route('home')->with('status', 'Post created successfully');
     }
-    
+
     public function destroy($id)
     {
         $post = Post::findOrFail($id);

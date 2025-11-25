@@ -17,9 +17,18 @@ class UserController extends Controller
     {
         // getting user so thet name appears in the title
         // If error, use findOrFail($id) that sends 404 if not found
-        $user = User::findOrFail($id);
+        //$user = User::findOrFail($id);
 
-        return view('pages.profile', ['user' => $user]);
+        $user = User::withCount(['posts', 'followers', 'following'])->findOrFail($id);
+
+        $posts = $user->posts()
+                      ->orderBy('date', 'desc')
+                      ->get();
+
+        return view('pages.profile', [
+            'user' => $user,
+            'posts' => $posts,
+        ]);
     }
     
     public function edit($id)

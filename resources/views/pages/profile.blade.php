@@ -61,26 +61,39 @@
         {{-- stats --}}
         <div class="row profile-stats">
             <div class="column stat-item">
-                <h3>0</h3>
+                <h3>{{ $user->posts_count ?? $posts->count() }}</h3>
                 <small>Posts</small>
             </div>
             <div class="column stat-item">
-                <h3>0</h3>
+                <h3>{{ $user->followers_count ?? 0 }}</h3>
                 <small>Followers</small>
             </div>
             <div class="column stat-item">
-                <h3>0</h3>
+                <h3>{{ $user->following_count ?? 0 }}</h3>
                 <small>Following</small>
             </div>
         </div>
 
         {{-- users feed posts --}}
-        <h3>Recent Posts</h3>
+        <h3>Posts</h3>
         
-        {{-- posts loop for later --}}
-        <div class="card empty-state">
-            <p>No posts yet.</p>
-        </div>
+        @if($posts->isEmpty())
+            <div class="card empty-state">
+                <p>No posts yet.</p>
+            </div>
+        @else
+            @foreach($posts as $post)
+                <div class="card">
+                    @if($post->image)
+                        <img src="{{ asset('storage/' . ltrim($post->image, '/')) }}" alt="post image" style="max-width:100%;">
+                    @endif
+                    @if($post->description)
+                        <p>{{ $post->description }}</p>
+                    @endif
+                    <small>{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</small>
+                </div>
+            @endforeach
+        @endif
 
     </div>
 </div>
