@@ -36,7 +36,8 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/admin/create', 'showCreateUserForm')->name('admin.create');
     Route::post('/admin/create', 'createUser')->name('admin.create.action');
     Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
-    Route::put('/admin/user/{id}', 'editUser')->name('admin.edit');
+    Route::get('/admin/edit/{id}', 'showEditUserForm')->name('admin.edit');
+    Route::put('/admin/user/{id}', 'editUser')->name('admin.edit.action');
 });
 
 Route::get('/home', [TimelineController::class, 'index'])->name('home');

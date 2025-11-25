@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+
 
 
 use App\Models\User;
@@ -90,28 +92,53 @@ class AdminController extends Controller
         return redirect()->route('admin');
     }
 
-    public function showEditUserForm()
+    public function showEditUserForm($id)
     {
-        return view('partials.create');
+        $user = User::findOrFail($id);
+
+        return view('partials.edit', ['user' => $user]);
     }
 
-    public function editUser($id)
+    public function editUser(Request $request, $id)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:250',
-            'username' => 'required|string|max:250|unique:registered_user',
-            'email' => 'required|email|max:250|unique:registered_user',
-            'password' => 'required|min:8|confirmed'
+        $user = User::findOrFail($id);
+
+        // validation
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => ['required', 'string', 'max:255', Rule::unique('registered_user')->ignore($user->id_user, 'id_user')],
+            'email' => ['required', 'email', 'max:255', Rule::unique('registered_user')->ignore($user->id_user, 'id_user')],
+            'biography' => 'nullable|string|max:500',
+            'profile_picture' => 'nullable|image|max:4096', // Max 4MB
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $validatedData['password'] = Hash::make($validatedData['password']);
-
-        $user = new User();
-        $user->name = $validatedData['name'];
-        $user->username = $validatedData['username'];
-        $user->email = $validatedData['email'];
-        $user->password = $validatedData['password'];
+        // update user data
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->biography = $request->biography;
         
+        $user->is_public = $request->has('is_public');
+
+        // Password updates only if provided
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Upload Image
+        if ($request->hasFile('profile_picture')) {
+    
+            if ($user->profile_picture && $user->profile_picture !== 'img/default-user.png') {
+                
+                $oldPath = str_replace('storage/', '', $user->profile_picture);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $user->profile_picture = 'storage/' . $path;
+        }
+
         $user->save();
 
         return redirect()->route('admin');
