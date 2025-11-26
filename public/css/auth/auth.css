@@ -1,9 +1,9 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif; 
     display: flex;
     justify-content: center;
     align-items: center;
-   
+    min-height: 100vh; 
     background: #f3f4f6;
     margin: 0;
 }
@@ -23,11 +23,12 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     width: 50vw;
+    max-width: 500px; /* Limit */
     margin: 0 auto;
 }
 
 h2 { 
-    text-align: center; margin-top: 0; color: #333; 
+    text-align: center; margin-top: 0; color: #1e00ff; 
 }
 
 label { 
@@ -49,34 +50,40 @@ input[type="text"], input[type="email"], input[type="password"] {
 }
 
 input:focus { 
-    border-color: #2563eb; 
+    border-color: #1e00ff; 
     outline: none; 
+    box-shadow: 0 0 0 0.2rem rgba(30, 0, 255, 0.25);
 }
 
 button {
     width: 100%; 
     padding: 12px;
-    background: #2563eb; 
+    background: #1e00ff; 
     color: white;
-    border: none; 
+    border: 1px solid #1e00ff; 
     border-radius: 4px; 
     cursor: pointer; 
     margin-top: 20px;
     font-size: 1rem; 
-    transition: background 0.2s;
+    transition: background 0.2s, border-color 0.2s;
 }
 
 button:hover { 
-    background: #1d4ed8; 
+    background: #1500b3; 
+    border-color: #1500b3;
 }
 
 .link { 
     display: block; 
     text-align: center; 
     margin-top: 15px; 
-    color: #2563eb; 
+    color: #1e00ff;
     text-decoration: none; 
     font-size: 0.9rem; 
+}
+
+.link:hover {
+    text-decoration: underline;
 }
 
 .error { 

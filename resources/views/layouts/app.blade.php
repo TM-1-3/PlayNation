@@ -7,8 +7,8 @@
     <title>@yield('title', config('app.name'))</title>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="{{ asset('css/milligram.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/milligram.css') }}">
     <link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <link rel="stylesheet" href="{{ asset('css/profile.css') }}">

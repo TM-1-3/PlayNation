@@ -13,18 +13,34 @@
 
 .label-card {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 8px;
+    background: #f9fafb; 
+    border: 2px solid #e5e7eb; 
+    border-radius: 8px;
     padding: 10px; text-align: center; transition: all 0.2s; height: 100px;
 }
 .label-card img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 8px; }
 .label-card span { font-size: 0.9rem; font-weight: 500; }
 
-.label-option:hover .label-card { border-color: #93c5fd; }
+
+.label-option:hover .label-card { border-color: #8080ff; }
+
+
 .label-option input:checked + .label-card {
-    border-color: #2563eb; background-color: #eff6ff;
-    color: #2563eb; box-shadow: 0 0 0 2px #bfdbfe;
+    border-color: #1e00ff;          
+    background-color: #f0f0ff;      
+    color: #1e00ff;                 
+    box-shadow: 0 0 0 2px #cce0ff;  
+}
+textarea { 
+    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; box-sizing: border-box; 
 }
 
-textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; box-sizing: border-box; }
+/* Foco na textarea também a azul */
+textarea:focus {
+    border-color: #1e00ff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(30, 0, 255, 0.25);
+}
+
 .privacy-toggle { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
 .privacy-toggle input { width: auto; margin: 0; }
