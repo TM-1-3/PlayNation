@@ -1157,7 +1157,7 @@ paths:
 
 ######### POST DELETE ######### 
 
-  /post/{id}:
+  /post/delete/id}:
     delete:
       operationId: R304
       summary: 'R304: Delete Post'
