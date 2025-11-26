@@ -91,8 +91,9 @@
                     @endif
 
                     @if($post->image)
-                        <img src="{{ asset('storage/' . ltrim($post->image, '/')) }}" alt="post image" style="max-width:100%;">
+                            <img class="post-image" src="{{ asset($post->image) }}" alt="Post Content" style="width: 30vw;">
                     @endif
+
                     @if($post->description)
                         <p>{{ $post->description }}</p>
                     @endif

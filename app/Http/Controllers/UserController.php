@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 
 class UserController extends Controller
@@ -75,17 +76,17 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        // Upload Image
+        $filename = '';
         if ($request->hasFile('profile_picture')) {
-    
-            if ($user->profile_picture && $user->profile_picture !== 'img/default-user.png') {
-                
-                $oldPath = str_replace('storage/', '', $user->profile_picture);
-                Storage::disk('public')->delete($oldPath);
+            if (!empty($user->id_user) && File::exists(public_path($user->profile_picture))) {
+                File::delete(public_path($user->profile_picture));
             }
 
-            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $user->profile_picture = 'storage/' . $path;
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('img/users'), $filename);
+            
+            $user->profile_picture = 'img/users/' . $filename;
         }
 
         $user->save();
