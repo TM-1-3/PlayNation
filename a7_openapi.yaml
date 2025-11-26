@@ -87,7 +87,7 @@ paths:
 
   /logout:
 
-    get:
+    post:
       operationId: R103
       summary: 'R103 : Logout Operation'
       description: 'Logout the current logged user. Access: AUTH, ADM, OWN, GRM'
@@ -276,7 +276,7 @@ paths:
 
 ######### USER PROFILE #########
 
-  /user/{id}:
+  /profile/{id}:
 
     get:
       operationId: R109
@@ -300,7 +300,7 @@ paths:
 
 ######### EDIT PROFILE #########
 
-  /user/edit:
+  /profile/{id}/edit:
 
     get:
       operationId: R110
@@ -322,7 +322,7 @@ paths:
                   description: 'Unauthorized. Redirect to user profile.'
                   value: '/user/{id}'
     
-    post:
+    put:
       operationId: R111
       summary: 'R111: Edit user profile operation'
       description: 'Processes and saves the alterations made by user. Access: OWN'
@@ -384,26 +384,21 @@ paths:
 
 ######### PROFILE DELETE #########
 
-  /user/profileDelete:
+  /user/delete/{id}:
 
-    post:
+    delete:
       operationId: R112
       summary: 'R112: Deletes an user account.'
       description: 'Deletes an user while in the profile page. Access: OWN, ADM'
       tags:
         - 'M01: Authentication and Users'
 
-      requestBody:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
           required: true
-          content:
-            application/x-www-form-urlencoded:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                required:
-                  - id
 
       responses:
         '302':
@@ -1052,6 +1047,136 @@ paths:
         '403':
           description: 'This action is forbidden.'
 
+######### ADMIN CREATE USER #########
+
+  /admin/create:
+
+    get:
+      operationId: R204
+      summary: 'R204: Admin Create User Form'
+      description: 'Provide administrator with user creation form . Access: ADM'
+      tags:
+        - 'M02: Administration'
+      responses:
+        '200':
+          description: 'OK. Show create user form.'
+        '403':
+          description: 'You do not have permission.'
+
+    post:
+      operationId: R205
+      summary: 'R205: Admin Create User Action'
+      description: 'Process the creation of a new user. Access: ADM'
+      tags:
+        - 'M02: Administration'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                is_admin:
+                  type: boolean
+                  description: 'Optional field to set the new user as admin.'
+              required:
+                - username
+                - name
+                - email
+                - password
+      responses:
+        '302':
+          description: 'Redirect after successful creation.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                value: '/admin'
+        '403':
+          description: 'Forbidden.'
+
+######### ADMIN EDIT USER #########
+
+  /admin/edit/{id}:
+
+    get:
+      operationId: R206
+      summary: 'R206: Admin Edit User Form'
+      description: 'Provide administratot with edit user form. Access: ADM'
+      tags:
+        - 'M02: Administration'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: 'OK. Show edit user form.'
+        '403':
+          description: 'Forbidden.'
+        '404':
+          description: 'User not found.'
+
+  /admin/user/{id}:
+
+    put:
+      operationId: R207
+      summary: 'R207: Admin Edit User'
+      description: 'Update user details. Access: ADM'
+      tags:
+        - 'M02: Administration'
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - username
+                - name
+                - email
+      responses:
+        '302':
+          description: 'Successful update.'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                value: '/admin'
+        '403':
+          description: 'Forbidden.'
+
 
 ############################################ POSTS ############################################
 
@@ -1157,7 +1282,7 @@ paths:
 
 ######### POST DELETE ######### 
 
-  /post/delete/id}:
+  /post/delete/{id}:
     delete:
       operationId: R304
       summary: 'R304: Delete Post'
@@ -1414,6 +1539,8 @@ paths:
 
 ############################################ COMMENTS ############################################
 
+######### CREATE COMMENT #########
+
   /comment/create:
     post:
       operationId: R501
@@ -1452,6 +1579,9 @@ paths:
                   value: '/post/{id}'
                 302Failure:
                   description: 'Failed. Redirect back.'
+
+######### EDIT COMMENT #########
+
   /comment/edit:
     post:
       operationId: R502
@@ -1485,26 +1615,22 @@ paths:
         '404':
           description: 'Comment not found.'
 
-  /comment/delete:
-    post:
+######### DELETE COMMENT #########
+
+  /comment/delete/{id}:
+    delete:
       operationId: R503
       summary: 'R503: Delete Comment Operation'
       description: 'Deletes a comment. Access: OWN, ADM'
       tags:
         - 'M05: Comments'
 
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                id: 
-                  type: integer
-                  description: 'ID of the comment to delete'
-              required:
-                - id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
                 
       responses:
         '200': 
@@ -1513,6 +1639,8 @@ paths:
           description: 'Forbidden action.'
         '404':
           description: 'Comment not found.'
+
+######### LIKE COMMENT #########
 
   /comment/like:
     post:
@@ -1783,26 +1911,21 @@ paths:
 
 ######### DELETE GROUP #########
 
-  /group/delete:
+  /group/delete/{id}:
 
-    post:
+    delete:
       operationId: R608
       summary: 'R608: Delete Group Operation'
       description: 'Deletes a group. Access: OWN, ADM'
       tags:
         - 'M06: Groups'
 
-      requestBody:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
           required: true
-          content:
-            application/x-www-form-urlencoded:
-              schema:
-                type: object
-                properties:
-                  group_id:
-                    type: integer
-                required:
-                  - group_id
 
       responses:
         '302':
