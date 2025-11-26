@@ -6,9 +6,16 @@
 
 <div class="home-content">
     @auth
-    <div class="feed-toggle-container">
-        <a href="{{ route('home', ['timeline' => 'public']) }}" class="feed-tab @if (isset($activeTimeline) && $activeTimeline === 'public') active @endif"> Recent</a>
-        <a href="{{ route('home', ['timeline' => 'personalized']) }}" class="feed-tab @if(isset($activeTimeline) && $activeTimeline === 'personalized') active @endif">For You</a>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <a href="{{ route('home', ['timeline' => 'public']) }}" class="feed-tab @if (isset($activeTimeline) && $activeTimeline === 'public') active @endif"> Recent</a>
+            <a href="{{ route('home', ['timeline' => 'personalized']) }}" class="feed-tab @if(isset($activeTimeline) && $activeTimeline === 'personalized') active @endif">For You</a>
+        </div>
+
+        {{-- fixed Following button --}}
+        <div>
+            <a href="{{ route('home', ['timeline' => 'following']) }}" class="button following-button">Friend's Posts</a>
+        </div>
     </div>
     @endauth
     <div class="search-home">

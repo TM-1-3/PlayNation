@@ -18,9 +18,22 @@ class TimelineController extends Controller {
 
         $query = Post::with(['user', 'labels']);
 
-        if ($user && $timelineType === 'personalized') {
+        if ($user && $timelineType === 'following') {
+            // avoid ambiguity between registered_user.id_user and user_friend.id_user
+            $followingIds = $user->following()->pluck('registered_user.id_user')->toArray();
 
-            $userLabels = $user->labels()->pluck('label.id_label')->toArray();
+            // if user follows nobody return empty collection quickly
+            if (empty($followingIds)) {
+                $posts = collect();
+                return view('pages.home', ['posts' => $posts, 'activeTimeline' => $timelineType]);
+            }
+
+            $query->whereIn('id_creator', $followingIds)
+                  ->orderByDesc('date');
+
+        } else if ($user && $timelineType === 'personalized') {
+
+            $userLabels = $user->labels()->pluck('id_label')->toArray();
             if (!empty($userLabels)) {
                 $query->withCount(['labels as relevance' => function ($q) use ($userLabels) {
                     $q->whereIn('label.id_label', $userLabels);
@@ -31,7 +44,7 @@ class TimelineController extends Controller {
             else {
                 $query->orderByDesc('date');
             }
-        } 
+        }  
         else {
             $query->orderByDesc('date');
         }
