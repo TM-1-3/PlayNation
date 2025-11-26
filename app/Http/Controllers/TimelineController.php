@@ -36,6 +36,28 @@ class TimelineController extends Controller {
             $query->orderByDesc('date');
         }
 
+        // Filter posts: only show posts from public profiles, from friends, or own posts
+        if ($user) {
+            $query->where(function($q) use ($user) {
+                $q->where('id_creator', $user->id_user) // Own posts
+                ->orWhereHas('user', function($userQuery) {
+                    $userQuery->where('is_public', true);
+                })
+                ->orWhereHas('user', function($userQuery) use ($user) {
+                    $userQuery->whereIn('id_user', function($subQuery) use ($user) {
+                        $subQuery->select('id_friend')
+                            ->from('user_friend')
+                            ->where('id_user', $user->id_user);
+                    });
+                });
+            });
+        } else {
+            // Guest users can only see public posts
+            $query->whereHas('user', function($userQuery) {
+                $userQuery->where('is_public', true);
+            });
+        }
+
         $posts = $query->get();
 
         return view('pages.home', ['posts' => $posts, 'activeTimeline' => $timelineType]);
