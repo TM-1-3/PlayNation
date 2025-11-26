@@ -152,43 +152,9 @@ class PostController extends Controller
         return redirect()->route('profile.show', $post->id_creator ?? Auth::id())->with('status', 'Post updated successfully');
     }
 
+    
+
     public function destroy($id)
-    {
-        $post = Post::find($id);
-
-  
-    if (!$post) {
-        return response()->json([
-            'success' => true, 
-            'message' => 'Post already deleted.'
-        ]);
-    }
-
-
-    if (Auth::id() != $post->id_creator) {
-        return response()->json([
-            'success' => false, 
-            'message' => 'Unauthorized'
-        ], 403);
-    }
-
-
-    if (!empty($post->image)) {
-        $imagePath = public_path($post->image);
-        if (File::exists($imagePath)) {
-            File::delete($imagePath);
-        }
-    }
-
-    $post->delete();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Post deleted successfully'
-    ]);
-    }
-
-    public function destroySpecial($id)
     {
 
     $post = Post::findOrFail($id);

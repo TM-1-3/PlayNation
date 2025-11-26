@@ -50,11 +50,6 @@
                             @endif
                             
                             <span class="post-time">{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</span>
-                            @if(Auth::check() && $post->user && Auth::user()->id_user == $post->user->id_user)
-                                <button class="button-delete" data-id="{{ $post->id_post }}" title="Delete Post">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            @endif
 
 
                         </div>
