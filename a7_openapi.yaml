@@ -305,7 +305,7 @@ paths:
     get:
       operationId: R110
       summary: 'R110: Edit user profile page.'
-      description: 'Shows the page for edittin the profile of the user. Access: OWN'
+      description: 'Shows the page for editting the profile of the user. Access: OWN'
       tags:
         - 'M01: Authentication and Users'
       responses:
@@ -1206,6 +1206,18 @@ paths:
 ######### POST CREATE #########
 
   /post/create:
+  
+    get:
+      operationId: R306
+      summary: 'R306: Create Post Form'
+      description: 'Show the form to create a new post. Access: AUTH'
+      tags:
+        - 'M03: Posts'
+      responses:
+        '200':
+          description: 'OK. Show Create Post UI.'
+        '403':
+          description: 'Forbidden. User not logged in.'
     post:
       operationId: R302
       summary: 'R302: Create Post'
@@ -1247,7 +1259,7 @@ paths:
 
 ######### POST EDIT ######### 
 
-  /post/edit:
+  /post/{id}/edit:
     post:
       operationId: R303
       summary: 'R303: Edit Post Operation'
