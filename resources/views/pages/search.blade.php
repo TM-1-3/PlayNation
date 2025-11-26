@@ -15,7 +15,7 @@
             <a href="{{ route('profile.show',$user->id_user) }}" class="search-username">{{ $user->username }}</a>
         </div>
         @endforeach
-    <div>
+    </div>
 </div>
 
 @endsection

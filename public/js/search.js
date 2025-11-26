@@ -183,7 +183,7 @@ function searchHandler(response, searchType) {
         });
       }
     }
-  } else if (searchType === 'search-user') {
+  } else if (searchType === 'search-user-input') {
     const userList = document.getElementById('users-list');
     if (response.users && userList) {
       userList.innerHTML = '';
@@ -191,7 +191,7 @@ function searchHandler(response, searchType) {
         const noResults = document.createElement('div');
         noResults.className = 'no-results';
         noResults.innerHTML = '<i class="fa-solid fa-user-slash"></i><p>No users found</p>';
-        searchContainer.appendChild(noResults);
+        userList.appendChild(noResults);
       } else {
         response.users.forEach(user => {
           const userDiv = document.createElement('div');
@@ -200,7 +200,7 @@ function searchHandler(response, searchType) {
             <a href="/profile/${user.id_user}" class="search-name">${user.name}</a>
             <a href="/profile/${user.id_user}" class="search-username">${user.username}</a>
           `;
-          searchContainer.appendChild(userDiv);
+          userList.appendChild(userDiv);
         });
       }
     }

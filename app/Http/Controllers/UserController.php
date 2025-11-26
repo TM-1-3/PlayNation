@@ -101,7 +101,7 @@ class UserController extends Controller
         $users = User::query();
         
         if($search) {
-            $posts->where(function($query) use ($search) {
+            $users->where(function($query) use ($search) {
                 $query->where('name', 'ILIKE', "%{$search}%")
                     ->orWhere('username', 'ILIKE', "%{$search}%");
             });
