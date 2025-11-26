@@ -94,5 +94,28 @@ class UserController extends Controller
         return redirect()->route('profile.show', $user->id_user)
             ->with('status', 'Profile updated successfully!');
     }
+
+    public function searchUser(Request $request)
+    {
+        $search = $request->get('search');
+        $users = User::query();
+        
+        if($search) {
+            $users->where(function($query) use ($search) {
+                $query->where('name', 'ILIKE', "%{$search}%")
+                    ->orWhere('username', 'ILIKE', "%{$search}%");
+            });
+        }
+        
+        $users = $users->get();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'users' => $users
+            ]);
+        }
+
+        return view('pages.search', ['users' => $users]);
+    }
 }
 

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ asset('css/home.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/search.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth/auth.css') }}">
     <link rel="stylesheet" href="{{ asset('css/auth/setup.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,6 +36,11 @@
             <a href="{{ url('/home') }}" class="nav-item {{ request()->is('/') || request()->routeIs('home') ? 'active' : '' }}">
                 <i class="fa-solid fa-house nav-icon"></i> 
                 Feed
+            </a>
+
+            <a href="{{ route('search.users') }}" class="nav-item">
+                <i class="fa-solid fa-house nav-icon"></i> 
+                Search Users
             </a>
 
             @if(Auth::check())

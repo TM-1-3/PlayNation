@@ -3,9 +3,14 @@ if (searchUserAdmin) {
     searchUserAdmin.addEventListener('submit', searchRequest);
 }
 
-const searchHome = document.getElementById('search-home');
-if (searchHome) {
-  searchHome.addEventListener('input', searchRequest);
+const searchPost = document.getElementById('search-home');
+if (searchPost) {
+  searchPost.addEventListener('input', searchRequest);
+}
+
+const searchUser = document.getElementById('search-user-input');
+if (searchUser) {
+  searchUser.addEventListener('input', searchRequest);
 }
 
 /**
@@ -175,6 +180,27 @@ function searchHandler(response, searchType) {
           
           postElement.innerHTML = postHTML;
           timeline.appendChild(postElement);
+        });
+      }
+    }
+  } else if (searchType === 'search-user-input') {
+    const userList = document.getElementById('users-list');
+    if (response.users && userList) {
+      userList.innerHTML = '';
+      if (response.users.length === 0) {
+        const noResults = document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.innerHTML = '<i class="fa-solid fa-user-slash"></i><p>No users found</p>';
+        userList.appendChild(noResults);
+      } else {
+        response.users.forEach(user => {
+          const userDiv = document.createElement('div');
+          userDiv.className = 'user-search';
+          userDiv.innerHTML = `
+            <a href="/profile/${user.id_user}" class="search-name">${user.name}</a>
+            <a href="/profile/${user.id_user}" class="search-username">${user.username}</a>
+          `;
+          userList.appendChild(userDiv);
         });
       }
     }
