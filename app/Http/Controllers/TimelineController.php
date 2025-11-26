@@ -90,4 +90,5 @@ class TimelineController extends Controller {
         
         return view('pages.home', ['posts' => $posts]);
     }
+
 }

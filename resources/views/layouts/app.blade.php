@@ -37,6 +37,11 @@
                 Feed
             </a>
 
+            <a href="{{ route('search.users') }}" class="nav-item">
+                <i class="fa-solid fa-house nav-icon"></i> 
+                Search Users
+            </a>
+
             @if(Auth::check())
                     {{-- auth user zone --}}
 
