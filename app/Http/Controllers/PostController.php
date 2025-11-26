@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Label;
+use Illuminate\Support\Facades\File;
 
 class PostController extends Controller
 {
@@ -37,7 +38,10 @@ class PostController extends Controller
 
         $imagePath = '';
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', 'public');
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('img/posts'), $filename);
+            $imagePath = 'img/posts/' . $filename;
         }
 
         $post = Post::create([
@@ -109,11 +113,16 @@ class PostController extends Controller
 
         // handle image update: store new and delete old if replaced
         if ($request->hasFile('image')) {
-            $newPath = $request->file('image')->store('posts', 'public');
-            if (!empty($post->image)) {
-                Storage::disk('public')->delete($post->image);
+            if (!empty($post->image) && File::exists(public_path($post->image))) {
+                File::delete(public_path($post->image));
             }
-            $post->image = $newPath;
+
+
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('img/posts'), $filename);
+            
+            $post->image = 'img/posts/' . $filename;
         }
 
         $post->description = $request->description ?? $post->description;
@@ -145,20 +154,34 @@ class PostController extends Controller
 
     public function destroy($id)
     {
-        $post = Post::findOrFail($id);
+        $post = Post::find($id);
 
-        if (Auth::id() != $post->id_creator) {
-            return redirect()->back()->withErrors(['form' => 'Unauthorized']);
+    if (!$post) {
+        return response()->json([
+            'success' => true, 
+            'message' => 'Post already deleted.'
+        ]);
+    }
+
+    if (Auth::id() != $post->id_creator) {
+        return response()->json([
+            'success' => false, 
+            'message' => 'Unauthorized'
+        ], 403);
+    }
+
+    if (!empty($post->image)) {
+        $imagePath = public_path($post->image);
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
         }
+    }
 
-        // delete stored image if any
-        if (!empty($post->image)) {
-            Storage::disk('public')->delete($post->image);
-        }
+    $post->delete();
 
-        $ownerId = $post->id_creator;
-        $post->delete();
-
-        return redirect()->route('profile.show', $ownerId)->with('status', 'Post deleted successfully');
+    return response()->json([
+        'success' => true,
+        'message' => 'Post deleted successfully'
+    ]);
     }
 }

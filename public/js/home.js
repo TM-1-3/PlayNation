@@ -7,7 +7,7 @@ $(document).ready(function() {
 
 
         $.ajax({
-            url: '/post/' + postId,
+            url: '/post/' + idPost,
             type: 'DELETE',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content')

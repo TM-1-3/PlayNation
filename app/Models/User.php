@@ -8,8 +8,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Post;
-use App\Models\User;
-
 
 class User extends Authenticatable
 {
