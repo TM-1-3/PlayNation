@@ -47,9 +47,13 @@
       <input type="text" id="new_label" name="new_label" value="{{ old('new_label') }}">
       @error('new_label') <div style="color:red">{{ $message }}</div> @enderror
 
-      <hr>
-      <div style="margin-top:2em; display:flex; gap:10px;">
-        <button type="submit" class="button">Save</button>
+      <br>
+      <div style="margin-top:2em; display:flex; gap:10px; backgroud-color:red;">
+        <form method="PUT" action="{{ route('post.update', $post->id_post) }}" onsubmit="return confirm('Delete this post?');" style="display:inline;">
+          @csrf
+          @method('PUT')
+          <button type="submit" class="button">Save</button>
+        </form>
 
         <form method="POST" action="{{ route('post.destroy', $post->id_post) }}" onsubmit="return confirm('Delete this post?');" style="display:inline;">
           @csrf
