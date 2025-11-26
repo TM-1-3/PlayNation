@@ -76,19 +76,6 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        // Upload Image
-        /*if ($request->hasFile('profile_picture')) {
-    
-            if ($user->profile_picture && $user->profile_picture !== 'img/default-user.png') {
-                
-                $oldPath = str_replace('storage/', '', $user->profile_picture);
-                Storage::disk('public')->delete($oldPath);
-            }
-
-            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $user->profile_picture = 'storage/' . $path;
-        }*/
-
         $filename = '';
         if ($request->hasFile('profile_picture')) {
             if (!empty($user->id_user) && File::exists(public_path($user->profile_picture))) {

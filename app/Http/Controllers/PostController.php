@@ -156,32 +156,19 @@ class PostController extends Controller
     {
         $post = Post::find($id);
 
-    if (!$post) {
-        return response()->json([
-            'success' => true, 
-            'message' => 'Post already deleted.'
-        ]);
-    }
-
-    if (Auth::id() != $post->id_creator) {
-        return response()->json([
-            'success' => false, 
-            'message' => 'Unauthorized'
-        ], 403);
-    }
-
-    if (!empty($post->image)) {
-        $imagePath = public_path($post->image);
-        if (File::exists($imagePath)) {
-            File::delete($imagePath);
+        if (!$post) {
+            return redirect()->route('home');
         }
-    }
 
-    $post->delete();
+        if (!empty($post->image)) {
+            $imagePath = public_path($post->image);
+            if (File::exists($imagePath)) {
+                File::delete($imagePath);
+            }
+        }
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Post deleted successfully'
-    ]);
+        $post->delete();
+
+        return redirect()->route('profile.show', Auth::id())->with('status', 'Post deleted successfully');
     }
 }
