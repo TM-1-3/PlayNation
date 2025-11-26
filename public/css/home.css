@@ -86,3 +86,19 @@
     color: #c0392b;
 }
 
+/* fixed following button */
+.following-button {
+  position: fixed;
+  top: 36px;
+  right: 36px;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* move to bottom on small screens so it doesn't overlap header */
+@media (max-width: 600px) {
+  .following-button {
+    top: auto;
+    bottom: 16px;
+  }
+}
