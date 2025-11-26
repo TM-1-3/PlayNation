@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Label;
 use Illuminate\Support\Facades\File;
 
@@ -156,19 +155,38 @@ class PostController extends Controller
     {
         $post = Post::find($id);
 
-        if (!$post) {
-            return redirect()->route('home');
+    // 2. If the post doesn't exist, tell JS it's "success" (so it removes the HTML)
+    if (!$post) {
+        return response()->json([
+            'success' => true, 
+            'message' => 'Post already deleted.'
+        ]);
+    }
+
+    // 3. Check Authorization (Return JSON, not a redirect)
+    if (Auth::id() != $post->id_creator) {
+        return response()->json([
+            'success' => false, 
+            'message' => 'Unauthorized'
+        ], 403);
+    }
+
+    // 4. Delete Image
+    // NOTE: I updated this to match your 'store' method which uses public_path
+    if (!empty($post->image)) {
+        $imagePath = public_path($post->image);
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
         }
+    }
 
-        if (!empty($post->image)) {
-            $imagePath = public_path($post->image);
-            if (File::exists($imagePath)) {
-                File::delete($imagePath);
-            }
-        }
+    // 5. Delete the Post
+    $post->delete();
 
-        $post->delete();
-
-        return redirect()->route('profile.show', Auth::id())->with('status', 'Post deleted successfully');
+    // 6. Return JSON response for your JavaScript
+    return response()->json([
+        'success' => true,
+        'message' => 'Post deleted successfully'
+    ]);
     }
 }
