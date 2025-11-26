@@ -33,7 +33,7 @@ class TimelineController extends Controller {
 
         } else if ($user && $timelineType === 'personalized') {
 
-            $userLabels = $user->labels()->pluck('id_label')->toArray();
+            $userLabels = $user->labels()->pluck('label.id_label')->toArray();
             if (!empty($userLabels)) {
                 $query->withCount(['labels as relevance' => function ($q) use ($userLabels) {
                     $q->whereIn('label.id_label', $userLabels);
