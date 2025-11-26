@@ -55,7 +55,7 @@
           <button type="submit" class="button">Save</button>
         </form>
 
-        <form method="POST" action="{{ route('post.destroy', $post->id_post) }}" onsubmit="return confirm('Delete this post?');" style="display:inline;">
+        <form method="POST" action="{{ route('post.destroySpecial', $post->id_post) }}" onsubmit="return confirm('Delete this post?');" style="display:inline;">
           @csrf
           @method('DELETE')
           <button type="submit" class="button" style="background:#e74c3c; color:#fff;">Delete Post</button>
