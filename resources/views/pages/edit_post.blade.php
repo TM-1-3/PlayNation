@@ -3,65 +3,75 @@
 @section('title', 'Edit Post')
 
 @section('content')
-<div class="centered-content">
-  <div class="card" style="width:100%; max-width:600px; padding:2em;">
-    <h2>Edit Post</h2>
+<div class="flex flex-col items-center justify-center text-center min-h-[60vh] pb-5">
+  <div class="w-full max-w-2xl bg-white rounded-lg shadow-md p-8">
+    <h2 class="text-2xl text-blue-600 mb-6">Edit Post</h2>
 
     @if($errors->has('form'))
-      <div style="color:red">{{ $errors->first('form') }}</div>
+      <div class="text-red-600 text-sm mb-4">{{ $errors->first('form') }}</div>
     @endif
 
-    <form method="POST" action="{{ route('post.update', $post->id_post) }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('post.update', $post->id_post) }}" enctype="multipart/form-data" class="space-y-4">
       @csrf
       @method('PUT')
 
-      <label>Current image</label>
-      @if($post->image)
-        <div style="margin-bottom:10px;">
-          <img src="{{ asset('storage/' . ltrim($post->image, '/')) }}" alt="post image" style="max-width:100%;">
-        </div>
-      @else
-        <div class="card">No image</div>
-      @endif
+      <div>
+        <label class="block mb-2 font-medium text-gray-700 text-left">Current image</label>
+        @if($post->image)
+          <div class="mb-2.5">
+            <img src="{{ asset('storage/' . ltrim($post->image, '/')) }}" alt="post image" class="max-w-full rounded">
+          </div>
+        @else
+          <div class="rounded-lg shadow-sm p-4 mb-4 text-gray-600">No image</div>
+        @endif
+      </div>
 
-      <label for="image">Replace image (optional)</label>
-      <input type="file" id="image" name="image">
-      @error('image') <div style="color:red">{{ $message }}</div> @enderror
+      <div>
+        <label for="image" class="block mb-2 font-medium text-gray-700 text-left">Replace image (optional)</label>
+        <input type="file" id="image" name="image" class="w-full p-2 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+        @error('image') <div class="text-red-600 text-sm mt-1 text-left">{{ $message }}</div> @enderror
+      </div>
 
-      <label for="description">Description</label>
-      <textarea id="description" name="description" style="height:100px; width:100%;">{{ old('description', $post->description) }}</textarea>
-      @error('description') <div style="color:red">{{ $message }}</div> @enderror
+      <div>
+        <label for="description" class="block mb-2 font-medium text-gray-700 text-left">Description</label>
+        <textarea id="description" name="description" class="h-[100px] w-full p-3 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">{{ old('description', $post->description) }}</textarea>
+        @error('description') <div class="text-red-600 text-sm mt-1 text-left">{{ $message }}</div> @enderror
+      </div>
 
-      <label for="labels">Labels (select existing)</label>
-      <select id="labels" name="labels[]" multiple size="6" style="width:100%;">
-        @foreach($labels as $label)
-          <option value="{{ $label->id_label }}" {{ ($post->labels->pluck('id_label')->contains($label->id_label) || (is_array(old('labels')) && in_array($label->id_label, old('labels')))) ? 'selected' : '' }}>
-            {{ $label->designation }}
-          </option>
-        @endforeach
-      </select>
-      <small>Hold Ctrl/Cmd to select multiple</small>
-      @error('labels') <div style="color:red">{{ $message }}</div> @enderror
+      <div>
+        <label for="labels" class="block mb-2 font-medium text-gray-700 text-left">Labels (select existing)</label>
+        <select id="labels" name="labels[]" multiple size="6" class="w-full p-2 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+          @foreach($labels as $label)
+            <option value="{{ $label->id_label }}" {{ ($post->labels->pluck('id_label')->contains($label->id_label) || (is_array(old('labels')) && in_array($label->id_label, old('labels')))) ? 'selected' : '' }}>
+              {{ $label->designation }}
+            </option>
+          @endforeach
+        </select>
+        <small class="text-gray-600 text-left block mt-1">Hold Ctrl/Cmd to select multiple</small>
+        @error('labels') <div class="text-red-600 text-sm mt-1 text-left">{{ $message }}</div> @enderror
+      </div>
 
-      <label for="new_label">Or create new label</label>
-      <input type="text" id="new_label" name="new_label" value="{{ old('new_label') }}">
-      @error('new_label') <div style="color:red">{{ $message }}</div> @enderror
+      <div>
+        <label for="new_label" class="block mb-2 font-medium text-gray-700 text-left">Or create new label</label>
+        <input type="text" id="new_label" name="new_label" value="{{ old('new_label') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+        @error('new_label') <div class="text-red-600 text-sm mt-1 text-left">{{ $message }}</div> @enderror
+      </div>
 
       <br>
-      <div style="margin-top:2em; display:flex; gap:10px; backgroud-color:red;">
-        <form method="PUT" action="{{ route('post.update', $post->id_post) }}" onsubmit="return confirm('Delete this post?');" style="display:inline;">
+      <div class="flex gap-2.5">
+        <form method="PUT" action="{{ route('post.update', $post->id_post) }}" onsubmit="return confirm('Delete this post?');" class="inline">
           @csrf
           @method('PUT')
-          <button type="submit" class="button">Save</button>
+          <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded border border-blue-700 transition-colors hover:bg-blue-700 cursor-pointer">Save</button>
         </form>
 
-        <form method="POST" action="{{ route('post.destroy', $post->id_post) }}" onsubmit="return confirm('Delete this post?');" style="display:inline;">
+        <form method="POST" action="{{ route('post.destroy', $post->id_post) }}" onsubmit="return confirm('Delete this post?');" class="inline">
           @csrf
           @method('DELETE')
-          <button type="submit" class="button" style="background:#e74c3c; color:#fff;">Delete Post</button>
+          <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded border border-red-700 transition-colors hover:bg-red-700 cursor-pointer">Delete Post</button>
         </form>
 
-        <a href="{{ route('profile.show', $post->id_creator) }}" class="button button-outline">Cancel</a>
+        <a href="{{ route('profile.show', $post->id_creator) }}" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">Cancel</a>
       </div>
     </form>
   </div>

@@ -5,35 +5,36 @@
 @section('content')
 
 {{-- profile principal block --}}
-<div class="row">
+<div class="max-w-6xl mx-auto pt-10 pr-10 pb-5">
+<div class="flex flex-wrap gap-8">
     {{-- left column photo and data --}}
-    <div class="column column-33 profile-sidebar">
+    <div class="w-full md:w-1/3 md:min-w-[250px] text-center">
 
             <img src="{{ $user->profile_picture ? asset($user->profile_picture) : asset('img/default-user.png') }}" 
                 alt="{{ $user->name }}" 
-                class="profile-avatar">
+                class="w-[150px] h-[150px] rounded-full object-cover border-4 border-blue-900 block mx-auto mb-4 shadow-md">
             
-            <h1 class="profile-name">{{ $user->name }}</h1>
-            <h4 class="profile-username">@ {{ $user->username }}</h4>
+            <h1 class="mb-1 text-2xl font-bold">{{ $user->name }}</h1>
+            <h4 class="text-gray-500 font-normal mb-6 text-lg">{{ $user->username }}</h4>
             
             {{-- Bio --}}
-            <p>
-                <em>"{{ $user->biography ?? 'This user has no bio yet.' }}"</em>
+            <p class="italic text-gray-600 mb-6">
+                "{{ $user->biography ?? 'This user has no bio yet.' }}"
             </p>
 
             
-            <div class="profile-actions">
+            <div class="mt-5 flex justify-center items-center gap-4 flex-wrap">
                 
                 @if(Auth::check() && Auth::id() == $user->id_user)
                     {{-- My profile --}}
 
                     {{-- left edit profile button --}}
-                    <a href="{{ route('profile.edit', $user->id_user) }}" class="button">
+                    <a href="{{ route('profile.edit', $user->id_user) }}" class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700">
                         ✏️ Edit Profile
                     </a>
 
                     {{-- right placeholder button --}} <!-- eddit later but i like a setting ideia -->
-                    <button class="button button-outline" title="Feature para breve">
+                    <button class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white" title="Feature para breve">
                         ⚙️ Settings
                     </button>                    
                     
@@ -41,14 +42,14 @@
                     {{-- others profile --}}
                     
                     {{-- add friend button --}}
-                    <button class="button"> + add fiend </button>
+                    <button class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700"> + add fiend </button>
                     
                     {{-- msg button --}}
-                    <a href="#" class="button button-outline">💬 Message</a>
+                    <a href="#" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">💬 Message</a>
                 
                 @else
                     {{-- not logged in--}}
-                    <a href="{{ route('login') }}" class="button button-outline">Login to start interacting</a>
+                    <a href="{{ route('login') }}" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">Login to start interacting</a>
                 @endif
 
             </div>
@@ -56,53 +57,54 @@
     </div>
 
     {{-- right cloumn stats and personal posts feed --}}
-    <div class="column column-67">
+    <div class="flex-1 min-w-0">
         
         {{-- stats --}}
-        <div class="row profile-stats">
-            <div class="column stat-item">
-                <h3>{{ $user->posts_count ?? $posts->count() }}</h3>
-                <small>Posts</small>
+        <div class="flex justify-around mb-8 border-b border-gray-200 pb-4">
+            <div class="text-center">
+                <h3 class="mb-0 text-blue-600 text-2xl font-bold">{{ $user->posts_count ?? $posts->count() }}</h3>
+                <small class="text-gray-600">Posts</small>
             </div>
-            <div class="column stat-item">
-                <h3>{{ $user->followers_count ?? 0 }}</h3>
-                <small>Followers</small>
+            <div class="text-center">
+                <h3 class="mb-0 text-blue-600 text-2xl font-bold">{{ $user->followers_count ?? 0 }}</h3>
+                <small class="text-gray-600">Followers</small>
             </div>
-            <div class="column stat-item">
-                <h3>{{ $user->following_count ?? 0 }}</h3>
-                <small>Following</small>
+            <div class="text-center">
+                <h3 class="mb-0 text-blue-600 text-2xl font-bold">{{ $user->following_count ?? 0 }}</h3>
+                <small class="text-gray-600">Following</small>
             </div>
         </div>
 
         {{-- users feed posts --}}
-        <h3>Posts</h3>
+        <h3 class="text-xl font-bold mb-4">Posts</h3>
         
         @if($posts->isEmpty())
-            <div class="card empty-state">
+            <div class="rounded-lg shadow-sm p-8 mb-8 text-center text-gray-500">
                 <p>No posts yet.</p>
             </div>
         @else
             @foreach($posts as $post)
-                <div class="card" style="position:relative;">
+                <div class="rounded-lg shadow-sm p-8 mb-8 relative">
                     @if(Auth::check() && Auth::id() == $post->id_creator)
-                        <div style="position:absolute; top:8px; right:8px;">
-                            <a href="{{ route('post.edit', $post->id_post) }}" class="button button-small" title="Edit post">Edit Post</a>
+                        <div class="absolute top-2 right-2">
+                            <a href="{{ route('post.edit', $post->id_post) }}" class="bg-blue-600 text-white py-1 px-3 text-sm rounded border border-blue-700 transition-colors hover:bg-blue-700 no-underline" title="Edit post">Edit Post</a>
                         </div>
                     @endif
 
                     @if($post->image)
-                            <img class="post-image" src="{{ asset($post->image) }}" alt="Post Content" style="width: 30vw;">
+                            <img class="w-full max-w-md block border-t border-gray-200" src="{{ asset($post->image) }}" alt="Post Content">
                     @endif
 
                     @if($post->description)
-                        <p>{{ $post->description }}</p>
+                        <p class="my-4">{{ $post->description }}</p>
                     @endif
-                    <small>{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</small>
+                    <small class="text-gray-600">{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</small>
                 </div>
             @endforeach
         @endif
 
     </div>
+</div>
 </div>
 
 @endsection

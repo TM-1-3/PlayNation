@@ -82,6 +82,10 @@ Route::middleware(['auth'])->group(function () {
         return view('pages.placeholder', ['title' => 'Groups']);
     })->name('groups.index');
 
+    Route::get('/mygroups', function () {
+        return view('pages.placeholder', ['title' => 'My Groups']);
+    })->name('mygroups.index');
+
     // Post
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
     Route::post('/post', [PostController::class, 'store'])->name('post.store');

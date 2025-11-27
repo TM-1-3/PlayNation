@@ -128,11 +128,11 @@ function searchHandler(response, searchType) {
     if (response.posts && timeline) {
       timeline.innerHTML = '';
       if (response.posts.length === 0) {
-        timeline.innerHTML = '<p style="text-align:center;">No posts found</p>';
+        timeline.innerHTML = '<div class="text-center py-10 text-gray-500"><p>No posts found</p></div>';
       } else {
         response.posts.forEach(post => {
           const postElement = document.createElement('div');
-          postElement.className = 'post';
+          postElement.className = 'bg-white border border-gray-200 rounded-lg mb-5 text-left flex flex-col';
           postElement.id = `post-${post.id_post}`;
           
           const userProfilePic = post.user?.profile_picture || 'img/default_avatar.png';
@@ -142,17 +142,17 @@ function searchHandler(response, searchType) {
           const timeAgo = getTimeAgo(postDate);
           
           let postHTML = `
-            <div class="post-header">
+            <div class="flex items-center p-3.5">
               ${userId ? `<a href="/profile/${userId}">` : ''}
-                <img class="author" src="${userProfilePic}" alt="avatar">
+                <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" src="${userProfilePic}" alt="avatar">
               ${userId ? '</a>' : ''}
-              ${userId ? `<a href="/profile/${userId}" class="username">${username}</a>` : `<span class="username">${username}</span>`}
-              <span class="post-time">${timeAgo}</span>
+              ${userId ? `<a href="/profile/${userId}" class="font-semibold text-sm text-gray-800 no-underline">${username}</a>` : `<span class="font-semibold text-sm text-gray-800">${username}</span>`}
+              <span class="ml-auto text-xs text-gray-500">${timeAgo}</span>
           `;
           
           if (post.is_owner) {
             postHTML += `
-              <button class="button-delete" data-id="${post.id_post}" title="Delete Post">
+              <button class="bg-transparent border-none cursor-pointer text-red-600 p-1 text-sm transition-colors hover:text-red-800 ml-2" data-id="${post.id_post}" title="Delete Post">
                 <i class="fa-solid fa-trash"></i>
               </button>
             `;
@@ -161,19 +161,19 @@ function searchHandler(response, searchType) {
           postHTML += '</div>';
           
           if (post.image) {
-            postHTML += `<img class="post-image" src="${post.image}" alt="Post Content">`;
+            postHTML += `<img class="w-full block border-t border-gray-200" src="${post.image}" alt="Post Content">`;
           }
           
-          postHTML += '<div class="caption">';
+          postHTML += '<div class="py-3 px-4 text-sm leading-relaxed">';
           if (userId) {
-            postHTML += `<a href="/profile/${userId}" class="caption-user">${username}</a> `;
+            postHTML += `<a href="/profile/${userId}" class="font-semibold mr-1 text-gray-800 no-underline">${username}</a> `;
           }
           postHTML += `${post.description}</div>`;
           
           if (post.labels && post.labels.length > 0) {
-            postHTML += '<div class="post-tags">';
+            postHTML += '<div class="px-4 pb-4 flex gap-1 flex-wrap">';
             post.labels.forEach(label => {
-              postHTML += `<span class="tag">${label.designation}</span>`;
+              postHTML += `<span class="bg-blue-500 text-white text-xs py-1 px-2 rounded font-semibold">${label.designation}</span>`;
             });
             postHTML += '</div>';
           }
@@ -189,16 +189,16 @@ function searchHandler(response, searchType) {
       userList.innerHTML = '';
       if (response.users.length === 0) {
         const noResults = document.createElement('div');
-        noResults.className = 'no-results';
-        noResults.innerHTML = '<i class="fa-solid fa-user-slash"></i><p>No users found</p>';
+        noResults.className = 'text-center py-10 text-gray-500';
+        noResults.innerHTML = '<i class="fa-solid fa-user-slash text-4xl mb-4"></i><p>No users found</p>';
         userList.appendChild(noResults);
       } else {
         response.users.forEach(user => {
           const userDiv = document.createElement('div');
-          userDiv.className = 'user-search';
+          userDiv.className = 'bg-white border border-gray-200 rounded-lg p-5 transition-all hover:shadow-md hover:border-blue-400';
           userDiv.innerHTML = `
-            <a href="/profile/${user.id_user}" class="search-name">${user.name}</a>
-            <a href="/profile/${user.id_user}" class="search-username">${user.username}</a>
+            <a href="/profile/${user.id_user}" class="block text-lg font-semibold text-gray-800 mb-1 no-underline transition-colors hover:text-blue-600">${user.name}</a>
+            <a href="/profile/${user.id_user}" class="block text-sm text-gray-500 no-underline transition-colors hover:text-blue-500">${user.username}</a>
           `;
           userList.appendChild(userDiv);
         });

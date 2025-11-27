@@ -13,46 +13,46 @@
 
 @section('content')
 
-<div class="card setup-container">
-    <img class="logo" src = "/img/logo.png">
-    <h2>Profile Setup</h2>
-    <p style="text-align: center; color: #666; margin-bottom: 20px;">Finish Setting Up Your Profile</p>
+<div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8 mt-12">
+    <img class="mx-auto mb-6 max-w-[200px]" src="/img/logo.png" alt="Logo">
+    <h2 class="text-center text-2xl text-blue-600 mb-4">Profile Setup</h2>
+    <p class="text-center text-gray-600 mb-5">Finish Setting Up Your Profile</p>
 
-    <form method="POST" action="{{ route('profile.setup.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('profile.setup.store') }}" enctype="multipart/form-data" class="space-y-4">
         @csrf
 
         <div>
-            <label for="profile_picture">Profile Picture</label>
-            <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
-            @error('profile_picture') <div class="error">{{ $message }}</div> @enderror
+            <label for="profile_picture" class="block mb-2 font-medium text-gray-700">Profile Picture</label>
+            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="w-full p-2 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            @error('profile_picture') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
         </div>
 
         <div>
-            <label for="biography">Biography</label>
-            <textarea id="biography" name="biography" rows="3" placeholder="I love running and eating pizza..."></textarea>
-            @error('biography') <div class="error">{{ $message }}</div> @enderror
+            <label for="biography" class="block mb-2 font-medium text-gray-700">Biography</label>
+            <textarea id="biography" name="biography" rows="3" placeholder="I love running and eating pizza..." class="w-full p-3 border border-gray-300 rounded focus:border-blue-600 focus:outline-none"></textarea>
+            @error('biography') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
         </div>
 
-        <div class="privacy-toggle">
-            <label for="is_public" style="margin:0;">Make Profile Public?</label>
-            <input type="checkbox" id="is_public" name="is_public" checked>
+        <div class="flex items-center gap-2.5 my-4">
+            <input type="checkbox" id="is_public" name="is_public" checked class="w-4 h-4">
+            <label for="is_public" class="m-0 font-medium text-gray-700">Make Profile Public?</label>
         </div>
 
-        <label>Interests (Select all that apply)</label>
-        <div class="label-grid">
+        <label class="block mb-3 font-medium text-gray-700">Interests (Select all that apply)</label>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             @foreach($labels as $label)
-                <label class="label-option">
-                    <input type="checkbox" name="labels[]" value="{{ $label->id_label }}">
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="labels[]" value="{{ $label->id_label }}" class="hidden peer">
                     
-                    <div class="label-card">
-                        <img src="{{ asset($label->image) }}" alt="icon">
-                        <span>{{ $label->designation }}</span>
+                    <div class="bg-white border-2 border-gray-300 rounded-lg p-4 text-center transition-all hover:border-blue-500 hover:shadow-md peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                        <img src="{{ asset($label->image) }}" alt="icon" class="w-16 h-16 mx-auto mb-2 object-contain">
+                        <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-600">{{ $label->designation }}</span>
                     </div>
                 </label>
             @endforeach
         </div>
         
-        <button type="submit">Finish Setup</button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6">Finish Setup</button>
     </form>
 </div>
 

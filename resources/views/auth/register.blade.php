@@ -13,35 +13,45 @@
 
 @section('content')
 
-<div class="card">
-    <img class="logo" src = "/img/logo.png">
-    <h2 style="text-align: center;">Register</h2>
-    <form method="POST" action="{{ route('register.action') }}">
+<div class="mx-auto bg-white rounded-lg shadow-md p-8 my-12 w-[70vw]">
+    <img class="mx-auto mb-6 max-w-[200px]" src="/img/logo.png" alt="Logo">
+    <h2 class="text-center text-2xl text-blue-600 mb-6">Register</h2>
+    <form method="POST" action="{{ route('register.action') }}" class="space-y-4">
         @csrf
 
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required value="{{ old('name') }}">
-        @error('name') <div class="error">{{ $message }}</div> @enderror
+        <div>
+            <label for="name" class="block mb-2 font-medium text-gray-700">Name</label>
+            <input type="text" id="name" name="name" required value="{{ old('name') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            @error('name') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
+        </div>
 
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required value="{{ old('username') }}">
-        @error('username') <div class="error">{{ $message }}</div> @enderror
+        <div>
+            <label for="username" class="block mb-2 font-medium text-gray-700">Username</label>
+            <input type="text" id="username" name="username" required value="{{ old('username') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            @error('username') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
+        </div>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required value="{{ old('email') }}">
-        @error('email') <div class="error">{{ $message }}</div> @enderror
+        <div>
+            <label for="email" class="block mb-2 font-medium text-gray-700">Email</label>
+            <input type="email" id="email" name="email" required value="{{ old('email') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            @error('email') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
+        </div>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
-        @error('password') <div class="error">{{ $message }}</div> @enderror
+        <div>
+            <label for="password" class="block mb-2 font-medium text-gray-700">Password</label>
+            <input type="password" id="password" name="password" required class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            @error('password') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
+        </div>
 
-        <label for="password_confirmation">Confirm Password</label>
-        <input type="password" id="password_confirmation" name="password_confirmation" required>
+        <div>
+            <label for="password_confirmation" class="block mb-2 font-medium text-gray-700">Confirm Password</label>
+            <input type="password" id="password_confirmation" name="password_confirmation" required class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+        </div>
 
-        <button type="submit">Register</button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6">Register</button>
     </form>
 
-    <a href="{{ route('login') }}" class="link">Already have an account? Login</a>
+    <a href="{{ route('login') }}" class="block text-center mt-4 text-blue-600 no-underline text-sm hover:underline">Already have an account? Login</a>
 </div>
 
 @endsection

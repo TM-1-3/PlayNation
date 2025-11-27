@@ -13,33 +13,34 @@
 
 @section('content')
 
-<div class="card">
-    <img class="logo" src = "/img/logo.png">
-    <h2 style="text-align: center;">Login</h2>
-    <form method="POST" action="{{ route('login.action') }}">
+<div class="mx-auto bg-white rounded-lg shadow-md p-8 mt-12 w-[70vw]">
+    <img class="mx-auto mb-6 max-w-[200px]" src="/img/logo.png" alt="Logo">
+    <h2 class="text-center text-2xl text-blue-600 mb-6">Login</h2>
+    <form method="POST" action="{{ route('login.action') }}" class="space-y-4">
         @csrf
 
         <div>
-        <label for="login">Email or Username</label>
-        <input type="text" id="login" name="usernameEmail" required autofocus value="{{ old('login') }}">
+            <label for="login" class="block mb-2 font-medium text-gray-700">Email or Username</label>
+            <input type="text" id="login" name="usernameEmail" required autofocus value="{{ old('login') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+        </div>
 
         <div>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+            <label for="password" class="block mb-2 font-medium text-gray-700">Password</label>
+            <input type="password" id="password" name="password" required class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
         </div>
 
         @if ($errors->any())
-            <div class="error">
+            <div class="text-red-600 text-sm mt-1">
                 {{ $errors->first('email') }}
             </div>
         @endif
 
-        <button type="submit">Log in</button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6">Log in</button>
     </form>
-    <a href="{{ route('register') }}" style="display: block; text-align: center; margin-top: 15px; color: #2563eb; text-decoration: none; font-size: 0.9rem;">
+    <a href="{{ route('register') }}" class="block text-center mt-4 text-blue-600 no-underline text-sm hover:underline">
         Don't have an account? Register
     </a>
-    <a href="{{ route('home') }}" class="link" style="color: #6b7280; margin-top: 10px;">
+    <a href="{{ route('home') }}" class="block text-center mt-2.5 text-gray-500 no-underline text-sm hover:underline">
         Continue without logging in
     </a>
 </div>
