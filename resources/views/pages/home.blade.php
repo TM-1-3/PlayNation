@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="max-w-3xl mx-auto p-5 justify-center">
+<div class="max-w-3xl mx-auto p-5">
     @auth
     <div class="flex justify-between items-center mb-5">
         <div>

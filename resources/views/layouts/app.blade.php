@@ -23,7 +23,7 @@
         <a href="{{ url('/') }}" class="flex items-center mb-8 no-underline pl-2.5">
             <img src="{{ asset('img/playnation_logo.svg') }}" alt="PlayNation" class="h-[170px]"> 
         </a>
-        <nav class="flex flex-col gap-1 flex-grow">
+        <nav class="flex flex-col gap-0.5 flex-grow">
             
             <a href="{{ url('/home') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->is('/') || request()->routeIs('home') ? 'font-bold text-blue-600' : '' }}">
                 <i class="fa-solid fa-house w-8 text-xl text-center mr-2.5"></i> 
@@ -163,7 +163,7 @@
             </script>
         @endif
 
-        <section id="content" class="ml-64 p-8 min-h-screen bg-gray-50\">
+        <section id="content" class="ml-64 mt-5 p-8 min-h-screen bg-gray-50\">
             @yield('content')
         </section>
     </div>
