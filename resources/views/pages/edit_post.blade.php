@@ -58,7 +58,7 @@
       </div>
 
       <br>
-      <div class="mt-8 flex gap-2.5">
+      <div class="flex gap-2.5">
         <form method="PUT" action="{{ route('post.update', $post->id_post) }}" onsubmit="return confirm('Delete this post?');" class="inline">
           @csrf
           @method('PUT')
