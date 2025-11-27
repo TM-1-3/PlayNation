@@ -15,7 +15,7 @@
                 class="w-[150px] h-[150px] rounded-full object-cover border-4 border-blue-900 block mx-auto mb-4 shadow-md">
             
             <h1 class="mb-1 text-2xl font-bold">{{ $user->name }}</h1>
-            <h4 class="text-gray-500 font-normal mb-6 text-lg">@ {{ $user->username }}</h4>
+            <h4 class="text-gray-500 font-normal mb-6 text-lg">{{ $user->username }}</h4>
             
             {{-- Bio --}}
             <p class="italic text-gray-600 mb-6">

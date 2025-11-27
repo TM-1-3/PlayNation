@@ -198,7 +198,7 @@ function searchHandler(response, searchType) {
           userDiv.className = 'bg-white border border-gray-200 rounded-lg p-5 transition-all hover:shadow-md hover:border-blue-400';
           userDiv.innerHTML = `
             <a href="/profile/${user.id_user}" class="block text-lg font-semibold text-gray-800 mb-1 no-underline transition-colors hover:text-blue-600">${user.name}</a>
-            <a href="/profile/${user.id_user}" class="block text-sm text-gray-500 no-underline transition-colors hover:text-blue-500">@${user.username}</a>
+            <a href="/profile/${user.id_user}" class="block text-sm text-gray-500 no-underline transition-colors hover:text-blue-500">${user.username}</a>
           `;
           userList.appendChild(userDiv);
         });
