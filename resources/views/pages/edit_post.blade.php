@@ -3,7 +3,7 @@
 @section('title', 'Edit Post')
 
 @section('content')
-<div class="flex flex-col items-center justify-center text-center min-h-[60vh]">
+<div class="flex flex-col items-center justify-center text-center min-h-[60vh] pb-5">
   <div class="w-full max-w-2xl bg-white rounded-lg shadow-md p-8">
     <h2 class="text-2xl text-blue-600 mb-6">Edit Post</h2>
 
@@ -22,7 +22,7 @@
             <img src="{{ asset('storage/' . ltrim($post->image, '/')) }}" alt="post image" class="max-w-full rounded">
           </div>
         @else
-          <div class="bg-green-200 rounded-lg shadow-sm p-4 mb-4 text-gray-600">No image</div>
+          <div class="rounded-lg shadow-sm p-4 mb-4 text-gray-600">No image</div>
         @endif
       </div>
 
