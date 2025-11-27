@@ -4,24 +4,24 @@
 
 @section('content')
 
-<div id="app-layout">
+<div class="max-w-6xl mx-auto">
 
-    <div id="main-content">
-        <div id="container-admin">
-                <h2>User List</h2>
+    <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+        <div class="w-full overflow-y-auto">
+                <h2 class="mt-0 mb-6 text-2xl text-blue-600 border-b-2 border-purple-300 pb-2">User List</h2>
 
-                <div class="search-controls">
-                    <form id="search-user-admin" action="{{ route('admin.user') }}" method="GET">
-                        <input type="text" id="search-input" name="search" placeholder="Search by Name, Username or Email...">
-                        <button class="btn-primary" type="submit" style="background-color: #3498db;">Search</button>
+                <div class="flex justify-between items-center gap-4 mb-8 flex-wrap">
+                    <form class="flex gap-2 flex-1 min-w-[300px] max-w-xl items-center" action="{{ route('admin.user') }}" method="GET">
+                        <input type="text" name="search" placeholder="Search by Name, Username or Email..." class="flex-1 w-[100px] py-3 px-4 border border-gray-300 rounded text-base transition-colors box-border h-10 leading-normal focus:border-blue-600 focus:outline-none focus:shadow-[0_0_0_3px_rgba(30,0,255,0.1)]">
+                        <button type="submit" class="bg-blue-500 text-white border-none py-3 px-5 rounded text-base cursor-pointer transition-colors whitespace-nowrap flex-shrink-0 w-auto box-border mb-8 hover:bg-blue-600">Search</button>
                     </form>
                     <form action="{{ route('admin.create') }}" method="GET">
                         @csrf
-                        <button type="submit" style="background:green">Create New User</button>
+                        <button type="submit" class="bg-green-600 text-white border-none py-3 px-6 rounded text-base cursor-pointer transition-colors font-semibold whitespace-nowrap box-border mb-8 hover:bg-green-700">Create New User</button>
                     </form>
                 </div>
 
-                <table id="admin-users-table">
+                <table class="w-full border-collapse mt-4">
                     <thead>
                         <tr>
                             <th>Name</th>

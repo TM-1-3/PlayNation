@@ -4,44 +4,52 @@
 
 @section('content')
 
-<div class="centered-content">
-    <div class="card" style="width:100%; max-width:600px; padding:2em;">
-    <h2>Create New Post</h2>
+<div class="flex flex-col items-center justify-center text-center min-h-[60vh]">
+    <div class="w-full max-w-2xl bg-white rounded-lg shadow-md p-8">
+    <h2 class="text-2xl text-blue-600 mb-6">Create New Post</h2>
 
     @if($errors->has('form'))
-      <div style="color:red">{{ $errors->first('form') }}</div>
+      <div class="text-red-600 text-sm mb-4">{{ $errors->first('form') }}</div>
     @endif
 
-    <form method="POST" action="{{ route('post.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('post.store') }}" enctype="multipart/form-data" class="space-y-4">
       @csrf
 
-      <label for="image">Image</label>
-      <input type="file" id="image" name="image">
-      @error('image') <div style="color:red">{{ $message }}</div> @enderror
+      <div>
+        <label for="image" class="block mb-2 font-medium text-gray-700 text-left">Image</label>
+        <input type="file" id="image" name="image" class="w-full p-2 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+        @error('image') <div class="text-red-600 text-sm mt-1 text-left">{{ $message }}</div> @enderror
+      </div>
 
-      <label for="description">Description</label>
-      <textarea id="description" name="description" style="height:100px; width:100%;">{{ old('description') }}</textarea>
-      @error('description') <div style="color:red">{{ $message }}</div> @enderror
+      <div>
+        <label for="description" class="block mb-2 font-medium text-gray-700 text-left">Description</label>
+        <textarea id="description" name="description" class="h-[100px] w-full p-3 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">{{ old('description') }}</textarea>
+        @error('description') <div class="text-red-600 text-sm mt-1 text-left">{{ $message }}</div> @enderror
+      </div>
 
-      <label for="label">Label (select existing)</label>
-      <select id="labels" name="labels[]" multiple style="width:100%; min-height:100px;">
-        @foreach($labels as $label)
-          <option value="{{ $label->id_label }}" {{ (collect(old('labels'))->contains($label->id_label)) ? 'selected' : '' }}>
-            {{ $label->designation }}
-          </option>
-        @endforeach
-      </select>
-      <small>Hold Ctrl/Cmd to select multiple</small>
-      @error('labels') <div style="color:red">{{ $message }}</div> @enderror
+      <div>
+        <label for="label" class="block mb-2 font-medium text-gray-700 text-left">Label (select existing)</label>
+        <select id="labels" name="labels[]" multiple class="w-full min-h-[100px] p-2 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+          @foreach($labels as $label)
+            <option value="{{ $label->id_label }}" {{ (collect(old('labels'))->contains($label->id_label)) ? 'selected' : '' }}>
+              {{ $label->designation }}
+            </option>
+          @endforeach
+        </select>
+        <small class="text-gray-600 text-left block mt-1">Hold Ctrl/Cmd to select multiple</small>
+        @error('labels') <div class="text-red-600 text-sm mt-1 text-left">{{ $message }}</div> @enderror
+      </div>
 
-      <label for="new_label">Or create new label</label>
-      <input type="text" id="new_label" name="new_label" value="{{ old('new_label') }}">
-      @error('new_label') <div style="color:red">{{ $message }}</div> @enderror
+      <div>
+        <label for="new_label" class="block mb-2 font-medium text-gray-700 text-left">Or create new label</label>
+        <input type="text" id="new_label" name="new_label" value="{{ old('new_label') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+        @error('new_label') <div class="text-red-600 text-sm mt-1 text-left">{{ $message }}</div> @enderror
+      </div>
 
-      <hr>
-      <div style="margin-top:2em; display:flex; gap:10px;">
-        <button type="submit" class="button">Create Post</button>
-        <a href="{{ route('home') }}" class="button button-outline">Cancel</a>
+      <hr class="my-6 border-gray-300">
+      <div class="mt-8 flex gap-2.5">
+        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700">Create Post</button>
+        <a href="{{ route('home') }}" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">Cancel</a>
       </div>
     </form>
   </div>
