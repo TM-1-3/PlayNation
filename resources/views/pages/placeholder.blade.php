@@ -3,14 +3,14 @@
 @section('title', $title)
 
 @section('content')
-<div class="centered-content">
-    <div style="margin-top: 50px;">
-        <i class="fa-solid fa-person-digging" style="font-size: 4rem; color: #d2afe7; margin-bottom: 20px;"></i>
-        <h1>{{ $title }}</h1>
-        <p>This feature is currently under development.</p>
-        <p><em>"No content yet."</em></p>
+<div class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+        <i class="fa-solid fa-person-digging text-6xl text-purple-300 mb-5"></i>
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ $title }}</h1>
+        <p class="text-gray-600 mb-2">This feature is currently under development.</p>
+        <p class="text-gray-500 italic mb-6">"No content yet."</p>
         
-        <a href="{{ url('/') }}" class="button button-outline">Back to Feed</a>
+        <a href="{{ route('home') }}" class="inline-block px-6 py-2 border-2 border-blue-600 text-blue-600 rounded-lg no-underline font-semibold transition-colors hover:bg-blue-600 hover:text-white">Back to Feed</a>
     </div>
 </div>
 @endsection

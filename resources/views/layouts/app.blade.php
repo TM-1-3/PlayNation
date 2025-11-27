@@ -20,7 +20,7 @@
 <body class="m-0 p-0 min-h-screen overflow-x-hidden bg-white text-gray-800 font-sans">
     {{-- SIDEBAR  --}}
     <aside class="w-64 bg-blue-100 border-r border-gray-200 h-screen fixed top-0 left-0 flex flex-col p-5 z-[1000]">
-        <a href="{{ url('/') }}" class="flex items-center mb-8 no-underline pl-2.5">
+        <a href="{{ url('/') }}" class="flex items-center no-underline pl-2.5">
             <img src="{{ asset('img/playnation_logo.svg') }}" alt="PlayNation" class="h-[170px]"> 
         </a>
         <nav class="flex flex-col gap-0.5 flex-grow">
@@ -48,7 +48,7 @@
                         New Post
                     </a>
 
-                    <a href="{{ route('groups.index') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('groups.index') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('mygroups.index') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('mygroups.index') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-users w-8 text-xl text-center mr-2.5"></i> 
                         My Groups
                     </a>

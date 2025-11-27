@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="flex flex-col items-center justify-center text-center min-h-[60vh]">
+<div class="flex flex-col items-center justify-center text-center min-h-[60vh] pt-10">
     <div class="w-full max-w-2xl bg-white rounded-lg shadow-md p-8">
     <h2 class="text-2xl text-blue-600 mb-6">Create New Post</h2>
 
