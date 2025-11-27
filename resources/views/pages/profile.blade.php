@@ -5,7 +5,7 @@
 @section('content')
 
 {{-- profile principal block --}}
-<div class="max-w-6xl mx-auto">
+<div class="max-w-6xl mx-auto pt-10 pr-10 pb-5">
 <div class="flex flex-wrap gap-8">
     {{-- left column photo and data --}}
     <div class="w-full md:w-1/3 md:min-w-[250px] text-center">

@@ -163,7 +163,7 @@
             </script>
         @endif
 
-        <section id="content" class="ml-64 min-h-screen bg-gray-50">
+        <section id="content" class="ml-64 min-h-screen bg-gray-50 pt-5">
             @yield('content')
         </section>
     </div>

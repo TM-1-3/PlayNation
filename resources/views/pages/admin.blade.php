@@ -4,9 +4,8 @@
 
 @section('content')
 
-<div class="max-w-6xl mx-auto">
 
-    <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+<div class="mx-auto bg-white rounded-lg shadow-md p-8 w-[70vw]">
         <div class="w-full overflow-y-auto">
                 <h2 class="mt-0 mb-6 text-2xl text-blue-600 border-b-2 border-purple-300 pb-2">User List</h2>
 
@@ -59,7 +58,7 @@
                     </tbody>
                 </table>
         </div>
-    </div>
+
 </div>
 
 @endsection

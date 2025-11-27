@@ -13,7 +13,7 @@
 
 @section('content')
 
-<div class="w-auto mx-auto bg-white rounded-lg shadow-md p-8 mt-12">
+<div class="mx-auto bg-white rounded-lg shadow-md p-8 my-12 w-[70vw]">
     <img class="mx-auto mb-6 max-w-[200px]" src="/img/logo.png" alt="Logo">
     <h2 class="text-center text-2xl text-blue-600 mb-6">Register</h2>
     <form method="POST" action="{{ route('register.action') }}" class="space-y-4">
