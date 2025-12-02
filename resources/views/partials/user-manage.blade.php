@@ -1,6 +1,6 @@
 <div>
                 <div class="flex justify-between items-end gap-4 mb-8 mt-6 flex-wrap">
-                    <form class="flex gap-2 flex-1 min-w-[300px] max-w-xl items-center" action="{{ route('admin.user') }}" method="GET">
+                    <form id="search-user-admin" class="flex gap-2 flex-1 min-w-[300px] max-w-xl items-center" action="{{ route('admin.user') }}" method="GET">
                         <input type="text" name="search" placeholder="Search by Name, Username or Email..." class="flex-1 py-1 px-4 border border-gray-300 rounded text-base transition-colors focus:border-blue-600 focus:outline-none focus:shadow-[0_0_0_3px_rgba(30,0,255,0.1)]">
                         <button type="submit" class="bg-blue-500 text-white border-none py-1 px-3 rounded text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600">Search</button>
                     </form>

@@ -103,18 +103,27 @@ function searchHandler(response, searchType) {
       tableBody.innerHTML = '';
       
       if (response.users.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No users found</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500 italic">No users found</td></tr>';
       } else {
         response.users.forEach(user => {
           const row = document.createElement('tr');
+          row.className = 'border-b border-gray-200 transition-colors hover:bg-gray-50';
           row.innerHTML = `
-            <td><a href="" class="action-link" style="text-decoration:none; color:black">${user.name}</a></td>
-            <td><a href="" class="action-link" style="text-decoration:none; color:black">${user.username}</a></td>
-            <td>${user.email}</td>
-            <td>${user.is_public ? 'Public' : 'Private'}</td>
-            <td>
-              <a href="" class="action-link">Edit</a>
-              <a href="" class="action-link" style="color: #e74c3c;">Delete</a>
+            <td class="p-4 text-gray-800 text-sm font-medium"><a href="/profile/${user.id_user}" class="no-underline text-gray-800 hover:text-blue-600">${user.name}</a></td>
+            <td class="p-4 text-gray-800 text-sm font-medium"><a href="/profile/${user.id_user}" class="no-underline text-gray-800 hover:text-blue-600">${user.username}</a></td>
+            <td class="p-4 text-gray-800 text-sm">${user.email}</td>
+            <td class="p-4 text-gray-800 text-sm">${user.is_public ? 'Public' : 'Private'}</td>
+            <td class="p-4">
+              <div class="flex items-center gap-4">
+                <a href="/admin/edit/${user.id_user}" class="bg-none text-blue-500 text-sm font-medium no-underline">Edit</a>
+                <form action="/admin/user/${user.id_user}" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                  <input type="hidden" name="_token" value="${document.querySelector('meta[name=\"csrf-token\"]').content}">
+                  <input type="hidden" name="_method" value="DELETE">
+                  <button type="submit" class="bg-none text-red-500 text-sm font-medium cursor-pointer border-none pb-1">
+                    Delete
+                  </button>
+                </form>
+              </div>
             </td>
           `;
           tableBody.appendChild(row);

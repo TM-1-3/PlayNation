@@ -17,6 +17,10 @@ class AdminController extends Controller
 
         $type = $request->query('type', 'user');
 
+        if (!$type) {
+            $type = 'user';
+        }
+
         if ($user->isAdmin()) {
             $users = User::all();
             return view('pages.admin', ['users' => $users, 'type' => $type]);
@@ -51,7 +55,7 @@ class AdminController extends Controller
         }
         
         // If it's a standard request, return the full view
-        return view('pages.admin', compact('users'));
+        return view('pages.admin', ['users' => $users, 'type' => 'user']);
     }
 
     public function showCreateUserForm()
