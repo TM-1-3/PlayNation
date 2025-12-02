@@ -19,7 +19,7 @@
 </head>
 <body class="m-0 p-0 min-h-screen overflow-x-hidden bg-white text-gray-800 font-sans">
     {{-- SIDEBAR  --}}
-    <aside class="w-64 bg-blue-100 border-r border-gray-200 h-screen fixed top-0 left-0 flex flex-col p-5 z-[1000]">
+    <aside class="w-64 bg-blue-200 border-r border-gray-200 h-screen fixed top-0 left-0 flex flex-col p-5 z-[1000]">
         <a href="{{ url('/') }}" class="flex items-center no-underline pl-2.5">
             <img src="{{ asset('img/playnation_logo.svg') }}" alt="PlayNation" class="h-[170px]"> 
         </a>
