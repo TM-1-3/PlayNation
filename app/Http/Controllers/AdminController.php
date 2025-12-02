@@ -15,7 +15,7 @@ class AdminController extends Controller
     {
         $user = auth()->user(); // Get the currently logged-in user
 
-        $type = $request->query('user', 'groups', 'content');
+        $type = $request->query('type', 'user');
 
         if ($user->isAdmin()) {
             $users = User::all();
