@@ -7,16 +7,21 @@
 
 <div class="mx-auto bg-white rounded-lg shadow-md p-8 w-[70vw]">
         <div class="w-full overflow-y-auto">
-                <h2 class="mt-0 mb-6 text-2xl text-blue-500 border-b-2 border-gray-200 pb-2 font-semibold"> Administer User Accounts</h2>
+                <div class= "flex gap-5 justify-around border-b-2 border-gray-200">
+                    <a href="" class="mt-0 text-xl text-gray-500 border-b-1 border-gray-200 pb-3 font-semibold"> Administer User Accounts</a>
+                    <a href="" class="mt-0 text-xl text-gray-500 border-b-1 border-gray-200 pb-3 font-semibold"> Moderate Groups</a>
+                    <a href="" class="mt-0 text-xl text-gray-500 border-b-1 border-gray-200 pb-3 font-semibold"> Manage Content</a>
+                </div>
 
-                <div class="flex justify-between items-end gap-4 mb-8 flex-wrap">
+
+                <div class="flex justify-between items-end gap-4 mb-8 mt-6 flex-wrap">
                     <form class="flex gap-2 flex-1 min-w-[300px] max-w-xl items-center" action="{{ route('admin.user') }}" method="GET">
-                        <input type="text" name="search" placeholder="Search by Name, Username or Email..." class="flex-1 py-3 px-4 border border-gray-300 rounded text-base transition-colors focus:border-blue-600 focus:outline-none focus:shadow-[0_0_0_3px_rgba(30,0,255,0.1)]">
-                        <button type="submit" class="bg-blue-500 text-white border-none py-3 px-5 rounded text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600">Search</button>
+                        <input type="text" name="search" placeholder="Search by Name, Username or Email..." class="flex-1 py-1 px-4 border border-gray-300 rounded text-base transition-colors focus:border-blue-600 focus:outline-none focus:shadow-[0_0_0_3px_rgba(30,0,255,0.1)]">
+                        <button type="submit" class="bg-blue-500 text-white border-none py-1 px-3 rounded text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600">Search</button>
                     </form>
                     <form action="{{ route('admin.create') }}" method="GET">
                         @csrf
-                        <button type="submit" class="bg-green-600 text-white border-none py-3 px-6 rounded text-base cursor-pointer transition-colors font-semibold whitespace-nowrap hover:bg-green-700">Create New User</button>
+                        <button type="submit" class="bg-green-600 text-white border-none py-1 px-3 rounded text-base cursor-pointer transition-colors font-semibold whitespace-nowrap hover:bg-green-700">Create New User</button>
                     </form>
                 </div>
 
