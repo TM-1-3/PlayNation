@@ -5,8 +5,8 @@
 @section('content')
 
 <div class="max-w-3xl mx-auto py-10 px-5">
-    <form id="search-user-input" action="{{ route('search.users') }}" method="GET" class="mb-6">
-        <input type="text" name="search" placeholder="Search by Name, Username or Email..." class="w-full py-3.5 px-4 border-2 border-gray-200 rounded-lg text-base mb-4 transition-all focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(52,152,219,0.1)] h-[2em]">
+    <form id="search-user" action="{{ route('search.users') }}" method="GET" class="mb-6">
+        <input id="search-input-user" type="text" name="search" placeholder="Search by Name or Username..." class="w-full py-3.5 px-4 border-2 border-gray-200 rounded-lg text-base mb-4 transition-all focus:outline-none focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(52,152,219,0.1)] h-[2em]">
     </form>
     <div id="users-list" class="space-y-4">
         @foreach($users as $user)

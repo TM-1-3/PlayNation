@@ -8,7 +8,7 @@ if (searchPost) {
   searchPost.addEventListener('input', searchRequest);
 }
 
-const searchUser = document.getElementById('search-user-input');
+const searchUser = document.getElementById('search-user');
 if (searchUser) {
   searchUser.addEventListener('input', searchRequest);
 }
@@ -192,7 +192,7 @@ function searchHandler(response, searchType) {
         });
       }
     }
-  } else if (searchType === 'search-user-input') {
+  } else if (searchType === 'search-user') {
     const userList = document.getElementById('users-list');
     if (response.users && userList) {
       userList.innerHTML = '';

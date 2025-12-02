@@ -101,12 +101,9 @@ class UserController extends Controller
         $users = User::query();
         
         if($search) {
-            // full-text search for name and username
-            $tsquery = str_replace(' ', ' & ', trim($search));
-            
-            $users->where(function($query) use ($search, $tsquery) {
-                // ull-text search on name and username using the index
-                $query->whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$tsquery]);
+            $users->where(function($query) use ($search) {
+                $query->where('name', 'ILIKE', "%{$search}%")
+                    ->orWhere('username', 'ILIKE', "%{$search}%");
             });
         }
         
@@ -120,5 +117,6 @@ class UserController extends Controller
 
         return view('pages.search', ['users' => $users]);
     }
+
 }
 
