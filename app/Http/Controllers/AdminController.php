@@ -54,7 +54,7 @@ class AdminController extends Controller
 
     public function showCreateUserForm()
     {
-        return view('partials.create');
+        return view('pages.create_user');
     }
 
     public function createUser(Request $request)
@@ -92,7 +92,7 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-        return view('partials.edit', ['user' => $user]);
+        return view('pages.edit_user', ['user' => $user]);
     }
 
     public function editUser(Request $request, $id)
