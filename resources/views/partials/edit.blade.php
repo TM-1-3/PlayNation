@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="flex flex-col items-center justify-center text-center min-h-[60vh]">
+<div class="flex flex-col items-center justify-center text-center min-h-[60vh] pb-5">
     <div class="w-full max-w-2xl bg-white rounded-lg shadow-md p-8 text-left">
         <h2 class="text-2xl text-blue-500 font-semibold border-b-2 border-gray-200 pb-2 mb-6">
             ✏️ Edit Profile

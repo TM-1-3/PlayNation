@@ -6,7 +6,7 @@
 
 <div class="flex flex-col items-center justify-center text-center min-h-[60vh] pt-10">
     <div class="w-full max-w-2xl bg-white rounded-lg shadow-md p-8">
-    <h2 class="text-2xl text-blue-600 mb-6">Create New Post</h2>
+    <h2 class="text-2xl text-blue-500 font-semibold mb-6">Create New Post</h2>
 
     @if($errors->has('form'))
       <div class="text-red-600 text-sm mb-4">{{ $errors->first('form') }}</div>
@@ -48,8 +48,8 @@
 
       <hr class="my-6 border-gray-300">
       <div class="mt-8 flex gap-2.5">
-        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700">Create Post</button>
-        <a href="{{ route('home') }}" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">Cancel</a>
+        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-500 transition-colors hover:bg-blue-500">Create Post</button>
+        <a href="{{ route('home') }}" class="bg-transparent text-blue-500 border border-blue-500 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-500 hover:text-white">Cancel</a>
       </div>
     </form>
   </div>
