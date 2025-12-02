@@ -6,7 +6,7 @@
 
 <div class="flex flex-col items-center justify-center text-center min-h-[60vh] pb-5">
     <div class="w-full max-w-2xl bg-white rounded-lg shadow-md p-8 text-left">
-        <h2 class="text-2xl text-blue-600 border-b-2 border-purple-300 pb-2 mb-6">
+        <h2 class="text-2xl text-blue-600 border-b-2 border-gray-200 pb-2 mb-6">
             ✏️ Edit Profile
         </h2>
 

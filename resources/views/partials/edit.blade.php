@@ -6,7 +6,7 @@
 
 <div class="flex flex-col items-center justify-center text-center min-h-[60vh]">
     <div class="w-full max-w-2xl bg-white rounded-lg shadow-md p-8 text-left">
-        <h2 class="text-2xl text-blue-600 border-b-2 border-purple-300 pb-2 mb-6">
+        <h2 class="text-2xl text-blue-500 font-semibold border-b-2 border-gray-200 pb-2 mb-6">
             ✏️ Edit Profile
         </h2>
 
@@ -66,8 +66,8 @@
             </div>
 
             <div class="mt-8 flex gap-2.5">
-                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700">💾 Save Changes</button>
-                <a href="{{ route('profile.show', $user->id_user) }}" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">Cancel</a>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-500 transition-colors hover:bg-blue-500">💾 Save Changes</button>
+                <a href="{{ route('admin') }}" class="bg-transparent text-blue-500 border border-blue-500 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-500 hover:text-white">Cancel</a>
             </div>
 
         </form>

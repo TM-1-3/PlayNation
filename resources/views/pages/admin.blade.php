@@ -7,7 +7,7 @@
 
 <div class="mx-auto bg-white rounded-lg shadow-md p-8 w-[70vw]">
         <div class="w-full overflow-y-auto">
-                <h2 class="mt-0 mb-6 text-2xl text-blue-600 border-b-2 border-purple-300 pb-2">User List</h2>
+                <h2 class="mt-0 mb-6 text-2xl text-blue-500 border-b-2 border-gray-200 pb-2 font-semibold"> Administer User Accounts</h2>
 
                 <div class="flex justify-between items-end gap-4 mb-8 flex-wrap">
                     <form class="flex gap-2 flex-1 min-w-[300px] max-w-xl items-center" action="{{ route('admin.user') }}" method="GET">
@@ -21,13 +21,13 @@
                 </div>
 
                 <table class="w-full border-collapse mt-4">
-                    <thead class="bg-gray-50 border-b-2 border-purple-300">
+                    <thead class="bg-gray-50 border-b-2 border-gray-200">
                         <tr>
-                            <th class="p-4 text-left font-semibold text-purple-600 text-sm uppercase tracking-wider">Name</th>
-                            <th class="p-4 text-left font-semibold text-purple-600 text-sm uppercase tracking-wider">Username</th>
-                            <th class="p-4 text-left font-semibold text-purple-600 text-sm uppercase tracking-wider">Email</th>
-                            <th class="p-4 text-left font-semibold text-purple-600 text-sm uppercase tracking-wider">Status</th>
-                            <th class="p-4 text-left font-semibold text-purple-600 text-sm uppercase tracking-wider">Actions</th>
+                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Name</th>
+                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Username</th>
+                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Email</th>
+                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Status</th>
+                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="admin-users-body">
@@ -38,12 +38,12 @@
                             <td class="p-4 text-gray-800 text-sm">{{ $user->email }}</td>
                             <td class="p-4 text-gray-800 text-sm">{{ $user->is_public ? 'Public' : 'Private' }}</td>
                             <td class="p-4">
-                                <div class="flex items-center gap-2">
-                                    <a href="{{ route('admin.edit', $user->id_user) }}" class="bg-blue-500 text-white py-1.5 px-3 rounded text-sm font-medium transition-colors hover:bg-blue-600 no-underline">Edit</a>
+                                <div class="flex items-center gap-4">
+                                    <a href="{{ route('admin.edit', $user->id_user) }}" class="bg-none text-blue-500 text-sm font-medium no-underline">Edit</a>
                                     <form action="{{ route('admin.delete', $user->id_user) }}" method="POST" class="m-0">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="bg-red-500 text-white py-1.5 px-3 rounded text-sm font-medium transition-colors hover:bg-red-600 cursor-pointer border-none" onclick="return confirm('Are you sure you want to delete this user?')">
+                                        <button type="submit" class="bg-none text-red-500 text-sm font-medium cursor-pointer border-none pb-1" onclick="return confirm('Are you sure you want to delete this user?')">
                                             Delete
                                         </button>
                                     </form>
