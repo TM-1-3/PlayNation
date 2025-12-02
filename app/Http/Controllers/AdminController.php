@@ -11,13 +11,15 @@ use App\Models\User;
 
 class AdminController extends Controller
 {
-    public function showAdminPage()
+    public function showAdminPage(Request $request)
     {
         $user = auth()->user(); // Get the currently logged-in user
 
+        $type = $request->query('user', 'groups', 'content');
+
         if ($user->isAdmin()) {
             $users = User::all();
-            return view('pages.admin', compact('users'));
+            return view('pages.admin', ['users' => $users, 'type' => $type]);
         }
         
         // User is not an admin, redirect them or show an error

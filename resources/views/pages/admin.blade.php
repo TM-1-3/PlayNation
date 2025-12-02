@@ -8,9 +8,9 @@
 <div class="mx-auto bg-white rounded-lg shadow-md p-8 w-[70vw]">
         <div class="w-full overflow-y-auto">
                 <div class= "flex gap-5 justify-around border-b-2 border-gray-200">
-                    <a href="" class="mt-0 text-xl text-gray-500 border-b-1 border-gray-200 pb-3 font-semibold"> Administer User Accounts</a>
-                    <a href="" class="mt-0 text-xl text-gray-500 border-b-1 border-gray-200 pb-3 font-semibold"> Moderate Groups</a>
-                    <a href="" class="mt-0 text-xl text-gray-500 border-b-1 border-gray-200 pb-3 font-semibold"> Manage Content</a>
+                    <a href="{{ route('admin', ['type' => 'user']) }}" class="mt-0 text-xl text-gray-500 border-b-1 border-gray-200 pb-3 font-semibold"> Administer User Accounts</a>
+                    <a href="{{ route('admin', ['type' => 'groups']) }}" class="mt-0 text-xl text-gray-500 border-b-1 border-gray-200 pb-3 font-semibold"> Moderate Groups</a>
+                    <a href="{{ route('admin', ['type' => 'content']) }}" class="mt-0 text-xl text-gray-500 border-b-1 border-gray-200 pb-3 font-semibold"> Manage Content</a>
                 </div>
 
 
