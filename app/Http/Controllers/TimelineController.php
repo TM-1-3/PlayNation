@@ -96,6 +96,16 @@ class TimelineController extends Controller {
         $posts = $posts->get();
 
         if ($request->ajax()) {
+            // Transform posts to include profile_image and post_image for consistency
+            $posts = $posts->map(function($post) {
+                $postArray = $post->toArray();
+                if (isset($postArray['user'])) {
+                    $postArray['user']['profile_picture'] = $post->user->getProfileImage();
+                }
+                $postArray['image'] = $post->getPostImage();
+                return $postArray;
+            });
+            
             return response()->json([
                 'posts' => $posts
             ]);

@@ -144,7 +144,7 @@ function searchHandler(response, searchType) {
           postElement.className = 'bg-white border border-gray-200 rounded-lg mb-5 text-left flex flex-col';
           postElement.id = `post-${post.id_post}`;
           
-          const userProfilePic = post.user?.profile_picture || 'img/default_avatar.png';
+          const userProfilePic = post.user?.profile_picture;
           const username = post.user?.username || 'Unknown User';
           const userId = post.user?.id_user;
           const postDate = new Date(post.date);
@@ -207,7 +207,7 @@ function searchHandler(response, searchType) {
           userDiv.className = 'flex bg-white border border-gray-200 rounded-lg p-5 transition-all hover:shadow-md hover:border-blue-400';
           
           const profileUrl = `/profile/${user.id_user}`;
-          const profileImage = user.profile_image || '/img/default_avatar.png';
+          const profileImage = user.profile_image;
           
           userDiv.innerHTML = `
             <a href="${profileUrl}" class="mt-2 mr-1">
