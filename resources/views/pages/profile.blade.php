@@ -84,22 +84,7 @@
             </div>
         @else
             @foreach($posts as $post)
-                <div class="rounded-lg shadow-sm p-8 mb-8 relative">
-                    @if(Auth::check() && Auth::id() == $post->id_creator)
-                        <div class="absolute top-2 right-2">
-                            <a href="{{ route('post.edit', $post->id_post) }}" class="bg-blue-600 text-white py-1 px-3 text-sm rounded border border-blue-700 transition-colors hover:bg-blue-700 no-underline" title="Edit post">Edit Post</a>
-                        </div>
-                    @endif
-
-                    @if($post->image)
-                            <img class="w-full max-w-md block border-t border-gray-200" src="{{ asset($post->image) }}" alt="Post Content">
-                    @endif
-
-                    @if($post->description)
-                        <p class="my-4">{{ $post->description }}</p>
-                    @endif
-                    <small class="text-gray-600">{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</small>
-                </div>
+                    @include('partials.post', ['post' => $post, 'type' => 'profile'])
             @endforeach
         @endif
 

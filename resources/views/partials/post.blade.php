@@ -14,7 +14,13 @@
             <span class="font-semibold text-sm text-gray-800">Unknown User</span>
         @endif
         
-        <span class="ml-auto text-xs text-gray-500">{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</span>
+        <span class="ml-auto text-xs text-gray-500 pr-4">{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</span>
+
+        @if($type == 'profile' && Auth::check() && Auth::id() == $post->id_creator)
+            <div >
+                <a href="{{ route('post.edit', $post->id_post) }}" class="text-black py-1 px-1 text-xl no-underline" title="Edit post">⋮</a>
+            </div>
+        @endif
     </div>
 
     @if($post->image)
