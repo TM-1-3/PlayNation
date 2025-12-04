@@ -106,6 +106,15 @@ class UserController extends Controller
         $users = $users->get();
 
         if ($request->ajax()) {
+            $users = $users->map(function($user) {
+                return [
+                    'id_user' => $user->id_user,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'profile_image' => $user->getProfileImage()
+                ];
+            });
+            
             return response()->json([
                 'users' => $users
             ]);

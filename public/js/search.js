@@ -204,10 +204,21 @@ function searchHandler(response, searchType) {
       } else {
         response.users.forEach(user => {
           const userDiv = document.createElement('div');
-          userDiv.className = 'bg-white border border-gray-200 rounded-lg p-5 transition-all hover:shadow-md hover:border-blue-400';
+          userDiv.className = 'flex bg-white border border-gray-200 rounded-lg p-5 transition-all hover:shadow-md hover:border-blue-400';
+          
+          const profileUrl = `/profile/${user.id_user}`;
+          const profileImage = user.profile_image || '/img/default_avatar.png';
+          
           userDiv.innerHTML = `
-            <a href="/profile/${user.id_user}" class="block text-lg font-semibold text-gray-800 mb-1 no-underline transition-colors hover:text-blue-600">${user.name}</a>
-            <a href="/profile/${user.id_user}" class="block text-sm text-gray-500 no-underline transition-colors hover:text-blue-500">${user.username}</a>
+            <a href="${profileUrl}" class="mt-2 mr-1">
+                <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" 
+                    src="${profileImage}" 
+                    alt="avatar">
+            </a>
+            <div class="flex-col">
+              <a href="${profileUrl}" class="block text-lg font-semibold text-gray-800 no-underline transition-colors hover:text-blue-600">${user.name}</a>
+              <a href="${profileUrl}" class="block text-sm text-gray-500 no-underline transition-colors hover:text-blue-500">${user.username}</a>
+            </div>
           `;
           userList.appendChild(userDiv);
         });
