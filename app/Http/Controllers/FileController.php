@@ -9,7 +9,7 @@ use App\Models\Post;
 
 class FileController extends Controller
 {   
-    static $default = 'default.jpg';
+    static $default = 'default.png';
     static $diskName = 'storage';
 
     static $systemTypes = [
