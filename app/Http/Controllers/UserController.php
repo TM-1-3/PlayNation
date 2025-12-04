@@ -91,38 +91,6 @@ class UserController extends Controller
             ->with('status', 'Profile updated successfully!');
     }
 
-    /*public function searchUser(Request $request)
-    {
-        $search = $request->get('search');
-        $users = User::query();
-        
-        if($search) {
-            $users->where(function($query) use ($search) {
-                $query->where('name', 'ILIKE', "%{$search}%")
-                    ->orWhere('username', 'ILIKE', "%{$search}%");
-            });
-        }
-        
-        $users = $users->get();
-
-        if ($request->ajax()) {
-            $users = $users->map(function($user) {
-                return [
-                    'id_user' => $user->id_user,
-                    'name' => $user->name,
-                    'username' => $user->username,
-                    'profile_image' => $user->getProfileImage()
-                ];
-            });
-            
-            return response()->json([
-                'users' => $users
-            ]);
-        }
-
-        return view('pages.search', ['users' => $users]);
-    }*/
-
     public function searchUser(Request $request)
     {
         $search = $request->get('search');

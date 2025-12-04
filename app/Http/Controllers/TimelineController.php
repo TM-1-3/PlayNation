@@ -79,21 +79,38 @@ class TimelineController extends Controller {
     public function searchPost(Request $request)
     {
         $search = $request->get('search');
-        $posts = Post::with(['user', 'labels']);
         
-        if($search) {
-            $posts->where(function($query) use ($search) {
-                $query->where('description', 'ILIKE', "%{$search}%")
-                    ->orWhereHas('labels', function($q) use ($search) {
-                        $q->where('designation', 'ILIKE', "%{$search}%");
-                    })
-                    ->orWhereHas('user', function($q) use ($search) {
-                        $q->where('username', 'ILIKE', "%{$search}%");
-                    });
-            });
+        if ($search) {
+            $input = $search . ':*';
+            $postIds = Post::leftJoin('registered_user', 'post.id_creator', '=', 'registered_user.id_user')
+                         ->leftJoin('post_label', 'post.id_post', '=', 'post_label.id_post')
+                         ->leftJoin('label', 'post_label.id_label', '=', 'label.id_label')
+                         ->whereRaw("
+                             post.tsvectors @@ to_tsquery('portuguese', ?) OR
+                             registered_user.tsvectors @@ to_tsquery('portuguese', ?) OR
+                             to_tsvector('portuguese', label.designation) @@ to_tsquery('portuguese', ?)
+                         ", [$input, $input, $input])
+                         ->select('post.id_post')
+                         ->selectRaw("
+                             ts_rank(post.tsvectors, to_tsquery('portuguese', ?)) +
+                             ts_rank(registered_user.tsvectors, to_tsquery('portuguese', ?)) +
+                             ts_rank(to_tsvector('portuguese', COALESCE(label.designation, '')), to_tsquery('portuguese', ?)) as rank
+                         ", [$input, $input, $input])
+                         ->distinct()
+                         ->orderByDesc('rank')
+                         ->pluck('id_post');
+            
+            // Load the posts with relationships in the correct order
+            $posts = Post::with(['user', 'labels'])
+                         ->whereIn('id_post', $postIds)
+                         ->get()
+                         ->sortBy(function($post) use ($postIds) {
+                             return array_search($post->id_post, $postIds->toArray());
+                         })
+                         ->values();
+        } else {
+            $posts = Post::with(['user', 'labels'])->get();
         }
-        
-        $posts = $posts->get();
 
         if ($request->ajax()) {
             // Transform posts to include profile_image and post_image for consistency

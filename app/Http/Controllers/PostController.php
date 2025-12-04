@@ -45,14 +45,6 @@ class PostController extends Controller
 
         $post->save();
 
-        /*$imagePath = '';
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('img/posts'), $filename);
-            $imagePath = 'img/posts/' . $filename;
-        }*/
-
         if ($request->hasFile('image')) {
             $uploadrequest = new Request([
                 'id' => $post->id_post,
@@ -121,20 +113,6 @@ class PostController extends Controller
         if (empty($request->description) && !$request->hasFile('image') && !$hasExistingImage) {
             return back()->withErrors(['form' => 'Post must have a description or an image.'])->withInput();
         }
-
-        // handle image update: store new and delete old if replaced
-        /*if ($request->hasFile('image')) {
-            if (!empty($post->image) && File::exists(public_path($post->image))) {
-                File::delete(public_path($post->image));
-            }
-
-
-            $file = $request->file('image');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('img/posts'), $filename);
-            
-            $post->image = 'img/posts/' . $filename;
-        }*/
 
         if ($request->hasFile('image')) {
             $uploadrequest = new Request([
