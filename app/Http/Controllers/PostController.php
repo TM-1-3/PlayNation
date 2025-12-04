@@ -9,6 +9,7 @@ use App\Models\Label;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
+
 class PostController extends Controller
 {
     public function create()

@@ -3,7 +3,7 @@
         @if($post->user)
             <a href="{{ route('profile.show', $post->user->id_user) }}">
                 <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" 
-                     src="@if($post->user->profile_picture) {{ asset($post->user->profile_picture) }} @else {{ asset('img/default_avatar.png') }} @endif" 
+                     src="{{ $post->user->getProfileImage() }}" 
                      alt="avatar">
             </a>
             <a href="{{ route('profile.show', $post->user->id_user) }}" class="font-semibold text-sm text-gray-800 no-underline">
