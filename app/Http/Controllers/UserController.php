@@ -76,17 +76,13 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        $filename = '';
         if ($request->hasFile('profile_picture')) {
-            if (!empty($user->id_user) && File::exists(public_path($user->profile_picture))) {
-                File::delete(public_path($user->profile_picture));
-            }
-
-            $file = $request->file('profile_picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('img/users'), $filename);
-            
-            $user->profile_picture = 'img/users/' . $filename;
+            $uploadrequest = new Request([
+                'id' => $user->id_user,
+                'type' => 'profile'
+            ]);
+            $uploadrequest->files->set('file', $request->file('profile_picture'));
+            app(FileController::class)->upload($uploadrequest);
         }
 
         $user->save();

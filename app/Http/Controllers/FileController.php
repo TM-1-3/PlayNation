@@ -38,7 +38,8 @@ class FileController extends Controller
         $fileName = null;
         switch($type) {
             case 'profile':
-                $fileName = User::find($id)->profile_image; 
+                $user = User::find($id); 
+                $fileName = $user ? $user->profile_picture : null; 
                 break;
             case 'post':
                 // other models
@@ -57,7 +58,11 @@ class FileController extends Controller
 
             switch($type) {
                 case 'profile':
-                    User::find($id)->profile_image = null;
+                    $user = User::find($id);
+                    if ($user) {
+                        $user->profile_picture = null; 
+                        $user->save();
+                    }
                     break;
                 case 'post':
                     // other models
@@ -82,6 +87,7 @@ class FileController extends Controller
         $file = $request->file('file');
         $type = $request->type;
         $extension = $file->extension();
+
         if (!$this->isValidExtension($type, $extension)) {
             return redirect()->back()->with('error', 'Error: Unsupported upload extension');
         }
@@ -98,7 +104,7 @@ class FileController extends Controller
             case 'profile':
                 $user = User::findOrFail($request->id);
                 if ($user) {
-                    $user->profile_image = $fileName;
+                    $user->profile_picture = $fileName;
                     $user->save();
                 } else {
                     $error = "unknown user";
@@ -118,7 +124,7 @@ class FileController extends Controller
         }
 
         $file->storeAs($type, $fileName, self::$diskName);
-        return redirect()->back()->with('success', 'Success: upload completed!');
+        return null;
     }
 
     static function get(String $type, int $userId) {
