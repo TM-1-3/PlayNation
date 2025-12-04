@@ -91,7 +91,7 @@ class UserController extends Controller
             ->with('status', 'Profile updated successfully!');
     }
 
-    public function searchUser(Request $request)
+    /*public function searchUser(Request $request)
     {
         $search = $request->get('search');
         $users = User::query();
@@ -120,6 +120,38 @@ class UserController extends Controller
             ]);
         }
 
+        return view('pages.search', ['users' => $users]);
+    }*/
+
+    public function searchUser(Request $request)
+    {
+        $search = $request->get('search');
+        
+        if ($search) {
+            $input = $search . ':*';
+            $users = User::whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input])
+                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('portuguese', ?)) DESC", [$input])
+                         ->get();
+        } else {
+            $users = User::all();
+        }
+
+        if ($request->ajax()) {
+            $users = $users->map(function($user) {
+                return [
+                    'id_user' => $user->id_user,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'profile_image' => $user->getProfileImage()
+                ];
+            });
+            
+            return response()->json([
+                'users' => $users
+            ]);
+        }
+        
+        // If it's a standard request, return the full view
         return view('pages.search', ['users' => $users]);
     }
 

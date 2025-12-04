@@ -35,10 +35,14 @@ class AdminController extends Controller
     {
         $search = $request->get('search');
         
-        $input = $search ? $search . ':*' : '*';
-        $users = User::whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input])
-                     ->orderByRaw("ts_rank(tsvectors, to_tsquery('portuguese', ?)) DESC", [$input])
-                     ->get();
+        if ($search) {
+            $input = $search . ':*';
+            $users = User::whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input])
+                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('portuguese', ?)) DESC", [$input])
+                         ->get();
+        } else {
+            $users = User::all();
+        }
 
         if ($request->ajax()) {
             return response()->json([
