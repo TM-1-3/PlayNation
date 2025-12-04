@@ -9,7 +9,8 @@ use App\Http\Controllers\Auth\SetupController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\AdminController; 
-use App\Http\Controllers\PostController; 
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\FileController; 
 
 // Home
 Route::redirect('/', '/login');
@@ -58,10 +59,6 @@ Route::middleware(['auth'])->group(function () {
     
     Route::put('/profile/{id}', [UserController::class, 'update'])->name('profile.update');
 
-    Route::get('/post/create', function () {
-        return view('pages.placeholder', ['title' => 'Create New Post']);
-    })->name('post.create');
-
     Route::get('/messages', function () {
         return view('pages.placeholder', ['title' => 'My Conversations']);
     })->name('messages.index');
@@ -92,4 +89,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
     Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
+    
+    // File upload
+    Route::post('/file/upload', [FileController::class, 'upload'])->name('upload.img');
 });

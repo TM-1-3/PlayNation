@@ -19,7 +19,7 @@
         <label class="block mb-2 font-medium text-gray-700 text-left">Current image</label>
         @if($post->image)
           <div class="mb-2.5">
-            <img src="{{ asset('storage/' . ltrim($post->image, '/')) }}" alt="post image" class="max-w-full rounded">
+            <img src="{{ $post->getPostImage() }}" alt="post image" class="max-w-full rounded">
           </div>
         @else
           <div class="rounded-lg shadow-sm p-4 mb-4 text-gray-600">No image</div>

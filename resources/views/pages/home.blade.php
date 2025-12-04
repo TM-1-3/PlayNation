@@ -29,7 +29,7 @@
                 </div>
             @elseif(isset($posts))
                 @foreach($posts as $post)
-                    @include('partials.post', ['post' => $post])
+                    @include('partials.post', ['post' => $post, 'type' => 'home'])
                 @endforeach
             @endif
         </div>

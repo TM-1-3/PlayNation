@@ -76,17 +76,13 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        $filename = '';
         if ($request->hasFile('profile_picture')) {
-            if (!empty($user->id_user) && File::exists(public_path($user->profile_picture))) {
-                File::delete(public_path($user->profile_picture));
-            }
-
-            $file = $request->file('profile_picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('img/users'), $filename);
-            
-            $user->profile_picture = 'img/users/' . $filename;
+            $uploadrequest = new Request([
+                'id' => $user->id_user,
+                'type' => 'profile'
+            ]);
+            $uploadrequest->files->set('file', $request->file('profile_picture'));
+            app(FileController::class)->upload($uploadrequest);
         }
 
         $user->save();
@@ -98,24 +94,34 @@ class UserController extends Controller
     public function searchUser(Request $request)
     {
         $search = $request->get('search');
-        $users = User::query();
         
-        if($search) {
-            $users->where(function($query) use ($search) {
-                $query->where('name', 'ILIKE', "%{$search}%")
-                    ->orWhere('username', 'ILIKE', "%{$search}%");
-            });
+        if ($search) {
+            $input = $search . ':*';
+            $users = User::whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input])
+                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('portuguese', ?)) DESC", [$input])
+                         ->get();
+        } else {
+            $users = User::all();
         }
-        
-        $users = $users->get();
 
         if ($request->ajax()) {
+            $users = $users->map(function($user) {
+                return [
+                    'id_user' => $user->id_user,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'profile_image' => $user->getProfileImage()
+                ];
+            });
+            
             return response()->json([
                 'users' => $users
             ]);
         }
-
+        
+        // If it's a standard request, return the full view
         return view('pages.search', ['users' => $users]);
     }
+
 }
 

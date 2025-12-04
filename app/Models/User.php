@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Post;
+use App\Http\Controllers\FileController;
 
 class User extends Authenticatable
 {
@@ -91,6 +92,10 @@ class User extends Authenticatable
     {
         // users this user has as friend
         return $this->belongsToMany(User::class, 'user_friend', 'id_user', 'id_friend');
+    }
+
+    public function getProfileImage() {
+        return FileController::get('profile', $this->id_user);
     }
 
 }
