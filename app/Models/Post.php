@@ -31,6 +31,6 @@ class Post extends Model
     }
 
     public function getPostImage() {
-        return FileController::get('post', $this->id_post);
+        return FileController::get('posts', $this->id_post);
     }
 }

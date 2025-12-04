@@ -24,7 +24,7 @@
     </div>
 
     @if($post->image)
-        <img class="w-full block border-t border-gray-200" src="{{ asset($post->image) }}" alt="Post Content">
+        <img class="w-full block border-t border-gray-200" src="{{ $post->getPostImage() }}" alt="Post Content">
     @endif
     
     <div class="py-3 px-4 text-sm leading-relaxed">

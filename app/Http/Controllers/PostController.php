@@ -139,7 +139,7 @@ class PostController extends Controller
         if ($request->hasFile('image')) {
             $uploadrequest = new Request([
                 'id' => $post->id_post,
-                'type' => 'post'
+                'type' => 'posts'
             ]);
             $uploadrequest->files->set('file', $request->file('image'));
             app(FileController::class)->upload($uploadrequest);

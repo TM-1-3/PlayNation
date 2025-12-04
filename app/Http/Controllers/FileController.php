@@ -14,7 +14,7 @@ class FileController extends Controller
 
     static $systemTypes = [
         'profile' => ['png', 'jpg', 'jpeg', 'gif'],
-        'post' => ['mp3', 'mp4', 'gif', 'png', 'jpg', 'jpeg'],
+        'posts' => ['mp3', 'mp4', 'gif', 'png', 'jpg', 'jpeg'],
     ];
 
     private static function getDefaultExtension(String $type) {
@@ -43,7 +43,7 @@ class FileController extends Controller
                 $user = User::find($id); 
                 $fileName = $user ? $user->profile_picture : null; 
                 break;
-            case 'post':
+            case 'posts':
                 $post = Post::find($id);
                 $fileName = $post ? $post->image : null; 
                 break;
@@ -70,7 +70,7 @@ class FileController extends Controller
                         $user->save();
                     }
                     break;
-                case 'post':
+                case 'posts':
                     $post = Post::find($id);
                     if ($post) {
                         $post->image = null; 
@@ -121,7 +121,7 @@ class FileController extends Controller
                 $user->save();
                 break;
 
-            case 'post':
+            case 'posts':
                 $post = Post::findOrFail($request->id);
                 $post->image = $fileName;
                 $post->save();
