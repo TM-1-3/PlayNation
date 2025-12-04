@@ -55,6 +55,9 @@ class FileController extends Controller
     }
 
     private static function delete(String $type, int $id) {
+        if ($id === null) {
+            return;
+        }
         $existingFileName = self::getFileName($type, $id);
         if ($existingFileName) {
             Storage::disk(self::$diskName)->delete($type . '/' . $existingFileName);
@@ -68,7 +71,11 @@ class FileController extends Controller
                     }
                     break;
                 case 'post':
-                    // other models
+                    $post = Post::find($id);
+                    if ($post) {
+                        $post->image = null; 
+                        $post->save();
+                    }
                     break;
             }
         }
@@ -79,6 +86,11 @@ class FileController extends Controller
         // Validation: has file
         if (!$request->hasFile('file')) {
             return redirect()->back()->with('error', 'Error: File not found');
+        }
+
+        // Validation: has ID
+        if (!$request->has('id') || $request->id === null) {
+            return redirect()->back()->withErrors(['id' => 'Error: ID is required']);
         }
 
         // Validation: upload type
@@ -102,28 +114,21 @@ class FileController extends Controller
         $fileName = $file->hashName();
 
         // Validation: model
-        $error = null;
         switch($request->type) {
             case 'profile':
                 $user = User::findOrFail($request->id);
-                if ($user) {
-                    $user->profile_picture = $fileName;
-                    $user->save();
-                } else {
-                    $error = "unknown user";
-                }
+                $user->profile_picture = $fileName;
+                $user->save();
                 break;
 
             case 'post':
-                // other models
+                $post = Post::findOrFail($request->id);
+                $post->image = $fileName;
+                $post->save();
                 break;
 
             default:
-                redirect()->back()->with('error', 'Error: Unsupported upload object');
-        }
-
-        if ($error) {
-            redirect()->back()->with('error', `Error: {$error}`);
+                return redirect()->back()->withErrors(['type' => 'Error: Unsupported upload object']);
         }
 
         $file->storeAs($type, $fileName, self::$diskName);

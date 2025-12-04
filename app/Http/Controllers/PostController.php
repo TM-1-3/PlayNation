@@ -36,20 +36,30 @@ class PostController extends Controller
             return back()->withErrors(['form' => 'Post must have a description or an image.'])->withInput();
         }
 
-        $imagePath = '';
+        $post = new Post();
+        $post->id_creator = Auth::id();
+        $post->description = $request->description ?? '';
+        $post->date = now(); 
+        $post->image = ''; // default empty (NOT NULL)
+
+        $post->save();
+
+        /*$imagePath = '';
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('img/posts'), $filename);
             $imagePath = 'img/posts/' . $filename;
-        }
+        }*/
 
-        $post = Post::create([
-            'id_creator' => Auth::id(),
-            'image' => $imagePath, // '' if none
-            'description' => $request->description ?? '',
-            'date' => now(),
-        ]);
+        if ($request->hasFile('image')) {
+            $uploadrequest = new Request([
+                'id' => $post->id_post,
+                'type' => 'post'
+            ]);
+            $uploadrequest->files->set('file', $request->file('image'));
+            app(FileController::class)->upload($uploadrequest);
+        }
 
         // handle labels: attach selected existing labels and optionally create+attach a new label
         $attachIds = $request->input('labels', []);
@@ -112,7 +122,7 @@ class PostController extends Controller
         }
 
         // handle image update: store new and delete old if replaced
-        if ($request->hasFile('image')) {
+        /*if ($request->hasFile('image')) {
             if (!empty($post->image) && File::exists(public_path($post->image))) {
                 File::delete(public_path($post->image));
             }
@@ -123,6 +133,15 @@ class PostController extends Controller
             $file->move(public_path('img/posts'), $filename);
             
             $post->image = 'img/posts/' . $filename;
+        }*/
+
+        if ($request->hasFile('image')) {
+            $uploadrequest = new Request([
+                'id' => $post->id_post,
+                'type' => 'post'
+            ]);
+            $uploadrequest->files->set('file', $request->file('image'));
+            app(FileController::class)->upload($uploadrequest);
         }
 
         $post->description = $request->description ?? $post->description;
@@ -157,15 +176,15 @@ class PostController extends Controller
     public function destroy($id)
     {
 
-    $post = Post::findOrFail($id);
-    if (Auth::id() != $post->id_creator) {
-    return redirect()->back()->withErrors(['form' => 'Unauthorized']);
-    }
-    if (!empty($post->image)) {
-    Storage::disk('public')->delete($post->image);
-    }
-    $ownerId = $post->id_creator;
-    $post->delete();
-    return redirect()->route('profile.show', $ownerId)->with('status', 'Post deleted successfully');
+        $post = Post::findOrFail($id);
+        if (Auth::id() != $post->id_creator) {
+            return redirect()->back()->withErrors(['form' => 'Unauthorized']);
+        }
+        if (!empty($post->image)) {
+            Storage::disk('public')->delete($post->image);
+        }
+        $ownerId = $post->id_creator;
+        $post->delete();
+        return redirect()->route('profile.show', $ownerId)->with('status', 'Post deleted successfully');
     }
 }

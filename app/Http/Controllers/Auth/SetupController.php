@@ -45,9 +45,18 @@ class SetupController extends Controller
         $user->biography = $request->biography;
         $user->is_public = $request->has('is_public');
 
-        if ($request->hasFile('profile_picture')) {
+        /*if ($request->hasFile('profile_picture')) {
             $path = $request->file('profile_picture')->store('profile_pictures', 'public');
             $user->profile_picture = 'storage/' . $path;
+        }*/
+
+        if ($request->hasFile('image')) {
+            $uploadrequest = new Request([
+                'id' => $user->id_user,
+                'type' => 'profile'
+            ]);
+            $uploadrequest->files->set('file', $request->file('profile_picture'));
+            app(FileController::class)->upload($uploadrequest);
         }
 
         $user->save();
