@@ -93,4 +93,8 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'user_friend', 'id_user', 'id_friend');
     }
 
+    public function getProfileImage() {
+        return FileController::get('profile', $this->id);
+    }
+
 }
