@@ -10,7 +10,7 @@
     {{-- left column photo and data --}}
     <div class="w-full md:w-1/3 md:min-w-[250px] text-center">
 
-            <img src="{{ $user->profile_picture ? asset($user->profile_picture) : asset('img/default-user.png') }}" 
+            <img src="{{ $user->getProfileImage() }}" 
                 alt="{{ $user->name }}" 
                 class="w-[150px] h-[150px] rounded-full object-cover border-4 border-blue-900 block mx-auto mb-4 shadow-md">
             

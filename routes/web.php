@@ -93,3 +93,5 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
 });
+
+Route::post('/file/upload', [FileController::class, 'upload']);
