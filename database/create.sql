@@ -41,6 +41,8 @@ DROP TABLE IF EXISTS registered_user CASCADE;
 DROP TABLE IF EXISTS user_block CASCADE;
 DROP TABLE IF EXISTS user_tag CASCADE;
 DROP TABLE IF EXISTS message CASCADE;
+DROP TABLE IF EXISTS admin_block CASCADE;
+DROP TABLE IF EXISTS admin_ban CASCADE;
 
 
 -- create tables
@@ -275,6 +277,18 @@ CREATE TABLE user_tag(
     id_post INTEGER NOT NULL REFERENCES post (id_post) ON DELETE CASCADE,
     id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
     PRIMARY KEY (id_post, id_user)
+);
+
+CREATE TABLE admin_block(
+    id_admin INTEGER NOT NULL REFERENCES administrator (id_admin) ON DELETE CASCADE,
+    id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
+    PRIMARY KEY (id_admin, id_user)
+);
+
+CREATE TABLE admin_ban(
+    id_admin INTEGER NOT NULL REFERENCES administrator (id_admin) ON DELETE CASCADE,
+    id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
+    PRIMARY KEY (id_admin, id_user)
 );
 
 -- Indexes
