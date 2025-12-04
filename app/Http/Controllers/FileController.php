@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Models\Post;
+
 
 class FileController extends Controller
 {   
@@ -42,7 +44,8 @@ class FileController extends Controller
                 $fileName = $user ? $user->profile_picture : null; 
                 break;
             case 'post':
-                // other models
+                $post = Post::find($id);
+                $fileName = $post ? $post->image : null; 
                 break;
             default:
                 return null;
@@ -127,7 +130,7 @@ class FileController extends Controller
         return null;
     }
 
-    static function get(String $type, int $userId) {
+    static function get(String $type, int $id) {
 
         // Validation: upload type
         if (!self::isValidType($type)) {
@@ -135,7 +138,7 @@ class FileController extends Controller
         }
 
         // Validation: file exists
-        $fileName = self::getFileName($type, $userId);
+        $fileName = self::getFileName($type, $id);
         if ($fileName) {
             return asset($type . '/' . $fileName);
         }
