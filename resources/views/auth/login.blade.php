@@ -40,6 +40,9 @@
     <a href="{{ route('register') }}" class="block text-center mt-4 text-blue-600 no-underline text-sm hover:underline">
         Don't have an account? Register
     </a>
+    <a href="{{ route('recoverPassword') }}" class="block text-center mt-2.5 text-black-500 no-underline text-sm hover:underline">
+        Forgot The Password?
+    </a>
     <a href="{{ route('home') }}" class="block text-center mt-2.5 text-gray-500 no-underline text-sm hover:underline">
         Continue without logging in
     </a>
