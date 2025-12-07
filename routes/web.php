@@ -51,6 +51,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
     Route::get('/admin/edit/{id}', 'showEditUserForm')->name('admin.edit');
     Route::put('/admin/user/{id}', 'editUser')->name('admin.edit.action');
+    Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
 });
 
 Route::get('/home', [TimelineController::class, 'index'])->name('home');

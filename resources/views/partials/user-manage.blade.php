@@ -24,12 +24,26 @@
                         @forelse($users as $user)
                         <tr class="border-b border-gray-200 transition-colors hover:bg-gray-50">
                             <td class="p-4 text-gray-800 text-sm font-medium"><a href="{{ route('profile.show',$user->id_user) }}" class="no-underline text-gray-800 hover:text-blue-600">{{ $user->name }}</a></td>
-                            <td class="p-4 text-gray-800 text-sm font-medium"><a href="{{ route('profile.show',$user->id_user) }}" class="no-underline text-gray-800 hover:text-blue-600">{{ $user->username }}</a></td>
+                            <td class="p-4 text-gray-800 text-sm font-medium"><a href="{{ route('profile.show',$user->id_user) }}" class="no-underline text-gray-800 hover:text-blue-600">
+                                {{ $user->username }}
+                                @if($user->verifiedUser)
+                                    <i class="fa-solid fa-circle-check text-blue-500 text-lg" title="Verified Account"></i>
+                                @endif
+                            </a>
+                            </td>
                             <td class="p-4 text-gray-800 text-sm">{{ $user->email }}</td>
                             <td class="p-4 text-gray-800 text-sm">{{ $user->is_public ? 'Public' : 'Private' }}</td>
                             <td class="p-4">
                                 <div class="flex items-center gap-4">
                                     <a href="{{ route('admin.edit', $user->id_user) }}" class="bg-none text-blue-500 text-sm font-medium no-underline">Edit</a>
+                                    @if(!$user->verifiedUser)
+                                        <form action="{{ route('admin.verify', $user->id_user) }}" method="POST" class="m-0">
+                                            @csrf
+                                            <button type="submit" class="bg-none text-green-600 text-sm font-medium cursor-pointer border-none pb-1 hover:text-green-700">
+                                                Verify
+                                            </button>
+                                        </form>
+                                    @endif
                                     <form action="{{ route('admin.delete', $user->id_user) }}" method="POST" class="m-0">
                                         @csrf
                                         @method('DELETE')

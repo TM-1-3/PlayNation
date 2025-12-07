@@ -16,7 +16,7 @@ class TimelineController extends Controller {
 
         $timelineType = $request->query('timeline', 'public');
 
-        $query = Post::with(['user', 'labels']);
+        $query = Post::with(['user.verifiedUser', 'labels']);
 
         if ($user && $timelineType === 'following') {
             // avoid ambiguity between registered_user.id_user and user_friend.id_user

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use App\Models\VerifiedUser;
 
 use App\Models\User;
 
@@ -140,5 +141,14 @@ class AdminController extends Controller
         $user->save();
 
         return redirect()->route('admin');
+    }
+
+    public function verifyUser($id){
+
+        $user = User::findOrFail($id);
+
+        VerifiedUser::create(['id_verified' => $user->id_user]);
+
+        return redirect()->back()->with('status', 'User verified successfully.');
     }
 }

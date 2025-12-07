@@ -18,7 +18,12 @@
             </a>
             <div class="flex-col">
                 <a href="{{ route('profile.show',$user->id_user) }}" class="block text-lg font-semibold text-gray-800 no-underline transition-colors hover:text-blue-600">{{ $user->name }}</a>
-                <a href="{{ route('profile.show',$user->id_user) }}" class="block text-sm text-gray-500 no-underline transition-colors hover:text-blue-500 ">{{ $user->username }}</a>
+                <a href="{{ route('profile.show',$user->id_user) }}" class="block text-sm text-gray-500 no-underline transition-colors hover:text-blue-500 ">
+                    {{ $user->username }}
+                    @if($user->verifiedUser)
+                        <i class="fa-solid fa-circle-check text-blue-500 text-lg" title="Verified Account"></i>
+                    @endif
+                </a>
             </div>
         </div>
         @endforeach

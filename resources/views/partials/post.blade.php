@@ -7,6 +7,9 @@
         </a>
         <a href="{{ route('profile.show', $post->user->id_user) }}" class="font-semibold text-sm text-gray-800 no-underline">
             {{ $post->user->username }}
+            @if($post->user->verifiedUser)
+                <i class="fa-solid fa-circle-check text-blue-500 text-[12px]"></i>
+            @endif
         </a>
         
         <span class="ml-auto text-xs text-gray-500 pr-4">{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</span>

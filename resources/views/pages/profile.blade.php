@@ -14,8 +14,15 @@
                 alt="{{ $user->name }}" 
                 class="w-[150px] h-[150px] rounded-full object-cover block mx-auto mb-4 shadow-md">
             
-            <h1 class="mb-1 text-2xl font-bold">{{ $user->name }}</h1>
-            <h4 class="text-gray-500 font-normal mb-6 text-lg">{{ $user->username }}</h4>
+            <h1 class="mb-1 text-2xl font-bold">
+                {{ $user->name }}
+            </h1>
+            <h4 class="text-gray-500 font-normal mb-6 text-lg">
+                {{ $user->username }}
+                @if($user->verifiedUser)
+                    <i class="fa-solid fa-circle-check text-blue-500 text-lg" title="Verified Account"></i>
+                @endif
+            </h4>
             
             {{-- Bio --}}
             <p class="italic text-gray-600 mb-6">
@@ -42,7 +49,7 @@
                     {{-- others profile --}}
                     
                     {{-- add friend button --}}
-                    <button class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700"> + add fiend </button>
+                    <button class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700"> + Add Friend </button>
                     
                     {{-- msg button --}}
                     <a href="#" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">💬 Message</a>

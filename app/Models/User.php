@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Post;
 use App\Http\Controllers\FileController;
 
@@ -98,4 +99,7 @@ class User extends Authenticatable
         return FileController::get('profile', $this->id_user);
     }
 
+    public function verifiedUser() : hasOne {
+        return $this->hasOne(VerifiedUser::class, 'id_verified', 'id_user');
+    }
 }
