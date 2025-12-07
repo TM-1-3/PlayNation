@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\SetupController;
+use App\Http\Controllers\Auth\RecoverPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\AdminController; 
@@ -28,6 +30,16 @@ Route::controller(LogoutController::class)->group(function () {
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register')->name('register.action');
+});
+
+Route::controller(RecoverPasswordController::class)->group(function () {
+    Route::get('/recoverPassword', 'showRecoverPasswordForm')->name('recoverPassword');;
+    Route::post('/recoverPassword', 'sendRecoverEmail')->name('recoverPassword.send');
+});
+
+Route::controller(ResetPasswordController::class)->group(function () {
+    Route::get('/resetPassword/{token}', 'showPasswordResetForm')->middleware('guest')->name('password.reset');;
+    Route::post('/resetPassword', 'resetPassword')->middleware('guest')->name('password.update');
 });
 
 // Admin
