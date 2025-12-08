@@ -7,7 +7,7 @@
 <div class="max-w-4xl mx-auto pt-10 px-4">
     <div class="mb-6 relative flex items-center justify-center">
         <h1 class="text-2xl font-bold text-gray-800 text-center">
-            {{ $user->name }}'s Friends
+            {{ $user->username }}'s Friends
         </h1>
     </div>
 
