@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 
 class UserController extends Controller
@@ -16,7 +17,23 @@ class UserController extends Controller
     {
         // getting user so thet name appears in the title
         // If error, use findOrFail($id) that sends 404 if not found
-        //$user = User::findOrFail($id);
+        $user = User::findOrFail($id);
+
+        $authId = Auth::id();
+
+        $isFriend = false;
+
+        $requestSent = false;
+
+        if ($authId) {
+            $isFriend = DB::table('user_friend')
+                ->where('id_user', $authId)->where('id_friend', $user->id_user)
+                ->exists();
+
+            $requestSent = DB::table('user_friend_request')
+                ->where('id_requester', $authId)->where('id_user', $user->id_user)
+                ->exists();
+        }
 
         $user = User::withCount(['posts', 'followers', 'following'])->findOrFail($id);
 
@@ -27,6 +44,8 @@ class UserController extends Controller
         return view('pages.profile', [
             'user' => $user,
             'posts' => $posts,
+            'isFriend' => $isFriend,
+            'requestSent' => $requestSent
         ]);
     }
     
