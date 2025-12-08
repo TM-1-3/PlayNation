@@ -102,4 +102,8 @@ class User extends Authenticatable
     public function verifiedUser() : hasOne {
         return $this->hasOne(VerifiedUser::class, 'id_verified', 'id_user');
     }
+
+    public function friends() {
+        return $this->belongsToMany(User::class, 'user_friend', 'id_user', 'id_friend');
+    }
 }

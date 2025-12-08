@@ -9,10 +9,12 @@ use App\Http\Controllers\Auth\SetupController;
 use App\Http\Controllers\Auth\RecoverPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\AdminController; 
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\FileController; 
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\FriendController; 
 
 // Home
 Route::redirect('/', '/login');
@@ -105,4 +107,14 @@ Route::middleware(['auth'])->group(function () {
     
     // File upload
     Route::post('/file/upload', [FileController::class, 'upload'])->name('upload.img');
+
+    Route::post('/user/{id}/sendFriendRequest', [FriendController::class, 'sendFriendRequest'])->name('user.sendFriendRequest');
+    Route::delete('/friend/remove/{id}', [FriendController::class, 'removeFriend'])->name('friend.remove');
+
+    Route::get('/notifications', [NotificationController::class, 'showNotificationsPage'])->name('notifications.index');
+
+    Route::post('/notifications/{id}/accept', [NotificationController::class, 'acceptFriendRequest'])->name('notifications.accept');
+    Route::post('/notifications/{id}/deny', [NotificationController::class, 'denyFriendRequest'])->name('notifications.deny');
 });
+
+Route::get('/profile/{id}/friends', [FriendController::class, 'showFriendsPage'])->name('user.friends');

@@ -49,8 +49,27 @@
                     {{-- others profile --}}
                     
                     {{-- add friend button --}}
-                    <button class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700"> + Add Friend </button>
-                    
+                    @if($isFriend)
+                        <form action="{{ route('friend.remove', $user->id_user) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this friend?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded inline-flex items-center justify-center cursor-pointer border border-red-700 transition-colors hover:bg-red-700">
+                                Unfriend
+                            </button>
+                        </form>
+                    @elseif($requestSent)
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded inline-flex items-center justify-center cursor-pointer border border-blue-700 transition-colors hover:bg-blue-700">
+                            🕒 Pending Request
+                        </button>
+                    @else
+                        {{-- Add Friend Form --}}
+                        <form action="{{ route('user.sendFriendRequest', $user->id_user) }}" method="POST" class="m-0">
+                            @csrf
+                            <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded inline-flex items-center justify-center cursor-pointer border border-blue-700 transition-colors hover:bg-blue-700">
+                                + Add Friend
+                            </button>
+                        </form>
+                        @endif
                     {{-- msg button --}}
                     <a href="#" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">💬 Message</a>
                 
@@ -72,13 +91,13 @@
                 <h3 class="mb-0 text-blue-600 text-2xl font-bold">{{ $user->posts_count ?? $posts->count() }}</h3>
                 <small class="text-gray-600">Posts</small>
             </div>
-            <div class="text-center">
-                <h3 class="mb-0 text-blue-600 text-2xl font-bold">{{ $user->followers_count ?? 0 }}</h3>
-                <small class="text-gray-600">Followers</small>
-            </div>
-            <div class="text-center">
-                <h3 class="mb-0 text-blue-600 text-2xl font-bold">{{ $user->following_count ?? 0 }}</h3>
-                <small class="text-gray-600">Following</small>
+            <div class="text-center group">
+                <a href="{{ route('user.friends', $user->id_user) }}" class="block p-2 rounded hover:bg-blue-50 transition-colors">
+                    <h3 class="mb-0 text-blue-600 text-2xl font-bold">
+                        {{ $user->friends()->count() }}
+                    </h3>
+                    <small class="text-gray-600">Friends</small>
+                </a>
             </div>
         </div>
 
