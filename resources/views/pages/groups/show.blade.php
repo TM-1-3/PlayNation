@@ -24,8 +24,8 @@
 
         <div class="profile-actions" style="flex-direction: column; gap: 10px;">
             
-            {{-- Owner actions --}}
-            @if(Auth::check() && Auth::id() === $group->id_owner)
+            {{-- Owner actions or admin --}}
+            @if(Auth::check() && (Auth::id() === $group->id_owner || Auth::user()->isAdmin()))
                 <a href="{{ route('groups.edit', $group->id_group) }}" class="button" style="width: 100%;">⚙️ Edit Group</a>
             @endif
 
