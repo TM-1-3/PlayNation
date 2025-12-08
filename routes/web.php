@@ -13,6 +13,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController; 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\FileController; 
+use App\Http\Controllers\GroupController;
 
 // Home
 Route::redirect('/', '/login');
@@ -110,4 +111,18 @@ Route::middleware(['auth'])->group(function () {
     
     // File upload
     Route::post('/file/upload', [FileController::class, 'upload'])->name('upload.img');
+
+
+    // Group routes public
+    Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
+    Route::get('/groups/{id}', [GroupController::class, 'show'])->name('groups.show');
+
+    // Group routes authenticated
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/groups/create/new', [GroupController::class, 'create'])->name('groups.create'); 
+        Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+        Route::get('/groups/{id}/edit', [GroupController::class, 'edit'])->name('groups.edit');
+        Route::put('/groups/{id}', [GroupController::class, 'update'])->name('groups.update');
+        Route::delete('/groups/{id}', [GroupController::class, 'destroy'])->name('groups.destroy');
+});
 });
