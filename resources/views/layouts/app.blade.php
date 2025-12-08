@@ -12,7 +12,6 @@
     @stack('styles')
 
     <!-- Scripts -->
-    <script src="{{ asset('js/home.js') }}?v={{ time() }}" defer></script>
     <script src="{{ asset('js/search.js') }}" defer></script>
     @stack('scripts')
 </head>

@@ -42,7 +42,7 @@
                 <input type="file" id="profile_picture" name="profile_picture" class="w-full p-2 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
                 @error('profile_picture') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
             </div>
-
+            
             <hr class="my-6 border-gray-300">
 
             <h4 class="mt-4 text-lg font-semibold text-gray-700">Change Password <small class="text-xs text-gray-500">(Leave empty to keep current)</small></h4>

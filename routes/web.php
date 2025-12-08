@@ -6,10 +6,13 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\SetupController;
+use App\Http\Controllers\Auth\RecoverPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\AdminController; 
-use App\Http\Controllers\PostController; 
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\FileController; 
 
 // Home
 Route::redirect('/', '/login');
@@ -29,6 +32,16 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'register')->name('register.action');
 });
 
+Route::controller(RecoverPasswordController::class)->group(function () {
+    Route::get('/recoverPassword', 'showRecoverPasswordForm')->name('recoverPassword');;
+    Route::post('/recoverPassword', 'sendRecoverEmail')->name('recoverPassword.send');
+});
+
+Route::controller(ResetPasswordController::class)->group(function () {
+    Route::get('/resetPassword/{token}', 'showPasswordResetForm')->middleware('guest')->name('password.reset');;
+    Route::post('/resetPassword', 'resetPassword')->middleware('guest')->name('password.update');
+});
+
 // Admin
 Route::controller(AdminController::class)->group(function () {
     Route::get('/admin', 'showAdminPage')->name('admin');
@@ -38,6 +51,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
     Route::get('/admin/edit/{id}', 'showEditUserForm')->name('admin.edit');
     Route::put('/admin/user/{id}', 'editUser')->name('admin.edit.action');
+    Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
 });
 
 Route::get('/home', [TimelineController::class, 'index'])->name('home');
@@ -57,10 +71,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/{id}/edit', [UserController::class, 'edit'])->name('profile.edit');
     
     Route::put('/profile/{id}', [UserController::class, 'update'])->name('profile.update');
-
-    Route::get('/post/create', function () {
-        return view('pages.placeholder', ['title' => 'Create New Post']);
-    })->name('post.create');
 
     Route::get('/messages', function () {
         return view('pages.placeholder', ['title' => 'My Conversations']);
@@ -97,4 +107,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
     Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
+    
+    // File upload
+    Route::post('/file/upload', [FileController::class, 'upload'])->name('upload.img');
 });

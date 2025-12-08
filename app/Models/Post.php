@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Http\Controllers\FileController;
+
 
 class Post extends Model
 {
@@ -26,5 +28,9 @@ class Post extends Model
     public function labels(): BelongsToMany
     {
         return $this->belongsToMany(Label::class, 'post_label', 'id_post', 'id_label');
+    }
+
+    public function getPostImage() {
+        return FileController::get('posts', $this->id_post);
     }
 }

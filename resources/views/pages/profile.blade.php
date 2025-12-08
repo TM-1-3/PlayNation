@@ -10,12 +10,19 @@
     {{-- left column photo and data --}}
     <div class="w-full md:w-1/3 md:min-w-[250px] text-center">
 
-            <img src="{{ $user->profile_picture ? asset($user->profile_picture) : asset('img/default-user.png') }}" 
+            <img src="{{ $user->getProfileImage() }}" 
                 alt="{{ $user->name }}" 
-                class="w-[150px] h-[150px] rounded-full object-cover border-4 border-blue-900 block mx-auto mb-4 shadow-md">
+                class="w-[150px] h-[150px] rounded-full object-cover block mx-auto mb-4 shadow-md">
             
-            <h1 class="mb-1 text-2xl font-bold">{{ $user->name }}</h1>
-            <h4 class="text-gray-500 font-normal mb-6 text-lg">{{ $user->username }}</h4>
+            <h1 class="mb-1 text-2xl font-bold">
+                {{ $user->name }}
+            </h1>
+            <h4 class="text-gray-500 font-normal mb-6 text-lg">
+                {{ $user->username }}
+                @if($user->verifiedUser)
+                    <i class="fa-solid fa-circle-check text-blue-500 text-lg" title="Verified Account"></i>
+                @endif
+            </h4>
             
             {{-- Bio --}}
             <p class="italic text-gray-600 mb-6">
@@ -42,7 +49,7 @@
                     {{-- others profile --}}
                     
                     {{-- add friend button --}}
-                    <button class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700"> + add fiend </button>
+                    <button class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700"> + Add Friend </button>
                     
                     {{-- msg button --}}
                     <a href="#" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">💬 Message</a>
@@ -84,22 +91,7 @@
             </div>
         @else
             @foreach($posts as $post)
-                <div class="rounded-lg shadow-sm p-8 mb-8 relative">
-                    @if(Auth::check() && Auth::id() == $post->id_creator)
-                        <div class="absolute top-2 right-2">
-                            <a href="{{ route('post.edit', $post->id_post) }}" class="bg-blue-600 text-white py-1 px-3 text-sm rounded border border-blue-700 transition-colors hover:bg-blue-700 no-underline" title="Edit post">Edit Post</a>
-                        </div>
-                    @endif
-
-                    @if($post->image)
-                            <img class="w-full max-w-md block border-t border-gray-200" src="{{ asset($post->image) }}" alt="Post Content">
-                    @endif
-
-                    @if($post->description)
-                        <p class="my-4">{{ $post->description }}</p>
-                    @endif
-                    <small class="text-gray-600">{{ \Carbon\Carbon::parse($post->date)->diffForHumans() }}</small>
-                </div>
+                    @include('partials.post', ['post' => $post, 'type' => 'profile'])
             @endforeach
         @endif
 

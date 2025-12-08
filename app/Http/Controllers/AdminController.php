@@ -6,18 +6,25 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use App\Models\VerifiedUser;
 
 use App\Models\User;
 
 class AdminController extends Controller
 {
-    public function showAdminPage()
+    public function showAdminPage(Request $request)
     {
         $user = auth()->user(); // Get the currently logged-in user
 
+        $type = $request->query('type', 'user');
+
+        if (!$type) {
+            $type = 'user';
+        }
+
         if ($user->isAdmin()) {
             $users = User::all();
-            return view('pages.admin', compact('users'));
+            return view('pages.admin', ['users' => $users, 'type' => $type]);
         }
         
         // User is not an admin, redirect them or show an error
@@ -28,19 +35,15 @@ class AdminController extends Controller
     public function searchUser(Request $request)
     {
         $search = $request->get('search');
-        $users = User::query();
         
-        if($search) {
-            // full-text search for name and username
-            $tsquery = str_replace(' ', ' & ', trim($search));
-            
-            $users->where(function($query) use ($search, $tsquery) {
-                // ull-text search on name and username using the index
-                $query->whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$tsquery]);
-            });
+        if ($search) {
+            $input = $search . ':*';
+            $users = User::whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input])
+                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('portuguese', ?)) DESC", [$input])
+                         ->get();
+        } else {
+            $users = User::all();
         }
-        
-        $users = $users->get();
 
         if ($request->ajax()) {
             return response()->json([
@@ -49,7 +52,7 @@ class AdminController extends Controller
         }
         
         // If it's a standard request, return the full view
-        return view('pages.admin', compact('users'));
+        return view('pages.admin', ['users' => $users, 'type' => 'user']);
     }
 
     public function showCreateUserForm()
@@ -138,5 +141,14 @@ class AdminController extends Controller
         $user->save();
 
         return redirect()->route('admin');
+    }
+
+    public function verifyUser($id){
+
+        $user = User::findOrFail($id);
+
+        VerifiedUser::create(['id_verified' => $user->id_user]);
+
+        return redirect()->back()->with('status', 'User verified successfully.');
     }
 }
