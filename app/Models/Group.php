@@ -13,7 +13,7 @@ class Group extends Model
 
     protected $table = 'groups';
     protected $primaryKey = 'id_group';
-    public $timestamps = false; // our table doesnt have created_at/updated_at
+    public $timestamps = false; // our table doesnt have created_at/updated_at 
 
     protected $fillable = [
         'name',

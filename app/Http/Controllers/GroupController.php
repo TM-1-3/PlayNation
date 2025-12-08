@@ -37,7 +37,6 @@ class GroupController extends Controller
         // verufy access (is public or is member)
         if (!$group->is_public) {
             if (!Auth::check() || !$group->members->contains(Auth::user()->id_user)) {
-                // only owner can access ----------------------------------------------------perguntar sobre isto, nos grupos privados apenas e só o owner que pode ver?, depois como é que seriam os membros que não são owners mas foram adicionados pelo owner?
                 if (!Auth::check() || $group->id_owner !== Auth::id()) {
                     abort(403, 'This group is private.');
                 }
@@ -67,9 +66,8 @@ class GroupController extends Controller
             'is_public' => 'boolean' 
         ]);
 
-        // 2. Garantir que o user é um "Group Owner" na tabela group_owner
-        // A tua BD exige que o ID exista na tabela group_owner antes de criar o grupo
-        $isOwner = DB::table('group_owner')->where('id_group_owner', $user->id_user)->exists(); //------------Não percebi esta parte explica melhor como é que a nossa base de dados sabe sobre os group ouwners, (eles devem podem ser owners de alguns grupos mas membros de outros). 
+        //guarante owner exists in group_owner
+        $isOwner = DB::table('group_owner')->where('id_group_owner', $user->id_user)->exists(); 
         
         if (!$isOwner) {
             DB::table('group_owner')->insert(['id_group_owner' => $user->id_user]);
@@ -102,8 +100,8 @@ class GroupController extends Controller
     {
         $group = Group::findOrFail($id);
 
-        // only ownwer can edit (probably admins showld too)
-        if (Auth::id() !== $group->id_owner) {
+        //owner our site admin can editadmin can now edit groups
+        if (Auth::id() !== $group->id_owner && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
 
