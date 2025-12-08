@@ -139,4 +139,3 @@ Route::get('/profile/{id}/friends', [FriendController::class, 'showFriendsPage']
         Route::put('/groups/{id}', [GroupController::class, 'update'])->name('groups.update');
         Route::delete('/groups/{id}', [GroupController::class, 'destroy'])->name('groups.destroy');
     });
-});

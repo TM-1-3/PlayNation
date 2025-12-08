@@ -27,9 +27,12 @@
                     <div>
                         <p class="text-sm text-gray-800">
                             <a href="{{ route('profile.show', $request->emitter->id_user) }}" class="font-bold hover:underline">
-                                {{ $request->emitter->name }}
+                                {{ $request->emitter->username }}
                             </a>
-                            <span class="text-gray-600">wants to be your friend.</span>
+                            @if($request->emitter->verifiedUser)
+                                <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified"></i>
+                            @endif
+                            <span class="text-gray-600"> wants to be your friend.</span>
                         </p>
                         <span class="text-xs text-gray-400">{{ \Carbon\Carbon::parse($request->date)->diffForHumans() }}</span>
                     </div>

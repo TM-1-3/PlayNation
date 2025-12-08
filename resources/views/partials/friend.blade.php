@@ -11,7 +11,12 @@
                     {{ $friend->name }}
                 </a>
             </h3>
-            <p class="text-gray-500 text-xs">{{ '@' . $friend->username }}</p>
+            <div class="flex items-center gap-1">
+                <p class="text-gray-500 text-xs">{{ '@' . $friend->username }}</p>
+                @if($friend->verifiedUser)
+                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified"></i>
+                @endif
+</div>
         </div>
     </div>
     <div class="flex items-center gap-2">
