@@ -62,6 +62,18 @@ class GroupController extends Controller
 
         // logged but no access
         abort(403, 'This group is private.');
+
+    }
+
+    public function create()
+    {
+        // Segurança extra: só logados entram (embora a rota já deva ter middleware)
+        if (!\Illuminate\Support\Facades\Auth::check()) {
+            return redirect()->route('login');
+        }
+        
+        // Retorna a view que criámos com o formulário Tailwind
+        return view('pages.groups.create');
     }
 
     // strore in bd
@@ -85,6 +97,8 @@ class GroupController extends Controller
         }
 
         //create group
+        
+
         $group = new Group();
         $group->name = $request->name;
         $group->description = $request->description;
