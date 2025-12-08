@@ -119,10 +119,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Group routes authenticated
     Route::middleware(['auth'])->group(function () {
-        Route::get('/groups/create/new', [GroupController::class, 'create'])->name('groups.create'); 
+        Route::get('/my-groups', [GroupController::class, 'myGroups'])->name('mygroups.index');
+        Route::get('/groups/create/new', [GroupController::class, 'create'])->name('groups.create');
         Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
         Route::get('/groups/{id}/edit', [GroupController::class, 'edit'])->name('groups.edit');
         Route::put('/groups/{id}', [GroupController::class, 'update'])->name('groups.update');
         Route::delete('/groups/{id}', [GroupController::class, 'destroy'])->name('groups.destroy');
-});
+    });
 });

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Post;
+use App\Models\Group;
 use App\Http\Controllers\FileController;
 
 class User extends Authenticatable
@@ -101,5 +102,13 @@ class User extends Authenticatable
 
     public function verifiedUser() : hasOne {
         return $this->hasOne(VerifiedUser::class, 'id_verified', 'id_user');
+    }
+
+    public function groups(){
+        return $this->belongsToMany(Group::class, 'group_membership', 'id_member', 'id_group');
+    }
+
+    public function ownedGroups(){
+        return $this->hasMany(Group::class, 'id_owner', 'id_user');
     }
 }

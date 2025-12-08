@@ -30,6 +30,16 @@ class Group extends Model
     // group owner
     // showuld connect to group_owner, but id_group_owner == id_user,
 
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_membership', 'id_member', 'id_group');
+    }
+
+    public function ownedGroups()
+    {
+        return $this->hasMany(Group::class, 'id_owner', 'id_user');
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_owner', 'id_user');

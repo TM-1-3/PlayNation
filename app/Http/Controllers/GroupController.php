@@ -20,37 +20,48 @@ class GroupController extends Controller
         if ($request->has('search')) {
             // save for future (tsvector) 
             $query->where('name', 'ilike', '%' . $request->search . '%');
-        } else {
-            $query->where('is_public', true);
-        }
+        } 
+        $query->where('is_public', true);
+        
 
         $groups = $query->get();
 
-        return view('pages.groups.index', compact('groups'));
+        return view('pages.groups.index', ['groups' => $groups, 'title' => 'Public Groups']);
+    }
+
+    public function myGroups()
+    {
+        $user = Auth::user();
+        $groups = $user->groups()->get(); 
+        return view('pages.groups.index', ['groups' => $groups, 'title' => 'My Groups']);
     }
 
     // show group details
     public function show($id)
     {
         $group = Group::with('owner', 'members')->findOrFail($id);
-        
-        // verufy access (is public or is member)
-        if (!$group->is_public) {
-            if (!Auth::check() || !$group->members->contains(Auth::user()->id_user)) {
-                if (!Auth::check() || $group->id_owner !== Auth::id()) {
-                    abort(403, 'This group is private.');
-                }
-            }
+        $user = Auth::user();
+        // public anyone (logged or not)
+        if ($group->is_public) {
+            return view('pages.groups.show', compact('group'));
         }
 
-        return view('pages.groups.show', compact('group'));
-    }
+        // private only if has key
+        if ($user && (
+            $group->members->contains($user->id_user) || 
+            $group->id_owner === $user->id_user || 
+            $user->isAdmin()
+        )) {
+            return view('pages.groups.show', compact('group'));
+        }
 
-    public function create()
-    {
-        if (!Auth::check()) return redirect()->route('login');
-        
-        return view('pages.groups.create');
+        // visitor if try acced private
+        if (!$user) {
+            return redirect()->route('login')->with('status', 'Please login to view private groups.');
+        }
+
+        // logged but no access
+        abort(403, 'This group is private.');
     }
 
     // strore in bd
