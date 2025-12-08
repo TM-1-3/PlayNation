@@ -39,14 +39,14 @@
                 <div class="flex gap-2">
                     <form action="{{ route('notifications.accept', $request->id_notification) }}" method="POST">
                         @csrf
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-1.5 px-4 rounded transition-colors">
+                        <button type="submit" class="bg-green-600 hover:bg-greeb-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors">
                             Accept
                         </button>
                     </form>
 
                     <form action="{{ route('notifications.deny', $request->id_notification) }}" method="POST">
                         @csrf
-                        <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1.5 px-4 rounded transition-colors">
+                        <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors">
                             Deny
                         </button>
                     </form>
