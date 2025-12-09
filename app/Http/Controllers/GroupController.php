@@ -102,7 +102,7 @@ class GroupController extends Controller
         $group = new Group();
         $group->name = $request->name;
         $group->description = $request->description;
-        $group->is_public = $request->has('is_public'); 
+        $group->is_public = $request->input('is_public'); 
         $group->id_owner = $user->id_user;
 
         // image as in profile
@@ -150,7 +150,7 @@ class GroupController extends Controller
 
         $group->name = $request->name;
         $group->description = $request->description;
-        $group->is_public = $request->has('is_public');
+        $group->is_public = $request->input('is_public');
 
         // smart delete of group picture
         if ($request->hasFile('picture')) {
@@ -184,4 +184,79 @@ class GroupController extends Controller
 
         return redirect()->route('groups.index')->with('status', 'Group deleted.');
     }
+
+    public function join($id)
+    {
+        $group = Group::findOrFail($id);
+        $user = Auth::user();
+
+        // basic verifications
+        if ($group->members->contains($user->id_user) || $group->id_owner === $user->id_user) {
+            return redirect()->back()->with('status', 'You are already a member.');
+        }
+
+        // public automatic join
+        if ($group->is_public) {
+            $group->members()->attach($user->id_user);
+            return redirect()->back()->with('status', 'Welcome to the group! 👋');
+        } 
+        
+        // request + notify owner
+        else {
+            // Verifies for existing request
+            if (!$group->joinRequests->contains($user->id_user)) {
+                
+                // create request on table
+                $group->joinRequests()->attach($user->id_user);
+
+                // create generic notification
+                // Baseado no padrão do FriendController
+                $notificationId = DB::table('notification')->insertGetId([
+                    'id_receiver' => $group->id_owner, // O Dono recebe
+                    'id_emitter'  => $user->id_user,   // Eu envio
+                    'text'        => $user->name . " requested to join your group '" . $group->name . "'.",
+                    'date'        => now()
+                ], 'id_notification');
+
+                // C. Criar a Notificação Específica (Tabela Filha 'join_group_request_notification')
+                // Isto liga a notificação ao grupo específico para saberes qual aceitar depois
+                DB::table('join_group_request_notification')->insert([
+                    'id_notification' => $notificationId,
+                    'id_group'        => $group->id_group,
+                    'accepted'        => null // null = pendente
+                ]);
+
+                return redirect()->back()->with('status', 'Request sent! Owner notified. 📨');
+            }
+            
+            return redirect()->back()->with('status', 'Request already sent.');
+        }
+    }
+
+    public function leave($id)
+    {
+        $group = Group::findOrFail($id);
+        $user = Auth::user();
+
+        // owner cant leave must delete group or transfer ownership
+        if ($group->id_owner === $user->id_user) {
+            return redirect()->back()->with('error', 'The owner cannot leave the group.');
+        }
+
+        // remove from members list
+        $group->members()->detach($user->id_user);
+
+        return redirect()->route('groups.index')->with('status', 'You left the group.');
+    }
+
+    public function cancelRequest($id)
+    {
+        $group = Group::findOrFail($id);
+        $user = Auth::user();
+
+        $group->joinRequests()->detach($user->id_user);
+
+        return redirect()->back()->with('status', 'Join request cancelled.');
+    }
+
 }

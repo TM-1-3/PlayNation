@@ -138,4 +138,7 @@ Route::get('/profile/{id}/friends', [FriendController::class, 'showFriendsPage']
         Route::get('/groups/{id}/edit', [GroupController::class, 'edit'])->name('groups.edit');
         Route::put('/groups/{id}', [GroupController::class, 'update'])->name('groups.update');
         Route::delete('/groups/{id}', [GroupController::class, 'destroy'])->name('groups.destroy');
+        Route::post('/groups/{id}/join', [GroupController::class, 'join'])->name('groups.join');
+        Route::post('/groups/{id}/leave', [GroupController::class, 'leave'])->name('groups.leave');
+        Route::delete('/groups/{id}/request', [GroupController::class, 'cancelRequest'])->name('groups.cancel_request');
     });

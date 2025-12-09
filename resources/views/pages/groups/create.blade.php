@@ -39,8 +39,8 @@
             <div class="flex items-start p-4 bg-gray-50 rounded-lg">
                 <div class="flex items-center h-5">
                     <input type="hidden" name="is_public" value="0">
-                    <input id="is_public" name="is_public" type="checkbox" value="1" checked 
-                           class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <input id="is_public" name="is_public" type="checkbox" value="1" {{ old('is_public', true) ? 'checked' : '' }} 
+                            class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
                 </div>
                 <div class="ml-3">
                     <label for="is_public" class="font-bold text-gray-800 text-sm">Public Group</label>
