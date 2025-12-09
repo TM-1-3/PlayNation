@@ -12,29 +12,49 @@ use Illuminate\Support\Facades\Storage;
 class GroupController extends Controller
 {
     // list all groups
-    public function index(Request $request)
-    {
-        // for searching 
-        $query = Group::query();
-
-        if ($request->has('search')) {
-            // save for future (tsvector) 
-            $query->where('name', 'ilike', '%' . $request->search . '%');
-        } 
-        $query->where('is_public', true);
-        
-
-        $groups = $query->get();
-
-        return view('pages.groups.index', ['groups' => $groups, 'title' => 'Public Groups']);
-    }
-
-    public function myGroups()
+    public function index()
     {
         $user = Auth::user();
-        $groups = $user->groups()->get(); 
-        return view('pages.groups.index', ['groups' => $groups, 'title' => 'My Groups']);
+        $myGroups = collect();
+        $otherGroups = collect();
+
+        if ($user) {
+            // my groups
+            // gets ids of groups where im member
+            $memberGroupIds = DB::table('group_membership')
+                ->where('id_member', $user->id_user)
+                ->pluck('id_group')
+                ->toArray();
+            
+            // gets ids of groups i own
+            $ownerGroupIds = DB::table('groups')
+                ->where('id_owner', $user->id_user)
+                ->pluck('id_group')
+                ->toArray();
+
+            // merge both and remove duplicates
+            $myGroupIds = array_unique(array_merge($memberGroupIds, $ownerGroupIds));
+
+            // get my groups details
+            $myGroups = Group::whereIn('id_group', $myGroupIds)->get();
+
+            // other groups including public and private to ask for access
+            $otherGroups = Group::whereNotIn('id_group', $myGroupIds)
+                ->orderBy('is_public', 'desc') // public first private after
+                ->get();
+
+        } else {
+            // only public groups for visitors
+            $otherGroups = Group::where('is_public', true)->get();
+        }
+
+        return view('pages.groups.index', [
+            'myGroups' => $myGroups,
+            'otherGroups' => $otherGroups
+        ]);
     }
+
+    
 
     // show group details
     public function show($id)
