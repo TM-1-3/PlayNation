@@ -39,7 +39,7 @@
                 
                 {{-- Imagem --}}
                 <div class="h-40 overflow-hidden relative">
-                    <img src="{{ $group->picture ? asset($group->picture) : asset('img/default-group.png') }}" 
+                    <img src="{{ $group->getGroupPicture() }}" 
                          alt="{{ $group->name }}" 
                          class="w-full h-full object-cover">
                     

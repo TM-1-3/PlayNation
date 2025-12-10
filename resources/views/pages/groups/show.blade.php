@@ -13,7 +13,7 @@
             <div class="bg-white rounded-lg shadow-md p-6 sticky top-5">
                 
                 <div class="relative w-full h-48 mb-6 rounded-lg overflow-hidden shadow-sm">
-                    <img src="{{ $group->picture ? asset($group->picture) : asset('img/default-group.png') }}" 
+                    <img src="{{ $group->getGroupPicture() }}" 
                          alt="{{ $group->name }}" 
                          class="w-full h-full object-cover">
                 </div>
