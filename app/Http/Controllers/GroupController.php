@@ -104,14 +104,18 @@ class GroupController extends Controller
         $group->description = $request->description;
         $group->is_public = $request->has('is_public'); 
         $group->id_owner = $user->id_user;
-
-        // image as in profile
-        if ($request->hasFile('picture')) {
-            $path = $request->file('picture')->store('groups', 'public');
-            $group->picture = 'storage/' . $path;
-        }
+        $group->picture = '';
 
         $group->save();
+
+        if ($request->hasFile('picture')) {
+            $uploadrequest = new Request([
+                'id' => $group->id_group,
+                'type' => 'groups'
+            ]);
+            $uploadrequest->files->set('file', $request->file('picture'));
+            app(FileController::class)->upload($uploadrequest);
+        }
 
         // owner is auto member
         $group->members()->attach($user->id_user);
@@ -152,14 +156,13 @@ class GroupController extends Controller
         $group->description = $request->description;
         $group->is_public = $request->has('is_public');
 
-        // smart delete of group picture
         if ($request->hasFile('picture')) {
-            if ($group->picture) {
-                $oldPath = str_replace('storage/', '', $group->picture);
-                Storage::disk('public')->delete($oldPath);
-            }
-            $path = $request->file('picture')->store('groups', 'public');
-            $group->picture = 'storage/' . $path;
+            $uploadrequest = new Request([
+                'id' => $group->id_group,
+                'type' => 'groups'
+            ]);
+            $uploadrequest->files->set('file', $request->file('picture'));
+            app(FileController::class)->upload($uploadrequest);
         }
 
         $group->save();
@@ -176,8 +179,8 @@ class GroupController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        if ($group->picture) {
-            Storage::disk('public')->delete(str_replace('storage/', '', $group->picture));
+        if (!empty($group->picture)) {
+            Storage::disk('storage')->delete('groups/' . $group->picture);
         }
 
         $group->delete();
