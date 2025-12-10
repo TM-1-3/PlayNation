@@ -9,6 +9,8 @@ use Illuminate\Validation\Rule;
 use App\Models\VerifiedUser;
 
 use App\Models\User;
+use App\Models\Group;
+
 
 class AdminController extends Controller
 {
@@ -16,15 +18,20 @@ class AdminController extends Controller
     {
         $user = auth()->user(); // Get the currently logged-in user
 
-        $type = $request->query('type', 'user');
+        $type = $request->query('type', 'user',  'groups');
 
         if (!$type) {
             $type = 'user';
         }
 
-        if ($user->isAdmin()) {
+        if ($user->isAdmin() && $type == 'user') {
             $users = User::all();
             return view('pages.admin', ['users' => $users, 'type' => $type]);
+        }
+
+        if ($user->isAdmin() && $type == 'group') {
+            $groups = Group::all();
+            return view('pages.admin', ['groups' => $groups, 'type' => $type]);
         }
         
         // User is not an admin, redirect them or show an error
