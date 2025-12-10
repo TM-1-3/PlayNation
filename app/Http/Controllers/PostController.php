@@ -160,7 +160,7 @@ class PostController extends Controller
             return redirect()->back()->withErrors(['form' => 'Unauthorized']);
         }
         if (!empty($post->image)) {
-            Storage::disk('public')->delete($post->image);
+            Storage::disk('storage')->delete('posts/' . $post->image);
         }
         $ownerId = $post->id_creator;
         $post->delete();
