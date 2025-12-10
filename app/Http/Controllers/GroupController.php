@@ -111,7 +111,7 @@ class GroupController extends Controller
         if ($request->hasFile('picture')) {
             $uploadrequest = new Request([
                 'id' => $group->id_group,
-                'type' => 'groups'
+                'type' => 'group'
             ]);
             $uploadrequest->files->set('file', $request->file('picture'));
             app(FileController::class)->upload($uploadrequest);
@@ -159,7 +159,7 @@ class GroupController extends Controller
         if ($request->hasFile('picture')) {
             $uploadrequest = new Request([
                 'id' => $group->id_group,
-                'type' => 'groups'
+                'type' => 'group'
             ]);
             $uploadrequest->files->set('file', $request->file('picture'));
             app(FileController::class)->upload($uploadrequest);
@@ -180,7 +180,7 @@ class GroupController extends Controller
         }
 
         if (!empty($group->picture)) {
-            Storage::disk('storage')->delete('groups/' . $group->picture);
+            Storage::disk('storage')->delete('group/' . $group->picture);
         }
 
         $group->delete();

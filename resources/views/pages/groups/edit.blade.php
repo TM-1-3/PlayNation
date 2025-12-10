@@ -32,7 +32,7 @@
 
             <div class="flex items-center gap-4">
                 @if($group->picture)
-                    <img src="{{ asset($group->picture) }}" class="w-16 h-16 rounded-lg object-cover shadow-sm">
+                    <img src="{{ $group->getGroupPicture() }}" class="w-16 h-16 rounded-lg object-cover shadow-sm">
                 @endif
                 <div class="flex-1">
                     <label for="picture" class="block text-sm font-bold text-gray-700 mb-1">Update Cover Image</label>
