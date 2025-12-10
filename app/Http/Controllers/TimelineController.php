@@ -119,7 +119,9 @@ class TimelineController extends Controller {
                 if (isset($postArray['user'])) {
                     $postArray['user']['profile_picture'] = $post->user->getProfileImage();
                 }
-                $postArray['image'] = $post->getPostImage();
+                if ($postArray['image']!= '') {
+                    $postArray['image'] = $post->getPostImage();
+                }
                 return $postArray;
             });
             

@@ -1,5 +1,5 @@
 <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-    
+    <a href="{{ route('groups.show', $group->id_group) }}" class="mt-auto block w-full text-center py-2 rounded-lg transition font-medium no-underline">
     <div class="h-40 overflow-hidden relative">
         <img src="{{ $group->getGroupPicture() }}" 
              alt="{{ $group->name }}" 
@@ -20,9 +20,6 @@
         <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
             {{ $group->description ?? 'No description available.' }}
         </p>
-
-        <a href="{{ route('groups.show', $group->id_group) }}" class="mt-auto block w-full text-center text-blue-600 border border-blue-600 py-2 rounded-lg hover:bg-blue-50 transition font-medium no-underline">
-            View Group
-        </a>
     </div>
+    </a>
 </article>

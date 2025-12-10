@@ -14,9 +14,15 @@
         </div>
     </div>
     @endauth
-    <div class="my-5">
-        <form id="search-home" action="{{ route('search.posts') }}" method="GET">
-            <input type="text" id="search-input-home" name="search" placeholder="Search for posts by username, tags or description..." class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none h-[2em]">
+    <div class="mb-5 mx-auto">
+        <form  id="search-home" action="{{ route('search.posts') }}" method="GET" class="relative">
+                            
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+            </div>
+                                
+            <input id="search-input-home" type="text" name="search" placeholder="Search for posts by username, tags or description.." 
+                    class="h-[2em] block w-full pl-10 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">        
         </form>
     </div>
     <div id="timeline" class="w-full pb-12">
