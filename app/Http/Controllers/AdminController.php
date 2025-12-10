@@ -62,6 +62,36 @@ class AdminController extends Controller
         return view('pages.admin', ['users' => $users, 'type' => 'user']);
     }
 
+    public function searchGroup(Request $request)
+    {
+        $search = $request->get('search');
+        
+        if ($search) {
+            $input = $search . ':*';
+            $groups = Group::whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input])
+                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('portuguese', ?)) DESC", [$input])
+                         ->get();
+        } else {
+            $groups = Group::all();
+        }
+
+        if ($request->ajax()) {
+
+            $groups = $groups->map(function($group) {
+                $groupArray = $group->toArray();
+                $groupArray['picture'] = $group->getGroupPicture();
+                return $groupArray;
+            });
+
+            return response()->json([
+                'groups' => $groups
+            ]);
+        }
+        
+        // If it's a standard request, return the full view
+        return view('pages.admin', ['groups' => $groups, 'type' => 'group']);
+    }
+
     public function showCreateUserForm()
     {
         return view('pages.create_user');

@@ -49,6 +49,7 @@ Route::controller(ResetPasswordController::class)->group(function () {
 Route::controller(AdminController::class)->group(function () {
     Route::get('/admin', 'showAdminPage')->name('admin');
     Route::get('/admin/user', 'searchUser')->name('admin.user');
+    Route::get('/admin/group', 'searchGroup')->name('admin.group');
     Route::get('/admin/create', 'showCreateUserForm')->name('admin.create');
     Route::post('/admin/create', 'createUser')->name('admin.create.action');
     Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
@@ -110,7 +111,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
     Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
+    Route::get('/post/report', [PostController::class, 'report'])->name('post.report');
     
+
     // File upload
     Route::post('/file/upload', [FileController::class, 'upload'])->name('upload.img');
 
