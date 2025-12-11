@@ -15,8 +15,8 @@
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
             </div>
-            <input type="text" id="group-search" placeholder="Filter groups..." 
-                   class="block w-full pl-10 pr-4 py-2.5 border-none rounded-lg shadow-md text-gray-900 focus:ring-2 focus:ring-blue-500 bg-white outline-none">
+            <input type="text" id="group-search" placeholder="Search for groups..." 
+                   class="block h-[2em] w-full pl-10 pr-4 py-2.5 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
         </div>
 
         @auth
@@ -36,7 +36,7 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="my-groups-grid">
                     @foreach($myGroups as $group)
-                        @include('partials.group_card', ['group' => $group, 'isMember' => true])
+                        @include('partials.group-card', ['group' => $group])
                     @endforeach
                 </div>
             </div>
@@ -56,7 +56,7 @@
         @else
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="other-groups-grid">
                 @foreach($otherGroups as $group)
-                    @include('partials.group_card', ['group' => $group, 'isMember' => false])
+                    @include('partials.group-card', ['group' => $group])
                 @endforeach
             </div>
         @endif
