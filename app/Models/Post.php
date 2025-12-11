@@ -30,6 +30,11 @@ class Post extends Model
         return $this->belongsToMany(Label::class, 'post_label', 'id_post', 'id_label');
     }
 
+    public function savers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'post_save', 'id_post', 'id_user');
+    }
+
     public function getPostImage() {
         return FileController::get('posts', $this->id_post);
     }

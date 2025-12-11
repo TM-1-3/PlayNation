@@ -84,9 +84,7 @@ Route::middleware(['auth'])->group(function () {
         return view('pages.placeholder', ['title' => 'Notifications']);
     })->name('notifications.index');
 
-    Route::get('/saved', function () {
-        return view('pages.saved');
-    })->name('saved.index');
+    Route::get('/saved', [PostController::class, 'showSaved'])->name('saved.index');
 
     Route::get('/settings', function () {
         return view('pages.placeholder', ['title' => 'Settings']);

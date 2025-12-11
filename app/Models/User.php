@@ -115,4 +115,9 @@ class User extends Authenticatable
     public function ownedGroups(){
         return $this->hasMany(Group::class, 'id_owner', 'id_user');
     }
+
+    public function savedPosts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'post_save', 'id_user', 'id_post');
+    }
 }

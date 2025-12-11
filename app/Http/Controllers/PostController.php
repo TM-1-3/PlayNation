@@ -169,7 +169,23 @@ class PostController extends Controller
     public function save($id)
     {
         $post = Post::findOrFail($id);
+        $user = Auth::user();
 
-        return view('pages.saved');
+        // Toggle save: if already saved, remove it; otherwise, add it
+        if ($user->savedPosts()->where('post.id_post', $id)->exists()) {
+            $user->savedPosts()->detach($id);
+            return redirect()->route('saved.index')->with('status', 'Post unsaved');
+        } else {
+            $user->savedPosts()->attach($id);
+            return redirect()->route('saved.index')->with('status', 'Post saved');
+        }
+    }
+
+    public function showSaved()
+    {
+        $user = Auth::user();
+        $posts = $user->savedPosts()->with(['user.verifiedUser', 'labels'])->orderByDesc('date')->get();
+        
+        return view('pages.saved', ['posts' => $posts]);
     }
 }
