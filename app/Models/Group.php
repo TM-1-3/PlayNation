@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use \App\Http\Controllers\FileController;
 
 class Group extends Model
 {
@@ -53,5 +54,9 @@ class Group extends Model
     public function joinRequests(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'group_join_request', 'id_group', 'id_requester');
+    }
+
+    public function getGroupPicture() {
+        return FileController::get('group', $this->id_group);
     }
 }
