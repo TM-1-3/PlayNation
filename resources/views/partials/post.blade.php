@@ -73,10 +73,13 @@
             <i class="fa-regular fa-share-from-square text-lg"></i>
             <span class="text-sm">Share</span>
         </button>
-        <button class="flex items-center gap-1 text-gray-600  bg-transparent border-none cursor-pointer ml-auto" title="Save">
-            <i class="fa-regular fa-bookmark text-lg"></i>
-            <span class="text-sm">Save</span>
-        </button>
+        <form action="{{ route('post.save', $post->id_post) }}" method="POST">
+            @csrf
+            <button class="flex items-center gap-1 text-gray-600  bg-transparent border-none cursor-pointer ml-auto" title="Save">
+                <i class="fa-regular fa-bookmark text-lg"></i>
+                <span class="text-sm">Save</span>
+            </button>
+        </form>
     </div>
     
     <div class="py-3 px-4 text-sm leading-relaxed">

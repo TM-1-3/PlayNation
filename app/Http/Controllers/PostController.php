@@ -154,7 +154,6 @@ class PostController extends Controller
 
     public function destroy($id)
     {
-
         $post = Post::findOrFail($id);
         if (Auth::id() != $post->id_creator) {
             return redirect()->back()->withErrors(['form' => 'Unauthorized']);
@@ -165,5 +164,12 @@ class PostController extends Controller
         $ownerId = $post->id_creator;
         $post->delete();
         return redirect()->route('profile.show', $ownerId)->with('status', 'Post deleted successfully');
+    }
+
+    public function save($id)
+    {
+        $post = Post::findOrFail($id);
+
+        return view('pages.saved');
     }
 }

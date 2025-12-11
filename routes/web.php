@@ -85,7 +85,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('notifications.index');
 
     Route::get('/saved', function () {
-        return view('pages.placeholder', ['title' => 'Saved Posts']);
+        return view('pages.saved');
     })->name('saved.index');
 
     Route::get('/settings', function () {
@@ -112,7 +112,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
     Route::get('/post/report', [PostController::class, 'report'])->name('post.report');
-    
+    Route::post('/post/{id}', [PostController::class, 'save'])->name('post.save');
+
 
     // File upload
     Route::post('/file/upload', [FileController::class, 'upload'])->name('upload.img');
