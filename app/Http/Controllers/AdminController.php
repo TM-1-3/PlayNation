@@ -9,6 +9,10 @@ use Illuminate\Validation\Rule;
 use App\Models\VerifiedUser;
 
 use App\Models\User;
+use App\Models\Group;
+use App\Models\Post;
+use Illuminate\Support\Facades\DB;
+
 
 class AdminController extends Controller
 {
@@ -16,15 +20,34 @@ class AdminController extends Controller
     {
         $user = auth()->user(); // Get the currently logged-in user
 
-        $type = $request->query('type', 'user');
+        $type = $request->query('type', 'user',  'groups');
 
         if (!$type) {
             $type = 'user';
         }
 
-        if ($user->isAdmin()) {
+        if ($user->isAdmin() && $type == 'user') {
             $users = User::all();
             return view('pages.admin', ['users' => $users, 'type' => $type]);
+        }
+
+        if ($user->isAdmin() && $type == 'content') {
+            $reportedPosts = Post::whereHas('reports')
+                ->with(['user.verifiedUser', 'labels', 'reports'])
+                ->get()
+                ->map(function($post) {
+                    $post->report_count = $post->reports->count();
+                    $post->report_descriptions = $post->reports->pluck('description')->toArray();
+                    return $post;
+                })
+                ->sortByDesc('report_count');
+            
+            return view('pages.admin', ['reportedPosts' => $reportedPosts, 'type' => $type]);
+        }
+
+        if ($user->isAdmin() && $type == 'group') {
+            $groups = Group::all();
+            return view('pages.admin', ['groups' => $groups, 'type' => $type]);
         }
         
         // User is not an admin, redirect them or show an error
@@ -53,6 +76,36 @@ class AdminController extends Controller
         
         // If it's a standard request, return the full view
         return view('pages.admin', ['users' => $users, 'type' => 'user']);
+    }
+
+    public function searchGroup(Request $request)
+    {
+        $search = $request->get('search');
+        
+        if ($search) {
+            $input = $search . ':*';
+            $groups = Group::whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input])
+                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('portuguese', ?)) DESC", [$input])
+                         ->get();
+        } else {
+            $groups = Group::all();
+        }
+
+        if ($request->ajax()) {
+
+            $groups = $groups->map(function($group) {
+                $groupArray = $group->toArray();
+                $groupArray['picture'] = $group->getGroupPicture();
+                return $groupArray;
+            });
+
+            return response()->json([
+                'groups' => $groups
+            ]);
+        }
+        
+        // If it's a standard request, return the full view
+        return view('pages.admin', ['groups' => $groups, 'type' => 'group']);
     }
 
     public function showCreateUserForm()
@@ -150,5 +203,23 @@ class AdminController extends Controller
         VerifiedUser::create(['id_verified' => $user->id_user]);
 
         return redirect()->back()->with('status', 'User verified successfully.');
+    }
+
+    public function deletePost($id)
+    {
+        $post = Post::findOrFail($id);
+        
+        $post->delete();
+
+        return redirect()->back()->with('status', 'Reported post deleted successfully.');
+    }
+
+    public function dismissReports($id)
+    {
+        $post = Post::findOrFail($id);
+        
+        $post->reports()->detach();
+
+        return redirect()->back()->with('status', 'Reports dismissed successfully.');
     }
 }

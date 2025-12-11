@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Label;
+use App\Models\Report;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -154,7 +155,6 @@ class PostController extends Controller
 
     public function destroy($id)
     {
-
         $post = Post::findOrFail($id);
         if (Auth::id() != $post->id_creator) {
             return redirect()->back()->withErrors(['form' => 'Unauthorized']);
@@ -165,5 +165,50 @@ class PostController extends Controller
         $ownerId = $post->id_creator;
         $post->delete();
         return redirect()->route('profile.show', $ownerId)->with('status', 'Post deleted successfully');
+    }
+
+    public function save($id)
+    {
+        $post = Post::findOrFail($id);
+        $user = Auth::user();
+
+        // Toggle save: if already saved, remove it; otherwise, add it
+        if ($user->savedPosts()->where('post.id_post', $id)->exists()) {
+            $user->savedPosts()->detach($id);
+            return redirect()->route('saved.index')->with('status', 'Post unsaved');
+        } else {
+            $user->savedPosts()->attach($id);
+            return redirect()->route('saved.index')->with('status', 'Post saved');
+        }
+    }
+
+    public function showSaved()
+    {
+        $user = Auth::user();
+        $posts = $user->savedPosts()->with(['user.verifiedUser', 'labels'])->orderByDesc('date')->get();
+        $savedPostIds = $posts->pluck('id_post')->toArray();
+        
+        return view('pages.saved', ['posts' => $posts, 'savedPostIds' => $savedPostIds]);
+    }
+
+    public function report(Request $request, $id)
+    {
+        $request->validate([
+            'reason' => 'required|string',
+            'details' => 'nullable|string|max:1000',
+        ]);
+
+        $description = $request->reason;
+        if ($request->filled('details')) {
+            $description .= ': ' . $request->details;
+        }
+
+        $report = Report::create([
+            'description' => $description
+        ]);
+
+        $report->posts()->attach($id);
+
+        return redirect()->back()->with('status', 'Post reported successfully. Admins will review it.');
     }
 }

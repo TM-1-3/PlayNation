@@ -1,6 +1,11 @@
 const searchUserAdmin = document.getElementById('search-user-admin');
 if (searchUserAdmin) {
-    searchUserAdmin.addEventListener('submit', searchRequest);
+  searchUserAdmin.addEventListener('submit', searchRequest);
+}
+
+const searchGroupAdmin = document.getElementById('search-group-admin');
+if (searchGroupAdmin) {
+  searchGroupAdmin.addEventListener('submit', searchRequest);
 }
 
 const searchPost = document.getElementById('search-home');
@@ -127,6 +132,59 @@ function searchHandler(response, searchType) {
             </td>
           `;
           tableBody.appendChild(row);
+        });
+      }
+    }
+  } else if (searchType === 'search-group-admin') {
+    // Handle admin group search
+    const groupsGrid = document.querySelector('.mt-8.grid');
+    
+    if (response.groups && groupsGrid) {
+      groupsGrid.innerHTML = '';
+      
+      if (response.groups.length === 0) {
+        groupsGrid.innerHTML = `
+          <div class="col-span-full mx-auto bg-white rounded-lg shadow-md p-10 text-center text-gray-500">
+            <i class="fa-solid fa-users-slash text-4xl mb-4 text-gray-300"></i>
+            <p class="text-lg">No groups found.</p>
+          </div>
+        `;
+      } else {
+        response.groups.forEach(group => {
+          const groupCard = document.createElement('article');
+          groupCard.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full';
+          
+          const groupPicture = group.picture;
+          const isPublic = group.is_public;
+          
+          groupCard.innerHTML = `
+            <a href="/group/${group.id_group}" class="mt-auto block w-full text-center py-2 rounded-lg transition font-medium no-underline">
+            <div class="h-40 overflow-hidden relative">
+              <img src="${groupPicture}" 
+                   alt="${group.name}" 
+                   class="w-full h-full object-cover">
+              
+              <div class="absolute top-2 right-2">
+                ${isPublic 
+                  ? '<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm">Public</span>'
+                  : '<span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm"><i class="fa-solid fa-lock text-[10px] mr-1"></i>Private</span>'
+                }
+              </div>
+            </div>
+            
+            <div class="p-5 flex-1 flex flex-col">
+              <h3 class="text-xl font-bold mb-2 text-gray-800 truncate">${group.name}</h3>
+              
+              <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
+                ${group.description || 'No description available.'}
+              </p>
+
+              
+            
+            </div>
+            </a>
+          `;
+          groupsGrid.appendChild(groupCard);
         });
       }
     }

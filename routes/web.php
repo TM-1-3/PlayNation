@@ -49,12 +49,15 @@ Route::controller(ResetPasswordController::class)->group(function () {
 Route::controller(AdminController::class)->group(function () {
     Route::get('/admin', 'showAdminPage')->name('admin');
     Route::get('/admin/user', 'searchUser')->name('admin.user');
+    Route::get('/admin/group', 'searchGroup')->name('admin.group');
     Route::get('/admin/create', 'showCreateUserForm')->name('admin.create');
     Route::post('/admin/create', 'createUser')->name('admin.create.action');
     Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
     Route::get('/admin/edit/{id}', 'showEditUserForm')->name('admin.edit');
     Route::put('/admin/user/{id}', 'editUser')->name('admin.edit.action');
     Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
+    Route::delete('/admin/post/{id}', 'deletePost')->name('admin.post.delete');
+    Route::post('/admin/post/{id}/dismiss', 'dismissReports')->name('admin.post.dismiss');
 });
 
 Route::get('/home', [TimelineController::class, 'index'])->name('home');
@@ -83,9 +86,7 @@ Route::middleware(['auth'])->group(function () {
         return view('pages.placeholder', ['title' => 'Notifications']);
     })->name('notifications.index');
 
-    Route::get('/saved', function () {
-        return view('pages.placeholder', ['title' => 'Saved Posts']);
-    })->name('saved.index');
+    Route::get('/saved', [PostController::class, 'showSaved'])->name('saved.index');
 
     Route::get('/settings', function () {
         return view('pages.placeholder', ['title' => 'Settings']);
@@ -110,7 +111,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
     Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
-    
+    Route::post('/post/{id}/report', [PostController::class, 'report'])->name('post.report');
+    Route::post('/post/{id}/save', [PostController::class, 'save'])->name('post.save');
+
+
     // File upload
     Route::post('/file/upload', [FileController::class, 'upload'])->name('upload.img');
 
