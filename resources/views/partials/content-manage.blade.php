@@ -2,7 +2,7 @@
     @if(isset($reportedPosts) && $reportedPosts->count() > 0)
         <div class="space-y-4">
             @foreach($reportedPosts as $post)
-                <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 p-4">
+                <div class="bg-white rounded-lg shadow-md hover:shadow-xl border border-gray-200 transition-shadow duration-300 p-4 mb-3">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-2">
@@ -27,36 +27,23 @@
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-lg p-3 mb-3">
-                        @if($post->image)
-                            <img class="w-full max-h-64 object-contain rounded mb-2" src="{{ $post->getPostImage() }}" alt="Post Content">
-                        @endif
-                        <p class="text-sm text-gray-800">{{ $post->description }}</p>
-                        @if($post->labels->isNotEmpty())
-                            <div class="mt-2 flex gap-1 flex-wrap">
-                                @foreach($post->labels as $label)
-                                    <span class="bg-blue-500 text-white text-xs py-1 px-2 rounded">{{ $label->designation }}</span>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-
                     <div class="flex gap-2">
                         <form action="{{ route('admin.post.delete', $post->id_post) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="bg-red-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-red-700 transition" onclick="return confirm('Are you sure you want to delete this post?')">
+                            <button type="submit" class="bg-red-600 text-white text-sm py-1 px-3 rounded-lg hover:bg-red-700 transition" onclick="return confirm('Are you sure you want to delete this post?')">
                                 Delete Post
                             </button>
                         </form>
                         <form action="{{ route('admin.post.dismiss', $post->id_post) }}" method="POST" class="inline">
                             @csrf
-                            <button type="submit" class="bg-gray-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-600 transition">
+                            <button type="submit" class="bg-gray-500 text-white text-sm py-1 px-3 rounded-lg hover:bg-gray-600 transition">
                                 Dismiss Reports
                             </button>
                         </form>
-                        <a href="{{ route('profile.show', $post->user->id_user) }}" class="bg-blue-500 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-600 transition inline-block">
-                            View User Profile
+                        {{-- quando tivermos view post mudo a route --}}
+                        <a href="{{ route('profile.show', $post->user->id_user) }}" class="bg-blue-500 text-white text-sm py-1 px-3 rounded-lg hover:bg-blue-600 transition inline-block">
+                            View Content
                         </a>
                     </div>
                 </div>

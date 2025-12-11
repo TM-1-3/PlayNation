@@ -3,7 +3,7 @@
     <div class="h-40 overflow-hidden relative">
         <img src="{{ $group->getGroupPicture() }}" 
              alt="{{ $group->name }}" 
-             class="w-[300px] h-[200px] object-cover">
+             class="w-[400px] h-[200px] object-cover">
         
         <div class="absolute top-2 right-2">
             @if($group->is_public)
