@@ -1,9 +1,9 @@
 <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-    <a href="{{ route('groups.show', $group->id_group) }}" class="mt-auto block w-full text-center py-2 rounded-lg transition font-medium no-underline">
+    <a href="{{ route('groups.show', $group->id_group) }}" class="block w-full text-center transition font-medium no-underline">
     <div class="h-40 overflow-hidden relative">
         <img src="{{ $group->getGroupPicture() }}" 
              alt="{{ $group->name }}" 
-             class="w-full h-full object-cover">
+             class="w-[300px] h-[200px] object-cover">
         
         <div class="absolute top-2 right-2">
             @if($group->is_public)
@@ -14,7 +14,7 @@
         </div>
     </div>
     
-    <div class="p-5 flex-1 flex flex-col">
+    <div class="p-3 flex-1 flex flex-col">
         <h3 class="text-xl font-bold mb-2 text-gray-800 truncate">{{ $group->name }}</h3>
         
         <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">

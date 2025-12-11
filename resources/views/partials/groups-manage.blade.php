@@ -1,4 +1,4 @@
-<div class="h-0vh] flex flex-col">
+<div class="h-[80vh] flex flex-col">
     <div class="mb-8 mt-6 flex-shrink-0">
         <form id="search-group-admin" action="{{ route('admin.group') }}" method="GET" class="flex gap-2 items-center max-w-2xl mx-auto">
             <div class="relative flex-1">
