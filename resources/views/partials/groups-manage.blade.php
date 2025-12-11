@@ -1,5 +1,5 @@
-<div class="overflow-y-scroll">
-    <div class="mb-8 mt-6">
+<div class="h-0vh] flex flex-col">
+    <div class="mb-8 mt-6 flex-shrink-0">
         <form id="search-group-admin" action="{{ route('admin.group') }}" method="GET" class="flex gap-2 items-center max-w-2xl mx-auto">
             <div class="relative flex-1">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -13,14 +13,16 @@
         </form>
     </div>
 
-    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        @forelse($groups as $group)
-            @include('partials.group-card', ['group' => $group])
-        @empty
-            <div class="col-span-full mx-auto bg-white rounded-lg shadow-md p-10 text-center text-gray-500">
-                <i class="fa-solid fa-users-slash text-4xl mb-4 text-gray-300"></i>
-                <p class="text-lg">No groups found.</p>
-            </div>
-        @endforelse
+    <div class="flex-1 overflow-y-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($groups as $group)
+                @include('partials.group-card', ['group' => $group])
+            @empty
+                <div class="col-span-full mx-auto bg-white rounded-lg shadow-md p-10 text-center text-gray-500">
+                    <i class="fa-solid fa-users-slash text-4xl mb-4 text-gray-300"></i>
+                    <p class="text-lg">No groups found.</p>
+                </div>
+            @endforelse
+        </div>
     </div>
 </div>
