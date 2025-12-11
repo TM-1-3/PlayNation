@@ -136,10 +136,12 @@ Route::get('/profile/{id}/friends', [FriendController::class, 'showFriendsPage']
 
     // Group routes authenticated
     Route::middleware(['auth'])->group(function () {
-        Route::get('/my-groups', [GroupController::class, 'myGroups'])->name('mygroups.index');
         Route::get('/groups/create/new', [GroupController::class, 'create'])->name('groups.create');
         Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
         Route::get('/groups/{id}/edit', [GroupController::class, 'edit'])->name('groups.edit');
         Route::put('/groups/{id}', [GroupController::class, 'update'])->name('groups.update');
         Route::delete('/groups/{id}', [GroupController::class, 'destroy'])->name('groups.destroy');
+        Route::post('/groups/{id}/join', [GroupController::class, 'join'])->name('groups.join');
+        Route::post('/groups/{id}/leave', [GroupController::class, 'leave'])->name('groups.leave');
+        Route::delete('/groups/{id}/request', [GroupController::class, 'cancelRequest'])->name('groups.cancel_request');
     });
