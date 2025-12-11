@@ -56,6 +56,8 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/admin/edit/{id}', 'showEditUserForm')->name('admin.edit');
     Route::put('/admin/user/{id}', 'editUser')->name('admin.edit.action');
     Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
+    Route::delete('/admin/post/{id}', 'deletePost')->name('admin.post.delete');
+    Route::post('/admin/post/{id}/dismiss', 'dismissReports')->name('admin.post.dismiss');
 });
 
 Route::get('/home', [TimelineController::class, 'index'])->name('home');
@@ -109,8 +111,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
     Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
-    Route::get('/post/report', [PostController::class, 'report'])->name('post.report');
-    Route::post('/post/{id}', [PostController::class, 'save'])->name('post.save');
+    Route::post('/post/{id}/report', [PostController::class, 'report'])->name('post.report');
+    Route::post('/post/{id}/save', [PostController::class, 'save'])->name('post.save');
 
 
     // File upload

@@ -10,6 +10,8 @@ use App\Models\VerifiedUser;
 
 use App\Models\User;
 use App\Models\Group;
+use App\Models\Post;
+use Illuminate\Support\Facades\DB;
 
 
 class AdminController extends Controller
@@ -27,6 +29,20 @@ class AdminController extends Controller
         if ($user->isAdmin() && $type == 'user') {
             $users = User::all();
             return view('pages.admin', ['users' => $users, 'type' => $type]);
+        }
+
+        if ($user->isAdmin() && $type == 'content') {
+            $reportedPosts = Post::whereHas('reports')
+                ->with(['user.verifiedUser', 'labels', 'reports'])
+                ->get()
+                ->map(function($post) {
+                    $post->report_count = $post->reports->count();
+                    $post->report_descriptions = $post->reports->pluck('description')->toArray();
+                    return $post;
+                })
+                ->sortByDesc('report_count');
+            
+            return view('pages.admin', ['reportedPosts' => $reportedPosts, 'type' => $type]);
         }
 
         if ($user->isAdmin() && $type == 'group') {
@@ -187,5 +203,23 @@ class AdminController extends Controller
         VerifiedUser::create(['id_verified' => $user->id_user]);
 
         return redirect()->back()->with('status', 'User verified successfully.');
+    }
+
+    public function deletePost($id)
+    {
+        $post = Post::findOrFail($id);
+        
+        $post->delete();
+
+        return redirect()->back()->with('status', 'Reported post deleted successfully.');
+    }
+
+    public function dismissReports($id)
+    {
+        $post = Post::findOrFail($id);
+        
+        $post->reports()->detach();
+
+        return redirect()->back()->with('status', 'Reports dismissed successfully.');
     }
 }

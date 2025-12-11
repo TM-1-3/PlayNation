@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto p-5">
-    <h1 class="text-2xl font-bold mb-5 text-gray-800">Saved Posts</h1>
+    <h1 class="text-2xl font-bold mb-5 text-gray-800 text-center">Saved Posts</h1>
     
     <div id="saved-posts" class="w-full pb-12">
         @if(isset($posts) && $posts->isEmpty())

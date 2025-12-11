@@ -73,7 +73,9 @@ class TimelineController extends Controller {
 
         $posts = $query->get();
 
-        return view('pages.home', ['posts' => $posts, 'activeTimeline' => $timelineType]);
+        $savedPostIds = $user ? $user->savedPosts()->pluck('post.id_post')->toArray() : [];
+
+        return view('pages.home', ['posts' => $posts, 'activeTimeline' => $timelineType, 'savedPostIds' => $savedPostIds]);
     }
 
     public function searchPost(Request $request)

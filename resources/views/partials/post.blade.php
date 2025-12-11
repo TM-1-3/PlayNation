@@ -73,10 +73,13 @@
             <i class="fa-regular fa-share-from-square text-lg"></i>
             <span class="text-sm">Share</span>
         </button>
-        <form action="{{ route('post.save', $post->id_post) }}" method="POST">
+        <form action="{{ route('post.save', $post->id_post) }}" method="POST" class="ml-auto">
             @csrf
-            <button class="flex items-center gap-1 text-gray-600  bg-transparent border-none cursor-pointer ml-auto" title="Save">
-                <i class="fa-regular fa-bookmark text-lg"></i>
+            @php
+                $isSaved = isset($savedPostIds) && in_array($post->id_post, $savedPostIds);
+            @endphp
+            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Save">
+                <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-lg"></i>
                 <span class="text-sm">Save</span>
             </button>
         </form>

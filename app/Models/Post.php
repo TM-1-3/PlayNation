@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Controllers\FileController;
 
 
@@ -33,6 +34,11 @@ class Post extends Model
     public function savers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'post_save', 'id_post', 'id_user');
+    }
+
+    public function reports(): BelongsToMany
+    {
+        return $this->belongsToMany(Report::class, 'report_post', 'id_post', 'id_report');
     }
 
     public function getPostImage() {

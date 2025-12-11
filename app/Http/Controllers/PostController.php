@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Label;
+use App\Models\Report;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -185,7 +186,29 @@ class PostController extends Controller
     {
         $user = Auth::user();
         $posts = $user->savedPosts()->with(['user.verifiedUser', 'labels'])->orderByDesc('date')->get();
+        $savedPostIds = $posts->pluck('id_post')->toArray();
         
-        return view('pages.saved', ['posts' => $posts]);
+        return view('pages.saved', ['posts' => $posts, 'savedPostIds' => $savedPostIds]);
+    }
+
+    public function report(Request $request, $id)
+    {
+        $request->validate([
+            'reason' => 'required|string',
+            'details' => 'nullable|string|max:1000',
+        ]);
+
+        $description = $request->reason;
+        if ($request->filled('details')) {
+            $description .= ': ' . $request->details;
+        }
+
+        $report = Report::create([
+            'description' => $description
+        ]);
+
+        $report->posts()->attach($id);
+
+        return redirect()->back()->with('status', 'Post reported successfully. Admins will review it.');
     }
 }

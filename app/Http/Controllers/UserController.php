@@ -41,11 +41,15 @@ class UserController extends Controller
                       ->orderBy('date', 'desc')
                       ->get();
 
+        $currentUser = Auth::user();
+        $savedPostIds = $currentUser ? $currentUser->savedPosts()->pluck('post.id_post')->toArray() : [];
+
         return view('pages.profile', [
             'user' => $user,
             'posts' => $posts,
             'isFriend' => $isFriend,
-            'requestSent' => $requestSent
+            'requestSent' => $requestSent,
+            'savedPostIds' => $savedPostIds
         ]);
     }
     

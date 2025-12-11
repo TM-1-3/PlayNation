@@ -26,7 +26,7 @@
             
             {{-- Adicionei 'pl-10' nas classes abaixo para o texto não tapar a lupa --}}
             <input type="text" name="search" placeholder="Search for groups..." value="{{ request('search') }}" 
-                   class="block w-full pl-10 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900 focus:ring-2 focus:ring-blue-500 bg-white outline-none">
+                   class="h-[2em] block w-full pl-10 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
             
         </form>
     </div>
