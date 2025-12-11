@@ -60,6 +60,25 @@
         <img class="w-full block border-t border-gray-200" src="{{ $post->getPostImage() }}" alt="Post Content">
     @endif
     
+    <div class="flex items-center gap-4 px-4 pt-2">
+        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Like">
+            <i class="fa-regular fa-heart text-lg"></i>
+            <span class="text-sm">Like</span>
+        </button>
+        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
+            <i class="fa-regular fa-comment text-lg"></i>
+            <span class="text-sm">Comment</span>
+        </button>
+        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Share">
+            <i class="fa-regular fa-share-from-square text-lg"></i>
+            <span class="text-sm">Share</span>
+        </button>
+        <button class="flex items-center gap-1 text-gray-600  bg-transparent border-none cursor-pointer ml-auto" title="Save">
+            <i class="fa-regular fa-bookmark text-lg"></i>
+            <span class="text-sm">Save</span>
+        </button>
+    </div>
+    
     <div class="py-3 px-4 text-sm leading-relaxed">
         @if($post->user)
             <a href="{{ route('profile.show', $post->user->id_user) }}" class="font-semibold mr-1 text-gray-800 no-underline">
