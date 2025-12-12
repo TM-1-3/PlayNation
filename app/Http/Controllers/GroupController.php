@@ -162,7 +162,7 @@ class GroupController extends Controller
     {
         $group = Group::findOrFail($id);
 
-        if (Auth::id() !== $group->id_owner) {
+        if (Auth::id() !== $group->id_owner && !Auth::user()->isAdmin()) {
             abort(403, 'Unauthorized');
         }
 
@@ -170,21 +170,27 @@ class GroupController extends Controller
             'name' => 'required|string|max:255|unique:groups,name,' . $group->id_group . ',id_group',
             'description' => 'nullable|string',
             'picture' => 'nullable|image|max:4096',
+            'is_public' => 'nullable|boolean'
         ]);
 
         $group->name = $request->name;
         $group->description = $request->description;
-        $group->is_public = $request->input('is_public');
+        $group->is_public = $request->input('is_public', false);
 
         if ($request->hasFile('picture')) {
-            $uploadrequest = new Request([
-                'id' => $group->id_group,
-                'type' => 'group'
-            ]);
-            $uploadrequest->files->set('file', $request->file('picture'));
-            app(FileController::class)->upload($uploadrequest);
-        }
+            // delete old picture if exists
+            if (!empty($group->picture)) {
+                Storage::disk('storage')->delete('group/' . $group->picture);
+            }
 
+            // upload new picture
+            $file = $request->file('picture');
+            $fileName = $file->hashName();
+            $file->storeAs('group', $fileName, 'storage');
+            
+            $group->picture = $fileName;
+        }
+        
         $group->save();
 
         return redirect()->route('groups.show', $group->id_group)->with('status', 'Group updated!');
