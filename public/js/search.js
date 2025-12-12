@@ -18,9 +18,12 @@ if (searchUser) {
   searchUser.addEventListener('input', searchRequest);
 }
 
-const searchGroup = document.getElementById('group-search');
-if (searchGroup) {
-  searchGroup.addEventListener('input', searchRequest);
+const searchGroupForm = document.getElementById('search-group');
+if (searchGroupForm) {
+  const searchGroupInput = searchGroupForm.querySelector('#group-search');
+  if (searchGroupInput) {
+    searchGroupInput.addEventListener('input', searchRequest);
+  }
 }
 
 /**
@@ -114,7 +117,14 @@ function searchRequest(event) {
     searchType = this.id;
   }
   
-  const url = str ? `${baseUrl}?search=${encodeURIComponent(str)}` : baseUrl;
+  let url = str ? `${baseUrl}?search=${encodeURIComponent(str)}` : baseUrl;
+  
+  // type for group searches
+  if (searchType === 'group-search') {
+    url += (url.includes('?') ? '&' : '?') + 'type=group-page';
+  } else if (searchType === 'search-group-admin') {
+    url += (url.includes('?') ? '&' : '?') + 'type=group-admin';
+  }
 
   sendAjaxRequest('GET', url, null, (response) => searchHandler(response, searchType));
   
@@ -158,8 +168,7 @@ function searchHandler(response, searchType) {
       }
     }
   } else if (searchType === 'search-group-admin') {
-    // Handle admin group search
-    const groupsGrid = document.querySelector('.mt-8.grid');
+    const groupsGrid = document.getElementById('admin-groups-grid');
     
     if (response.groups && groupsGrid) {
       groupsGrid.innerHTML = '';
@@ -180,8 +189,7 @@ function searchHandler(response, searchType) {
           const isPublic = group.is_public;
           
           groupCard.innerHTML = `
-            <a href="/group/${group.id_group}" class="mt-auto block w-full text-center py-2 rounded-lg transition font-medium no-underline">
-            <div class="h-40 overflow-hidden relative">
+            <a href="/groups/${group.id_group}" class="block h-40 overflow-hidden relative">
               <img src="${groupPicture}" 
                    alt="${group.name}" 
                    class="w-full h-full object-cover">
@@ -192,10 +200,12 @@ function searchHandler(response, searchType) {
                   : '<span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm"><i class="fa-solid fa-lock text-[10px] mr-1"></i>Private</span>'
                 }
               </div>
-            </div>
+            </a>
             
             <div class="p-5 flex-1 flex flex-col">
-              <h3 class="text-xl font-bold mb-2 text-gray-800 truncate">${group.name}</h3>
+              <a href="/groups/${group.id_group}" class="no-underline">
+                <h3 class="text-xl font-bold mb-2 text-gray-800 truncate hover:text-blue-600 transition">${group.name}</h3>
+              </a>
               
               <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
                 ${group.description || 'No description available.'}
@@ -303,8 +313,9 @@ function searchHandler(response, searchType) {
       }
     }
   } else if (searchType === 'group-search') {
-    // Handle group search on groups.index page
+    // group search on groups.index page
     const myGroupsGrid = document.getElementById('my-groups-grid');
+    const myGroupsSection = myGroupsGrid ? myGroupsGrid.closest('.group-section') : null;
     const otherGroupsGrid = document.getElementById('other-groups-grid');
     const noResultsDiv = document.getElementById('no-results');
     
@@ -313,8 +324,9 @@ function searchHandler(response, searchType) {
       if (myGroupsGrid) {
         myGroupsGrid.innerHTML = '';
         if (response.myGroups.length === 0) {
-          myGroupsGrid.innerHTML = '<div class="col-span-full text-center py-6 text-gray-400"><p>No groups found in your groups.</p></div>';
+          if (myGroupsSection) myGroupsSection.style.display = 'none';
         } else {
+          if (myGroupsSection) myGroupsSection.style.display = 'block';
           response.myGroups.forEach(group => {
             const groupCard = createGroupCard(group);
             myGroupsGrid.appendChild(groupCard);
@@ -326,10 +338,10 @@ function searchHandler(response, searchType) {
       if (otherGroupsGrid) {
         otherGroupsGrid.innerHTML = '';
         if (response.otherGroups.length === 0) {
-          otherGroupsGrid.classList.add('hidden');
+          otherGroupsGrid.style.display = 'none';
           if (noResultsDiv) noResultsDiv.classList.remove('hidden');
         } else {
-          otherGroupsGrid.classList.remove('hidden');
+          otherGroupsGrid.style.display = 'grid';
           if (noResultsDiv) noResultsDiv.classList.add('hidden');
           response.otherGroups.forEach(group => {
             const groupCard = createGroupCard(group);
@@ -351,10 +363,11 @@ function createGroupCard(group) {
   const isPublic = group.is_public;
   
   article.innerHTML = `
-    <a href="/groups/${group.id_group}" class="block h-40 overflow-hidden relative">
+    <a href="/groups/${group.id_group}" class="block w-full text-center transition font-medium no-underline">
+    <div class="h-40 overflow-hidden relative">
       <img src="${groupPicture}" 
            alt="${group.name}" 
-           class="w-full h-full object-cover">
+           class="w-[400px] h-[200px] object-cover">
       
       <div class="absolute top-2 right-2">
         ${isPublic 
@@ -362,17 +375,16 @@ function createGroupCard(group) {
           : '<span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm"><i class="fa-solid fa-lock text-[10px] mr-1"></i>Private</span>'
         }
       </div>
-    </a>
+    </div>
     
-    <div class="p-5 flex-1 flex flex-col">
-      <a href="/groups/${group.id_group}" class="no-underline">
-        <h3 class="text-xl font-bold mb-2 text-gray-800 truncate hover:text-blue-600 transition">${group.name}</h3>
-      </a>
+    <div class="p-3 flex-1 flex flex-col">
+      <h3 class="text-xl font-bold mb-2 text-gray-800 truncate">${group.name}</h3>
       
       <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
         ${group.description || 'No description available.'}
       </p>
     </div>
+    </a>
   `;
   
   return article;

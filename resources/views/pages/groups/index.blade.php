@@ -11,12 +11,12 @@
         <h2 class="text-3xl font-bold text-gray-800">Communities</h2>
         
         {{-- searchbar --}}
-        <form id="search-group" action="{{ route('search.groups') }}" method="GET" class="relative">
+        <form id="search-group" action="{{ route('search.groups') }}" method="GET" class="relative w-full md:max-w-md">
             <div class="relative w-full md:max-w-md">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                 </div>
-                <input type="text" id="group-search" placeholder="Search for groups..." 
+                <input type="text" name="search" id="group-search" placeholder="Search for groups..." 
                     class="block h-[2em] w-full pl-10 pr-4 py-2.5 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
             </div>
         </form>

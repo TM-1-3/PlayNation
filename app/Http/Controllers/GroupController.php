@@ -357,7 +357,11 @@ class GroupController extends Controller
                     'groups' => $groups,
                 ]);
             }
+            
+            return view('pages.admin', ['groups' => $groups, 'type' => 'group']);
         }
+        
+        return view('pages.admin', ['groups' => $groups, 'type' => 'group']);
     }
         
 }
