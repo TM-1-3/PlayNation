@@ -200,8 +200,6 @@ function searchHandler(response, searchType) {
               <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
                 ${group.description || 'No description available.'}
               </p>
-
-              
             
             </div>
             </a>
@@ -374,11 +372,6 @@ function createGroupCard(group) {
       <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
         ${group.description || 'No description available.'}
       </p>
-
-      <a href="/groups/${group.id_group}" 
-         class="mt-auto block w-full text-center py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium no-underline">
-        View Group
-      </a>
     </div>
   `;
   
