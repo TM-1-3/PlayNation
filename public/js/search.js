@@ -18,6 +18,11 @@ if (searchUser) {
   searchUser.addEventListener('input', searchRequest);
 }
 
+const searchGroup = document.getElementById('group-search');
+if (searchGroup) {
+  searchGroup.addEventListener('input', searchRequest);
+}
+
 /**
  * Encode a data object into URL-encoded form data.
  * Example: {a: 1, b: 2} → "a=1&b=2"
@@ -85,12 +90,29 @@ async function sendAjaxRequest(method, url, data, handler) {
 }
 
 function searchRequest(event) {
-  event.preventDefault();
-  event.stopPropagation();
+  if (event.preventDefault) event.preventDefault();
+  if (event.stopPropagation) event.stopPropagation();
   
-  const str = this.querySelector('input[name=search]').value.trim();
-  const baseUrl = this.action;
-  const searchType = this.id; // 'search-user-admin' or 'search-home'
+  let str, baseUrl, searchType;
+  
+  if (this.tagName === 'INPUT') {
+    // Direct input element (like group-search)
+    str = this.value.trim();
+    searchType = this.id;
+    
+    if (searchType === 'group-search') {
+      baseUrl = '/api/group';
+    } else if (searchType === 'search-user') {
+      baseUrl = '/api/user';
+    } else if (searchType === 'search-home') {
+      baseUrl = '/api/post';
+    }
+  } else {
+    // Form element
+    str = this.querySelector('input[name=search]').value.trim();
+    baseUrl = this.action;
+    searchType = this.id;
+  }
   
   const url = str ? `${baseUrl}?search=${encodeURIComponent(str)}` : baseUrl;
 
@@ -282,7 +304,83 @@ function searchHandler(response, searchType) {
         });
       }
     }
+  } else if (searchType === 'group-search') {
+    // Handle group search on groups.index page
+    const myGroupsGrid = document.getElementById('my-groups-grid');
+    const otherGroupsGrid = document.getElementById('other-groups-grid');
+    const noResultsDiv = document.getElementById('no-results');
+    
+    if (response.myGroups !== undefined && response.otherGroups !== undefined) {
+      // Update My Groups section
+      if (myGroupsGrid) {
+        myGroupsGrid.innerHTML = '';
+        if (response.myGroups.length === 0) {
+          myGroupsGrid.innerHTML = '<div class="col-span-full text-center py-6 text-gray-400"><p>No groups found in your groups.</p></div>';
+        } else {
+          response.myGroups.forEach(group => {
+            const groupCard = createGroupCard(group);
+            myGroupsGrid.appendChild(groupCard);
+          });
+        }
+      }
+      
+      // Update Explore section
+      if (otherGroupsGrid) {
+        otherGroupsGrid.innerHTML = '';
+        if (response.otherGroups.length === 0) {
+          otherGroupsGrid.classList.add('hidden');
+          if (noResultsDiv) noResultsDiv.classList.remove('hidden');
+        } else {
+          otherGroupsGrid.classList.remove('hidden');
+          if (noResultsDiv) noResultsDiv.classList.add('hidden');
+          response.otherGroups.forEach(group => {
+            const groupCard = createGroupCard(group);
+            otherGroupsGrid.appendChild(groupCard);
+          });
+        }
+      }
+    }
   }
   
   console.log('Search results updated via AJAX.');
+}
+
+function createGroupCard(group) {
+  const article = document.createElement('article');
+  article.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full';
+  
+  const groupPicture = group.picture;
+  const isPublic = group.is_public;
+  
+  article.innerHTML = `
+    <a href="/groups/${group.id_group}" class="block h-40 overflow-hidden relative">
+      <img src="${groupPicture}" 
+           alt="${group.name}" 
+           class="w-full h-full object-cover">
+      
+      <div class="absolute top-2 right-2">
+        ${isPublic 
+          ? '<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm">Public</span>'
+          : '<span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm"><i class="fa-solid fa-lock text-[10px] mr-1"></i>Private</span>'
+        }
+      </div>
+    </a>
+    
+    <div class="p-5 flex-1 flex flex-col">
+      <a href="/groups/${group.id_group}" class="no-underline">
+        <h3 class="text-xl font-bold mb-2 text-gray-800 truncate hover:text-blue-600 transition">${group.name}</h3>
+      </a>
+      
+      <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
+        ${group.description || 'No description available.'}
+      </p>
+
+      <a href="/groups/${group.id_group}" 
+         class="mt-auto block w-full text-center py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium no-underline">
+        View Group
+      </a>
+    </div>
+  `;
+  
+  return article;
 }
