@@ -49,7 +49,6 @@ Route::controller(ResetPasswordController::class)->group(function () {
 Route::controller(AdminController::class)->group(function () {
     Route::get('/admin', 'showAdminPage')->name('admin');
     Route::get('/admin/user', 'searchUser')->name('admin.user');
-    Route::get('/admin/group', 'searchGroup')->name('admin.group');
     Route::get('/admin/create', 'showCreateUserForm')->name('admin.create');
     Route::post('/admin/create', 'createUser')->name('admin.create.action');
     Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
@@ -59,11 +58,13 @@ Route::controller(AdminController::class)->group(function () {
     Route::delete('/admin/post/{id}', 'deletePost')->name('admin.post.delete');
     Route::post('/admin/post/{id}/dismiss', 'dismissReports')->name('admin.post.dismiss');
 });
+Route::get('/admin/group', [GroupController::class, 'searchGroup'])->name('admin.group');
 
 Route::get('/home', [TimelineController::class, 'index'])->name('home');
 
 Route::get('/api/post', [TimelineController::class, 'searchPost'])->name('search.posts');
 Route::get('/api/user', [UserController::class, 'searchUser'])->name('search.users');
+Route::get('/api/group', [GroupController::class, 'searchGroup'])->name('search.groups');
 
 // Profile
 Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
@@ -130,18 +131,19 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/profile/{id}/friends', [FriendController::class, 'showFriendsPage'])->name('user.friends');
 
 
-    // Group routes public
-    Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
-    Route::get('/groups/{id}', [GroupController::class, 'show'])->name('groups.show');
+// Group routes public
+Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
+Route::get('/groups/{id}', [GroupController::class, 'show'])->name('groups.show');
 
-    // Group routes authenticated
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/groups/create/new', [GroupController::class, 'create'])->name('groups.create');
-        Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
-        Route::get('/groups/{id}/edit', [GroupController::class, 'edit'])->name('groups.edit');
-        Route::put('/groups/{id}', [GroupController::class, 'update'])->name('groups.update');
-        Route::delete('/groups/{id}', [GroupController::class, 'destroy'])->name('groups.destroy');
-        Route::post('/groups/{id}/join', [GroupController::class, 'join'])->name('groups.join');
-        Route::post('/groups/{id}/leave', [GroupController::class, 'leave'])->name('groups.leave');
-        Route::delete('/groups/{id}/request', [GroupController::class, 'cancelRequest'])->name('groups.cancel_request');
-    });
+
+// Group routes authenticated
+Route::middleware(['auth'])->group(function () {
+Route::get('/groups/create/new', [GroupController::class, 'create'])->name('groups.create');
+Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+Route::get('/groups/{id}/edit', [GroupController::class, 'edit'])->name('groups.edit');
+Route::put('/groups/{id}', [GroupController::class, 'update'])->name('groups.update');
+Route::delete('/groups/{id}', [GroupController::class, 'destroy'])->name('groups.destroy');
+Route::post('/groups/{id}/join', [GroupController::class, 'join'])->name('groups.join');
+Route::post('/groups/{id}/leave', [GroupController::class, 'leave'])->name('groups.leave');
+Route::delete('/groups/{id}/request', [GroupController::class, 'cancelRequest'])->name('groups.cancel_request');
+});

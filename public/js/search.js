@@ -18,6 +18,14 @@ if (searchUser) {
   searchUser.addEventListener('input', searchRequest);
 }
 
+const searchGroupForm = document.getElementById('search-group');
+if (searchGroupForm) {
+  const searchGroupInput = searchGroupForm.querySelector('#group-search');
+  if (searchGroupInput) {
+    searchGroupInput.addEventListener('input', searchRequest);
+  }
+}
+
 /**
  * Encode a data object into URL-encoded form data.
  * Example: {a: 1, b: 2} → "a=1&b=2"
@@ -85,14 +93,38 @@ async function sendAjaxRequest(method, url, data, handler) {
 }
 
 function searchRequest(event) {
-  event.preventDefault();
-  event.stopPropagation();
+  if (event.preventDefault) event.preventDefault();
+  if (event.stopPropagation) event.stopPropagation();
   
-  const str = this.querySelector('input[name=search]').value.trim();
-  const baseUrl = this.action;
-  const searchType = this.id; // 'search-user-admin' or 'search-home'
+  let str, baseUrl, searchType;
   
-  const url = str ? `${baseUrl}?search=${encodeURIComponent(str)}` : baseUrl;
+  if (this.tagName === 'INPUT') {
+    // Direct input element (like group-search)
+    str = this.value.trim();
+    searchType = this.id;
+    
+    if (searchType === 'group-search') {
+      baseUrl = '/api/group';
+    } else if (searchType === 'search-user') {
+      baseUrl = '/api/user';
+    } else if (searchType === 'search-home') {
+      baseUrl = '/api/post';
+    }
+  } else {
+    // Form element
+    str = this.querySelector('input[name=search]').value.trim();
+    baseUrl = this.action;
+    searchType = this.id;
+  }
+  
+  let url = str ? `${baseUrl}?search=${encodeURIComponent(str)}` : baseUrl;
+  
+  // type for group searches
+  if (searchType === 'group-search') {
+    url += (url.includes('?') ? '&' : '?') + 'type=group-page';
+  } else if (searchType === 'search-group-admin') {
+    url += (url.includes('?') ? '&' : '?') + 'type=group-admin';
+  }
 
   sendAjaxRequest('GET', url, null, (response) => searchHandler(response, searchType));
   
@@ -136,8 +168,7 @@ function searchHandler(response, searchType) {
       }
     }
   } else if (searchType === 'search-group-admin') {
-    // Handle admin group search
-    const groupsGrid = document.querySelector('.mt-8.grid');
+    const groupsGrid = document.getElementById('admin-groups-grid');
     
     if (response.groups && groupsGrid) {
       groupsGrid.innerHTML = '';
@@ -158,8 +189,7 @@ function searchHandler(response, searchType) {
           const isPublic = group.is_public;
           
           groupCard.innerHTML = `
-            <a href="/group/${group.id_group}" class="mt-auto block w-full text-center py-2 rounded-lg transition font-medium no-underline">
-            <div class="h-40 overflow-hidden relative">
+            <a href="/groups/${group.id_group}" class="block h-40 overflow-hidden relative">
               <img src="${groupPicture}" 
                    alt="${group.name}" 
                    class="w-full h-full object-cover">
@@ -170,16 +200,16 @@ function searchHandler(response, searchType) {
                   : '<span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm"><i class="fa-solid fa-lock text-[10px] mr-1"></i>Private</span>'
                 }
               </div>
-            </div>
+            </a>
             
             <div class="p-5 flex-1 flex flex-col">
-              <h3 class="text-xl font-bold mb-2 text-gray-800 truncate">${group.name}</h3>
+              <a href="/groups/${group.id_group}" class="no-underline">
+                <h3 class="text-xl font-bold mb-2 text-gray-800 truncate hover:text-blue-600 transition">${group.name}</h3>
+              </a>
               
               <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
                 ${group.description || 'No description available.'}
               </p>
-
-              
             
             </div>
             </a>
@@ -282,7 +312,80 @@ function searchHandler(response, searchType) {
         });
       }
     }
+  } else if (searchType === 'group-search') {
+    // group search on groups.index page
+    const myGroupsGrid = document.getElementById('my-groups-grid');
+    const myGroupsSection = myGroupsGrid ? myGroupsGrid.closest('.group-section') : null;
+    const otherGroupsGrid = document.getElementById('other-groups-grid');
+    const noResultsDiv = document.getElementById('no-results');
+    
+    if (response.myGroups !== undefined && response.otherGroups !== undefined) {
+      // Update My Groups section
+      if (myGroupsGrid) {
+        myGroupsGrid.innerHTML = '';
+        if (response.myGroups.length === 0) {
+          if (myGroupsSection) myGroupsSection.style.display = 'none';
+        } else {
+          if (myGroupsSection) myGroupsSection.style.display = 'block';
+          response.myGroups.forEach(group => {
+            const groupCard = createGroupCard(group);
+            myGroupsGrid.appendChild(groupCard);
+          });
+        }
+      }
+      
+      // Update Explore section
+      if (otherGroupsGrid) {
+        otherGroupsGrid.innerHTML = '';
+        if (response.otherGroups.length === 0) {
+          otherGroupsGrid.style.display = 'none';
+          if (noResultsDiv) noResultsDiv.classList.remove('hidden');
+        } else {
+          otherGroupsGrid.style.display = 'grid';
+          if (noResultsDiv) noResultsDiv.classList.add('hidden');
+          response.otherGroups.forEach(group => {
+            const groupCard = createGroupCard(group);
+            otherGroupsGrid.appendChild(groupCard);
+          });
+        }
+      }
+    }
   }
   
   console.log('Search results updated via AJAX.');
+}
+
+function createGroupCard(group) {
+  const article = document.createElement('article');
+  article.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full';
+  
+  const groupPicture = group.picture;
+  const isPublic = group.is_public;
+  
+  article.innerHTML = `
+    <a href="/groups/${group.id_group}" class="block w-full text-center transition font-medium no-underline">
+    <div class="h-40 overflow-hidden relative">
+      <img src="${groupPicture}" 
+           alt="${group.name}" 
+           class="w-[400px] h-[200px] object-cover">
+      
+      <div class="absolute top-2 right-2">
+        ${isPublic 
+          ? '<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm">Public</span>'
+          : '<span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded shadow-sm"><i class="fa-solid fa-lock text-[10px] mr-1"></i>Private</span>'
+        }
+      </div>
+    </div>
+    
+    <div class="p-3 flex-1 flex flex-col">
+      <h3 class="text-xl font-bold mb-2 text-gray-800 truncate">${group.name}</h3>
+      
+      <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
+        ${group.description || 'No description available.'}
+      </p>
+    </div>
+    </a>
+  `;
+  
+  return article;
 }
