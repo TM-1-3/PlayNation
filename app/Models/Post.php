@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Http\Controllers\FileController;
+use Illuminate\Support\Facades\Storage;
 
 
 class Post extends Model
@@ -20,10 +21,17 @@ class Post extends Model
     protected $fillable = ['description', 
                            'image', 
                            'date', 
-                           'id_creator'];
+                           'id_creator',
+                           ', id_group'
+                        ];
 
     public function user(): BelongsTo {
         return $this->belongsTo(User::class, 'id_creator', 'id_user');
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class, 'id_group', 'id_group');
     }
 
     public function labels(): BelongsToMany
@@ -42,6 +50,14 @@ class Post extends Model
     }
 
     public function getPostImage() {
-        return FileController::get('posts', $this->id_post);
+        // if bd has an image associated
+        if ($this->image) {
+            
+            // verifyes the file exists in storage
+            return FileController::get('posts', $this->id_post);
+        }
+
+        // else return default image
+        return asset('public/img/default-post.png');
     }
 }

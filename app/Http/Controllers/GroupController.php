@@ -72,14 +72,12 @@ class GroupController extends Controller
 
         // if can view load posts
         if ($canViewContent) {
-            //$posts = $group->posts()->orderBy('date', 'DESC')->get();
-            //
-            //
-            // temporary no posts on groups
-            $posts = collect();
-            // 
-            //
-        } else {
+            $posts = $group->posts()
+                ->with('user')
+                ->orderBy('date', 'DESC')
+                ->get();
+        } 
+        else {
             $posts = collect(); // empty list
         }
 

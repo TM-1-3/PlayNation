@@ -65,4 +65,10 @@ class Group extends Model
         }
         return asset('img/default-group.png');
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'id_group', 'id_group');
+    }
+
 }

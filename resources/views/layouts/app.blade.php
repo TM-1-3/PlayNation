@@ -37,6 +37,11 @@
             @if(Auth::check())
                     {{-- auth user zone --}}
 
+                    <a href="{{ route('post.create') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('post.create') ? 'font-bold text-blue-600' : '' }}">
+                        <i class="fa-solid fa-circle-plus w-8 text-xl text-center mr-2.5"></i> 
+                        Create Post
+                    </a>
+
                     <a href="{{ route('profile.show', Auth::user()->id_user) }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('profile.show', Auth::user()->id_user) ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-user w-8 text-xl text-center mr-2.5"></i> 
                         My Profile
