@@ -43,16 +43,53 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-3">
-                    @if(Auth::check() && (Auth::id() === $group->id_owner || Auth::user()->isAdmin()))
-                        <a href="{{ route('groups.edit', $group->id_group) }}" class="w-full bg-gray-50 text-gray-700 py-2 rounded-lg hover:bg-gray-100 transition font-medium text-center no-underline border border-gray-200">
-                            Edit Group
-                        </a>
-                    @endif
+                {{-- group actions --}}
+                <div class="flex flex-col gap-3 mt-6">
+                    
+                    @auth
+                        {{-- Owner? shows edit --}}
+                        @if(Auth::id() === $group->id_owner)
+                            <a href="{{ route('groups.edit', $group->id_group) }}" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-lg hover:bg-gray-200 transition font-bold text-center no-underline border border-gray-300">
+                                Edit Group Settings
+                            </a>
+                        
+                        {{-- member? shows leave --}}
+                        @elseif($group->members->contains(Auth::user()->id_user))
+                            <form action="{{ route('groups.leave', $group->id_group) }}" method="POST" onsubmit="return confirm('Are you sure you want to leave this group?');">
+                                @csrf
+                                <button type="submit" class="w-full bg-white text-red-600 border border-red-200 py-2.5 rounded-lg hover:bg-red-50 transition font-bold shadow-sm">
+                                    <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i> Leave Group
+                                </button>
+                            </form>
 
-                    <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">
-                        Join Group
-                    </button>
+                        {{-- pending join request? shows cancel request --}}
+                        @elseif($group->joinRequests->contains(Auth::user()->id_user))
+                            <form action="{{ route('groups.cancel_request', $group->id_group) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-full bg-yellow-50 text-yellow-700 border border-yellow-200 py-2.5 rounded-lg hover:bg-yellow-100 transition font-bold shadow-sm">
+                                    <i class="fa-regular fa-clock mr-2"></i> Request Pending...
+                                </button>
+                                <p class="text-xs text-center text-gray-400 mt-2 cursor-pointer hover:underline">Click button to cancel</p>
+                            </form>
+
+                        {{-- not in n show request to join/join --}}
+                        @else
+                            <form action="{{ route('groups.join', $group->id_group) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition font-bold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 duration-200">
+                                    {{ $group->is_public ? 'Join Group' : 'Request to Join' }}
+                                </button>
+                            </form>
+                        @endif
+
+                    @else
+                        {{-- visitor shows login  --}}
+                        <a href="{{ route('login') }}" class="block w-full bg-blue-600 text-white py-5.5 rounded-lg hover:bg-blue-700 transition font-bold text-center no-underline shadow-md">
+                            Login to Join
+                        </a>
+                    @endauth
+
                 </div>
             </div>
         </div>
