@@ -59,40 +59,45 @@ class GroupController extends Controller
     // show group details
     public function show($id)
     {
-        $group = Group::with('owner', 'members')->findOrFail($id);
+        $group = Group::findOrFail($id);
         $user = Auth::user();
-        // public anyone (logged or not)
-        if ($group->is_public) {
-            return view('pages.groups.show', compact('group'));
+
+        // verifyes premissions
+        $isMember = $user ? $group->members->contains($user->id_user) : false;
+        $isOwner = $user ? $group->id_owner === $user->id_user : false;
+        $isAdmin = $user ? $user->isAdmin() : false;
+
+        // only public groups or members/owner/admin can view
+        $canViewContent = $group->is_public || $isMember || $isOwner || $isAdmin;
+
+        // if can view load posts
+        if ($canViewContent) {
+            //$posts = $group->posts()->orderBy('date', 'DESC')->get();
+            //
+            //
+            // temporary no posts on groups
+            $posts = collect();
+            // 
+            //
+        } else {
+            $posts = collect(); // empty list
         }
 
-        // private only if has key
-        if ($user && (
-            $group->members->contains($user->id_user) || 
-            $group->id_owner === $user->id_user || 
-            $user->isAdmin()
-        )) {
-            return view('pages.groups.show', compact('group'));
-        }
-
-        // visitor if try acced private
-        if (!$user) {
-            return redirect()->route('login')->with('status', 'Please login to view private groups.');
-        }
-
-        // logged but no access
-        abort(403, 'This group is private.');
-
+        return view('pages.groups.show', [
+            'group' => $group,
+            'posts' => $posts,
+            'canViewContent' => $canViewContent // flag to view content or not
+        ]);
     }
 
     public function create()
     {
-        // Segurança extra: só logados entram (embora a rota já deva ter middleware)
+        // only logged in users can create groups
         if (!\Illuminate\Support\Facades\Auth::check()) {
             return redirect()->route('login');
         }
         
-        // Retorna a view que criámos com o formulário Tailwind
+        // view
         return view('pages.groups.create');
     }
 
@@ -120,30 +125,36 @@ class GroupController extends Controller
         
 
         $group = new Group();
+        $group->id_owner = Auth::id();
         $group->name = $request->name;
         $group->description = $request->description;
-        $group->is_public = $request->input('is_public'); 
-        $group->id_owner = $user->id_user;
-        $group->picture = '';
+        
+        //trick becouse of trigger on insert
+        $desiredPrivacy = $request->input('is_public'); 
+        
+        // make it public first
+        $group->is_public = true; 
 
-        $group->save();
-
+        // picture upload
         if ($request->hasFile('picture')) {
             $file = $request->file('picture');
             $fileName = $file->hashName();
-            
-            // saves in folder 'group' inside of 'storage/app/public'
             $file->storeAs('group', $fileName, 'public');
-            
             $group->picture = $fileName;
+        }
+
+        $group->save(); //  saves as public
+
+        // adds memnbership for owner trigger dos not activate becouse its public
+        $group->members()->attach(Auth::user()->id_user);
+
+        // if user wants it private change it now
+        if (!$desiredPrivacy) {
+            $group->is_public = false;
             $group->save();
         }
 
-        // owner is auto member
-        $group->members()->attach($user->id_user);
-
-        return redirect()->route('groups.show', $group->id_group)
-            ->with('status', 'Group created successfully! 🎉');
+        return redirect()->route('groups.show', $group->id_group)->with('status', 'Group created successfully! 🎉');
     }
 
     
@@ -241,20 +252,20 @@ class GroupController extends Controller
                 $group->joinRequests()->attach($user->id_user);
 
                 // create generic notification
-                // Baseado no padrão do FriendController
+                // based on friend controller notification system
                 $notificationId = DB::table('notification')->insertGetId([
-                    'id_receiver' => $group->id_owner, // O Dono recebe
-                    'id_emitter'  => $user->id_user,   // Eu envio
+                    'id_receiver' => $group->id_owner, // Owner recieves
+                    'id_emitter'  => $user->id_user,   // I send
                     'text'        => $user->name . " requested to join your group '" . $group->name . "'.",
                     'date'        => now()
                 ], 'id_notification');
 
-                // C. Criar a Notificação Específica (Tabela Filha 'join_group_request_notification')
-                // Isto liga a notificação ao grupo específico para saberes qual aceitar depois
+                // Creates specific join group request notification
+                // this connects to the specific group so owner can accept/reject
                 DB::table('join_group_request_notification')->insert([
                     'id_notification' => $notificationId,
                     'id_group'        => $group->id_group,
-                    'accepted'        => null // null = pendente
+                    'accepted'        => null // null = pending
                 ]);
 
                 return redirect()->back()->with('status', 'Request sent! Owner notified. 📨');
@@ -348,6 +359,72 @@ class GroupController extends Controller
 
         // no ajax return directly to index
         return redirect()->route('groups.index');
+    }
+
+    public function acceptRequest($groupId, $userId)
+    {
+        $group = Group::findOrFail($groupId);
+        
+        // security: only owner can accept
+        if (Auth::id() !== $group->id_owner) {
+            abort(403, 'Only the owner can accept requests.');
+        }
+        
+        // save original privacy state
+        $wasPrivate = !$group->is_public;
+
+        // if private make it public temporarily
+        // avoids trigger issues
+        if ($wasPrivate) {
+            $group->is_public = true;
+            $group->save();
+        }
+
+        //add member
+        if (!$group->members->contains($userId)) {
+            $group->members()->attach($userId);
+        }
+
+        // return to normal privacy state
+        if ($wasPrivate) {
+            $group->is_public = false;
+            $group->save();
+        }
+
+        // removes pending request
+        $group->joinRequests()->detach($userId);
+
+        DB::table('join_group_request_notification')
+            ->join('notification', 'notification.id_notification', '=', 'join_group_request_notification.id_notification')
+            ->where('join_group_request_notification.id_group', $groupId)
+            ->where('notification.id_emitter', $userId)
+            ->where('notification.id_receiver', Auth::id())
+            ->update(['accepted' => true]);
+
+        return redirect()->back()->with('status', 'User accepted into the group!');
+    }
+
+    public function rejectRequest($groupId, $userId)
+    {
+        $group = Group::findOrFail($groupId);
+
+        // only owner can reject
+        if (Auth::id() !== $group->id_owner) {
+            abort(403, 'Only the owner can reject requests.');
+        }
+
+        // only remove request
+        $group->joinRequests()->detach($userId);
+
+        // update join group request notification to rejected
+        DB::table('join_group_request_notification')
+            ->join('notification', 'notification.id_notification', '=', 'join_group_request_notification.id_notification')
+            ->where('join_group_request_notification.id_group', $groupId)
+            ->where('notification.id_emitter', $userId)
+            ->where('notification.id_receiver', Auth::id())
+            ->update(['accepted' => false]);
+
+        return redirect()->back()->with('status', 'Request rejected.');
     }
         
 }

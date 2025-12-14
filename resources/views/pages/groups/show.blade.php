@@ -94,15 +94,42 @@
             </div>
         </div>
 
-        {{-- right Feed --}}
+        {{-- right column feed --}}
         <div class="flex-1 min-w-0">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-100">Group Activity</h3>
-                
-                <div class="text-center py-10 bg-gray-50 rounded-lg">
-                    <p class="text-gray-500">No posts in this group yet.</p>
+            
+            {{-- if has permission show feed --}}
+            @if($canViewContent)
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-100">Group Activity</h3>
+                    
+                    @if($posts->isEmpty())
+                        <div class="text-center py-10 bg-gray-50 rounded-lg">
+                            <p class="text-gray-500">No posts in this group yet.</p>
+                            @if(Auth::check() && ($group->members->contains(Auth::user()->id_user) || Auth::id() === $group->id_owner))
+                                <button class="mt-3 text-blue-600 font-medium hover:underline text-sm">Create the first post!</button>
+                            @endif
+                        </div>
+                    @else
+                        {{-- posts --}}
+                        @foreach($posts as $post)
+                            @include('partials.post', ['post' => $post]) 
+                        @endforeach
+                    @endif
                 </div>
-            </div>
+
+            {{-- no permission, lock --}}
+            @else
+                <div class="bg-white rounded-lg shadow-md p-10 text-center border border-gray-200">
+                    <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-lock text-4xl text-gray-400"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Private Group</h2>
+                    <p class="text-gray-500 max-w-md mx-auto">
+                        This group is private. Join the group to view posts and comments.
+                    </p>
+                </div>
+            @endif
+
         </div>
 
     </div>

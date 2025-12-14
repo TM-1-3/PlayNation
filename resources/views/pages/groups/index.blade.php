@@ -29,7 +29,7 @@
     </div>
 
     @auth
-        {{-- SECÇÃO 1: MEUS GRUPOS --}}
+        {{-- my groups--}}
         @if($myGroups->isNotEmpty())
             <div class="mb-12 group-section">
                 <h3 class="text-xl font-bold text-gray-700 mb-4 flex items-center gap-2">
@@ -45,7 +45,7 @@
         @endif
     @endauth
 
-    {{-- SECÇÃO 2: EXPLORAR (Outros Grupos) --}}
+    {{-- explore --}}
     <div class="group-section">
         <h3 class="text-xl font-bold text-gray-700 mb-4 flex items-center gap-2">
             <i class="fa-regular fa-compass text-blue-500"></i> Explore
@@ -63,7 +63,7 @@
             </div>
         @endif
         
-        {{-- Mensagem de "Sem Resultados" para a pesquisa --}}
+        {{-- no results message --}}
         <div id="no-results" class="hidden text-center py-10 text-gray-400">
             <i class="fa-solid fa-filter-circle-xmark text-4xl mb-2"></i>
             <p>No groups found matching your filter.</p>

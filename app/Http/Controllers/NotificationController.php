@@ -10,14 +10,29 @@ use Illuminate\Support\Facades\DB;
 class NotificationController extends Controller {
 
     public function showNotificationsPage() {
-
         $userId = Auth::id();
 
-        $friendRequests = Notification::pendingFriendRequests($userId)
+        $notifications = Notification::where('id_receiver', $userId)
+            ->with(['emitter', 'friendRequestNotification', 'joinGroupRequestNotification']) 
             ->orderByDesc('date')
             ->get();
+        
+        $pendingNotifications = $notifications->filter(function ($notification) {
+            // from group request and not accepted yet (null), keep
+            if ($notification->joinGroupRequestNotification && $notification->joinGroupRequestNotification->accepted === null) {
+                return true;
+            }
+            // from friend request and not accepted yet (null), keep
+            if ($notification->friendRequestNotification && $notification->friendRequestNotification->accepted === null) {
+                return true;
+            }
+           
+            return false; 
+        });
 
-        return view('pages.notifications', ['friendRequests' => $friendRequests]);
+        return view('pages.notifications', [
+            'notifications' => $pendingNotifications
+        ]);
     }
 
     public function acceptFriendRequest($id) {

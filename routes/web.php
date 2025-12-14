@@ -105,6 +105,8 @@ Route::middleware(['auth'])->group(function () {
         return view('pages.placeholder', ['title' => 'About']);
     })->name('about.index');
 
+    
+
 
     // Post
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
@@ -138,12 +140,14 @@ Route::get('/groups/{id}', [GroupController::class, 'show'])->name('groups.show'
 
 // Group routes authenticated
 Route::middleware(['auth'])->group(function () {
-Route::get('/groups/create/new', [GroupController::class, 'create'])->name('groups.create');
-Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
-Route::get('/groups/{id}/edit', [GroupController::class, 'edit'])->name('groups.edit');
-Route::put('/groups/{id}', [GroupController::class, 'update'])->name('groups.update');
-Route::delete('/groups/{id}', [GroupController::class, 'destroy'])->name('groups.destroy');
-Route::post('/groups/{id}/join', [GroupController::class, 'join'])->name('groups.join');
-Route::post('/groups/{id}/leave', [GroupController::class, 'leave'])->name('groups.leave');
-Route::delete('/groups/{id}/request', [GroupController::class, 'cancelRequest'])->name('groups.cancel_request');
+    Route::get('/groups/create/new', [GroupController::class, 'create'])->name('groups.create');
+    Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+    Route::get('/groups/{id}/edit', [GroupController::class, 'edit'])->name('groups.edit');
+    Route::put('/groups/{id}', [GroupController::class, 'update'])->name('groups.update');
+    Route::delete('/groups/{id}', [GroupController::class, 'destroy'])->name('groups.destroy');
+    Route::post('/groups/{id}/join', [GroupController::class, 'join'])->name('groups.join');
+    Route::post('/groups/{id}/leave', [GroupController::class, 'leave'])->name('groups.leave');
+    Route::delete('/groups/{id}/request', [GroupController::class, 'cancelRequest'])->name('groups.cancel_request');
+    Route::post('/groups/{group}/accept/{user}', [GroupController::class, 'acceptRequest'])->name('groups.accept_request');
+    Route::delete('/groups/{group}/reject/{user}', [GroupController::class, 'rejectRequest'])->name('groups.reject_request');
 });

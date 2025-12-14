@@ -32,4 +32,17 @@ class Notification extends Model
                      ->whereHas('friendRequestNotification', function($q) { $q->whereNull('accepted'); })
                      ->with('emitter');
     }
+
+    public function joinGroupRequestNotification()
+    {
+        return $this->hasOne(JoinGroupRequestNotification::class, 'id_notification', 'id_notification');
+    }
+
+    public function scopePendingGroupRequests($query, $userId) {
+        return $query->where('id_receiver', $userId)
+                     ->whereHas('joinGroupRequestNotification', function($q) { 
+                         $q->whereNull('accepted'); 
+                     })
+                     ->with(['emitter', 'joinGroupRequestNotification.group']); 
+    }
 }
