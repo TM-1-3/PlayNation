@@ -129,12 +129,14 @@ class GroupController extends Controller
         $group->save();
 
         if ($request->hasFile('picture')) {
-            $uploadrequest = new Request([
-                'id' => $group->id_group,
-                'type' => 'group'
-            ]);
-            $uploadrequest->files->set('file', $request->file('picture'));
-            app(FileController::class)->upload($uploadrequest);
+            $file = $request->file('picture');
+            $fileName = $file->hashName();
+            
+            // saves in folder 'group' inside of 'storage/app/public'
+            $file->storeAs('group', $fileName, 'public');
+            
+            $group->picture = $fileName;
+            $group->save();
         }
 
         // owner is auto member
@@ -178,15 +180,15 @@ class GroupController extends Controller
         $group->is_public = $request->input('is_public', false);
 
         if ($request->hasFile('picture')) {
-            // delete old picture if exists
-            if (!empty($group->picture)) {
-                Storage::disk('storage')->delete('group/' . $group->picture);
+            // delete old one if it exists
+            if ($group->picture && Storage::disk('public')->exists('group/' . $group->picture)) {
+                Storage::disk('public')->delete('group/' . $group->picture);
             }
 
-            // upload new picture
+            // saves new one
             $file = $request->file('picture');
             $fileName = $file->hashName();
-            $file->storeAs('group', $fileName, 'storage');
+            $file->storeAs('group', $fileName, 'public');
             
             $group->picture = $fileName;
         }
@@ -291,83 +293,61 @@ class GroupController extends Controller
     public function searchGroup(Request $request)
     {
         $search = $request->get('search');
-        $type = $request->get('type');
+        $type = $request->get('type'); 
         $user = Auth::user();
-        
+
         if ($search) {
             $input = $search . ':*';
-            $groups = Group::whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input])
-                         ->orderByRaw("ts_rank(tsvectors, to_tsquery('portuguese', ?)) DESC", [$input])
-                         ->get();
+            $query = Group::whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input])
+                          ->orderByRaw("ts_rank(tsvectors, to_tsquery('portuguese', ?)) DESC", [$input]);
         } else {
-            $groups = Group::all();
+            $query = Group::query();
         }
         
-        if ($type == 'group-page') {
-            if ($request->ajax()) {
+        $groups = $query->get();
+
+        
+        if ($request->ajax()) {
+            
+            
+            if ($type == 'group-page') {
                 $myGroups = collect();
                 $otherGroups = collect();
 
                 if ($user) {
-                    // user's group IDs (member or owner)
-                    $memberGroupIds = DB::table('group_membership')
-                        ->where('id_member', $user->id_user)
-                        ->pluck('id_group')
-                        ->toArray();
-                    
-                    $ownerGroupIds = DB::table('groups')
-                        ->where('id_owner', $user->id_user)
-                        ->pluck('id_group')
+                    // my groups (member or owner)
+                    $myGroupIds = $user->groups()->pluck('group_membership.id_group')
+                        ->merge($user->ownedGroups()->pluck('id_group'))
+                        ->unique()
                         ->toArray();
 
-                    $myGroupIds = array_unique(array_merge($memberGroupIds, $ownerGroupIds));
-
-                    // myGroups and otherGroups
                     $myGroups = $groups->whereIn('id_group', $myGroupIds)->values();
+                    
+                    // other groups Public first Private after
                     $otherGroups = $groups->whereNotIn('id_group', $myGroupIds)
                         ->sortByDesc('is_public')
                         ->values();
                 } else {
-                    // public groups for visitors
                     $otherGroups = $groups->where('is_public', true)->values();
                 }
 
-                // pictures
-                $myGroups = $myGroups->map(function($group) {
-                    $groupArray = $group->toArray();
-                    $groupArray['picture'] = $group->getGroupPicture();
-                    return $groupArray;
-                });
-
-                $otherGroups = $otherGroups->map(function($group) {
-                    $groupArray = $group->toArray();
-                    $groupArray['picture'] = $group->getGroupPicture();
-                    return $groupArray;
-                });
+                // contruct the full image url
+                $myGroups = $myGroups->map(fn($g) => array_merge($g->toArray(), ['picture' => $g->getGroupPicture()]));
+                $otherGroups = $otherGroups->map(fn($g) => array_merge($g->toArray(), ['picture' => $g->getGroupPicture()]));
 
                 return response()->json([
                     'myGroups' => $myGroups,
                     'otherGroups' => $otherGroups
                 ]);
             }
-        } else if ($type == 'group-admin') {
-            if ($request->ajax()) {
-                // pictures
-                $groups = $groups->map(function($group) {
-                    $groupArray = $group->toArray();
-                    $groupArray['picture'] = $group->getGroupPicture();
-                    return $groupArray;
-                });
-
-                return response()->json([
-                    'groups' => $groups,
-                ]);
-            }
             
-            return view('pages.admin', ['groups' => $groups, 'type' => 'group']);
+            // generic fallback
+            $formattedGroups = $groups->map(fn($g) => array_merge($g->toArray(), ['picture' => $g->getGroupPicture()]));
+            return response()->json(['groups' => $formattedGroups]);
         }
-        
-        return view('pages.admin', ['groups' => $groups, 'type' => 'group']);
+
+        // no ajax return directly to index
+        return redirect()->route('groups.index');
     }
         
 }

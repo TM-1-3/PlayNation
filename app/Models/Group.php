@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use \App\Http\Controllers\FileController;
+use Illuminate\Support\Facades\Storage;
 
 class Group extends Model
 {
@@ -56,7 +57,12 @@ class Group extends Model
         return $this->belongsToMany(User::class, 'group_join_request', 'id_group', 'id_requester');
     }
 
-    public function getGroupPicture() {
-        return FileController::get('group', $this->id_group);
+    public function getGroupPicture()
+    {
+        if ($this->picture) {
+            // Nova lógica: Procura na pasta pública 'group/'
+            return asset('storage/group/' . $this->picture);
+        }
+        return asset('img/default-group.png');
     }
 }
