@@ -94,38 +94,48 @@
             </div>
         </div>
 
-        {{-- right column feed --}}
+        {{-- right column chat --}}
         <div class="flex-1 min-w-0">
             
-            {{-- if has permission show feed --}}
             @if($canViewContent)
-                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-100">Group Activity</h3>
+                <div class="bg-white rounded-lg shadow-md h-[600px] flex flex-col relative overflow-hidden">
                     
-                    @if($posts->isEmpty())
-                        <div class="text-center py-10 bg-gray-50 rounded-lg">
-                            <p class="text-gray-500">No posts in this group yet.</p>
-                            @if(Auth::check() && ($group->members->contains(Auth::user()->id_user) || Auth::id() === $group->id_owner))
-                                <button class="mt-3 text-blue-600 font-medium hover:underline text-sm">Create the first post!</button>
-                            @endif
-                        </div>
-                    @else
-                        {{-- posts --}}
-                        @foreach($posts as $post)
-                            @include('partials.post', ['post' => $post]) 
-                        @endforeach
-                    @endif
-                </div>
+                    {{-- chat header --}}
+                    <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-700">
+                            <i class="fa-regular fa-comments mr-2"></i> Group Chat
+                        </h3>
+                        <span class="text-xs text-gray-500">Live conversation</span>
+                    </div>
 
-            {{-- no permission, lock --}}
+                    {{-- msgs area --}}
+                    <div class="flex-1 p-4 overflow-y-auto bg-gray-50/50" id="chat-messages">
+                        <div class="text-center text-gray-400 mt-20">
+                            <i class="fa-solid fa-comments text-4xl mb-2"></i>
+                            <p>Loading messages...</p>
+                        </div>
+                    </div>
+
+                    {{-- input part --}}
+                    <div class="p-4 border-t bg-white">
+                        <form class="flex gap-2">
+                            <input type="text" placeholder="Type a message..." class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100">
+                            <button type="button" class="bg-blue-600 text-white rounded-full w-10 h-10 hover:bg-blue-700 transition flex items-center justify-center">
+                                <i class="fa-solid fa-paper-plane text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
             @else
+                {{-- blockage --}}
                 <div class="bg-white rounded-lg shadow-md p-10 text-center border border-gray-200">
                     <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fa-solid fa-lock text-4xl text-gray-400"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-gray-800 mb-2">Private Group</h2>
                     <p class="text-gray-500 max-w-md mx-auto">
-                        This group is private. Join the group to view posts and comments.
+                        This group is private. Join the group to access the chat.
                     </p>
                 </div>
             @endif

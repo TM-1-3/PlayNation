@@ -62,29 +62,19 @@ class GroupController extends Controller
         $group = Group::findOrFail($id);
         $user = Auth::user();
 
-        // verifyes premissions
+        // Verificações de permissão (Mantém isto, é importante para o chat também)
         $isMember = $user ? $group->members->contains($user->id_user) : false;
         $isOwner = $user ? $group->id_owner === $user->id_user : false;
         $isAdmin = $user ? $user->isAdmin() : false;
 
-        // only public groups or members/owner/admin can view
         $canViewContent = $group->is_public || $isMember || $isOwner || $isAdmin;
 
-        // if can view load posts
-        if ($canViewContent) {
-            $posts = $group->posts()
-                ->with('user')
-                ->orderBy('date', 'DESC')
-                ->get();
-        } 
-        else {
-            $posts = collect(); // empty list
-        }
+        // REMOVEMOS A PARTE DOS POSTS ($group->posts...)
+        // Para já não enviamos nada extra, só o grupo e permissões.
 
         return view('pages.groups.show', [
             'group' => $group,
-            'posts' => $posts,
-            'canViewContent' => $canViewContent // flag to view content or not
+            'canViewContent' => $canViewContent
         ]);
     }
 
