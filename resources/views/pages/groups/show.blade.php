@@ -100,29 +100,43 @@
             @if($canViewContent)
                 <div class="bg-white rounded-lg shadow-md h-[600px] flex flex-col relative overflow-hidden">
                     
-                    {{-- chat header --}}
+                    {{-- header --}}
                     <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
                         <h3 class="font-bold text-gray-700">
                             <i class="fa-regular fa-comments mr-2"></i> Group Chat
                         </h3>
-                        <span class="text-xs text-gray-500">Live conversation</span>
+                        <span class="text-xs text-gray-500 flex items-center gap-1">
+                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Live
+                        </span>
                     </div>
 
-                    {{-- msgs area --}}
-                    <div class="flex-1 p-4 overflow-y-auto bg-gray-50/50" id="chat-messages">
-                        <div class="text-center text-gray-400 mt-20">
-                            <i class="fa-solid fa-comments text-4xl mb-2"></i>
-                            <p>Loading messages...</p>
+                    {{-- messages area --}}
+                    <div class="flex-1 p-4 overflow-y-auto bg-gray-50/50 flex flex-col gap-3" id="chat-messages">
+                        {{-- JS here --}}
+                        <div class="text-center text-gray-400 mt-20" id="loading-msg">
+                            <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                            <p>Connecting to server...</p>
                         </div>
                     </div>
 
-                    {{-- input part --}}
+                    {{-- input --}}
                     <div class="p-4 border-t bg-white">
-                        <form class="flex gap-2">
-                            <input type="text" placeholder="Type a message..." class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100">
-                            <button type="button" class="bg-blue-600 text-white rounded-full w-10 h-10 hover:bg-blue-700 transition flex items-center justify-center">
-                                <i class="fa-solid fa-paper-plane text-sm"></i>
+                       
+                        <form id="chat-form" class="flex items-center gap-2">
+                            
+                            {{-- text --}}
+                            <input type="text" 
+                                   id="message-input"
+                                   name="text"
+                                   placeholder="Type a message..." 
+                                   class="flex-1 border border-gray-300 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-gray-700 transition-shadow"
+                                   autocomplete="off">
+                            
+                            <button type="submit" 
+                                    class="bg-transparent border-none p-2 cursor-pointer transition-transform hover:scale-110 active:scale-95 group">
+                                <i class="fa-solid fa-paper-plane text-2xl text-blue-600 group-hover:text-blue-700"></i>
                             </button>
+
                         </form>
                     </div>
 
@@ -146,3 +160,152 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const groupId = "{{ $group->id_group }}";
+    const currentUserId = "{{ Auth::id() }}"; 
+    const currentUserName = "{{ Auth::user()->name }}"; 
+    
+    const chatContainer = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const loadingMsg = document.getElementById('loading-msg');
+
+    let lastLoadedId = 0; 
+
+    // load messages func
+    function loadMessages() {
+        fetch(`/groups/${groupId}/messages?after_id=${lastLoadedId}`)
+            .then(response => response.json())
+            .then(messages => {
+                if (loadingMsg) loadingMsg.remove(); 
+
+                if (messages.length > 0) {
+                    messages.forEach(msg => {
+                        // only ads if it doesnt exist yet
+                        if (!document.getElementById(`msg-${msg.id_message}`)) {
+                            appendMessageToChat(msg);
+                        }
+                        
+                        // updates cursor not to duplicate
+                        if (msg.id_message > lastLoadedId) {
+                            lastLoadedId = msg.id_message;
+                        }
+                    });
+                    scrollToBottom();
+                }
+            })
+            .catch(error => console.error('Error loading:', error));
+    }
+
+    // draw message
+    function appendMessageToChat(msg, isOptimistic = false, customId = null) {
+        const isMe = msg.id_sender == currentUserId;
+        const alignmentClass = isMe ? 'justify-end' : 'justify-start';
+        const bgClass = isMe ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
+        
+        // if own message, use customId (temp id), else use real id
+        const elementId = customId ? customId : `msg-${msg.id_message}`;
+        const opacityClass = isOptimistic ? 'opacity-70' : 'opacity-100';
+        const timeDisplay = isOptimistic ? 'Sending...' : new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        const html = `
+            <div id="${elementId}" class="flex ${alignmentClass} mb-2 fade-in ${opacityClass}">
+                <div class="max-w-[75%]">
+                    ${!isMe ? `<span class="text-xs text-gray-500 mb-1 block">${msg.sender.name}</span>` : ''}
+                    <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm">
+                        <p class="text-sm">${msg.text}</p> 
+                    </div>
+                    <span class="text-[10px] text-gray-400 mt-1 block ${isMe ? 'text-right' : 'text-left'} message-time">
+                        ${timeDisplay}
+                    </span>
+                </div>
+            </div>
+        `;
+        
+        chatContainer.insertAdjacentHTML('beforeend', html);
+    }
+
+    function scrollToBottom() {
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+    }
+
+    //send message
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        
+        const textValue = messageInput.value.trim();
+        if (!textValue) return;
+
+        messageInput.value = ''; 
+        messageInput.focus();
+
+        // unique temp id
+        const tempId = 'temp-' + Date.now();
+
+        // draw with temp id
+        appendMessageToChat({
+            id_sender: currentUserId,
+            sender: { name: currentUserName },
+            text: textValue,
+            date: new Date().toISOString() 
+        }, true, tempId); // <--- temp id here
+
+        scrollToBottom();
+
+        // 3. send to server
+        fetch(`/groups/${groupId}/messages`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ text: textValue })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const realMsg = data.message;
+                
+                // get temp element 
+                const tempElement = document.getElementById(tempId);
+
+                if (tempElement) {
+                    // transform to real message
+                    tempElement.id = `msg-${realMsg.id_message}`;
+                    
+                    // remove opacity
+                    tempElement.classList.remove('opacity-70');
+                    tempElement.classList.add('opacity-100');
+
+                    // update sending to real time
+                    const timeSpan = tempElement.querySelector('.message-time');
+                    if(timeSpan) {
+                        timeSpan.innerText = new Date(realMsg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    }
+                }
+
+                // update last loaded id
+                // Apolling already Knows our last id, but just in case
+                if (realMsg.id_message > lastLoadedId) {
+                    lastLoadedId = realMsg.id_message;
+                }
+            }
+        })
+        .catch(error => console.error('Error sending:', error));
+    });
+
+    // start
+    loadMessages();
+    setInterval(loadMessages, 3000); 
+});
+</script>
+
+<style>
+    .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+@endpush

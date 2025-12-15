@@ -16,6 +16,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FriendController; 
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\MessageController;
 
 // Home
 Route::redirect('/', '/login');
@@ -150,4 +151,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/groups/{id}/request', [GroupController::class, 'cancelRequest'])->name('groups.cancel_request');
     Route::post('/groups/{group}/accept/{user}', [GroupController::class, 'acceptRequest'])->name('groups.accept_request');
     Route::delete('/groups/{group}/reject/{user}', [GroupController::class, 'rejectRequest'])->name('groups.reject_request');
+    Route::get('/groups/{id}/messages', [MessageController::class, 'getGroupMessages'])->name('groups.messages');
+    Route::post('/groups/{id}/messages', [MessageController::class, 'sendGroupMessage'])->name('groups.messages.send');
 });

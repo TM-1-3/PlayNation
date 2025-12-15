@@ -71,4 +71,9 @@ class Group extends Model
         return $this->hasMany(Post::class, 'id_group', 'id_group');
     }
 
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'id_group', 'id_group');
+    }
+
 }
