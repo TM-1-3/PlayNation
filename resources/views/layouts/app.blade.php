@@ -47,6 +47,12 @@
                         My Profile
                     </a>
 
+                    <a href="{{ route('post.create') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('post.create') ? 'font-bold text-blue-600' : '' }}">
+                        <i class="fa-regular fa-square-plus w-8 text-xl text-center mr-2.5"></i> 
+                        New Post
+                    </a>
+
+
                     <a href="{{ route('groups.index') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('groups.index') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-users w-8 text-xl text-center mr-2.5"></i> 
                         My Groups

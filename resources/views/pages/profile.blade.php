@@ -103,15 +103,24 @@
 
         {{-- users feed posts --}}
         <h3 class="text-xl font-bold mb-4">Posts</h3>
+
+        @if(!$user->is_public && Auth::id() !== $user->id_user && !$isFriend)
+            
+            <div class="rounded-lg shadow-sm p-8 mb-8 text-center text-gray-500">
+                <h2 class="text-lg font-bold text-gray-800 mb-2">This account is private</h2>
+                <p class="text-gray-500 text-sm">Add this user as a friend to see their posts</p>
+            </div>
+        @else
         
         @if($posts->isEmpty())
             <div class="rounded-lg shadow-sm p-8 mb-8 text-center text-gray-500">
-                <p>No posts yet.</p>
+                <p>No posts yet</p>
             </div>
         @else
             @foreach($posts as $post)
                     @include('partials.post', ['post' => $post, 'type' => 'profile'])
             @endforeach
+        @endif
         @endif
 
     </div>

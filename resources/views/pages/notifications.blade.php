@@ -19,7 +19,7 @@
                     <a href="{{ route('profile.show', $notification->emitter->id_user) }}">
                         <img src="{{ $notification->emitter->getProfileImage() }}" 
                              alt="{{ $notification->emitter->name }}" 
-                             class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                             class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5">
                     </a>
                     
                     <div>
