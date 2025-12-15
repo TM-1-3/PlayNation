@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // update last loaded id
-                // Apolling already Knows our last id, but just in case
+                // polling already Knows our last id, but just in case
                 if (realMsg.id_message > lastLoadedId) {
                     lastLoadedId = realMsg.id_message;
                 }
