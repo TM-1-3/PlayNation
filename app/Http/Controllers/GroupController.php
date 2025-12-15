@@ -513,16 +513,35 @@ class GroupController extends Controller
         $group = Group::findOrFail($id);
         $user = Auth::user();
         
-        // verify if already member 
+        // verifyes if already a member
         if ($group->members->contains($user->id_user)) {
             return redirect()->back()->with('error', 'You are already a member.');
         }
 
-        // create register
-        GroupMember::create([
-            'id_group'  => $group->id_group,
-            'id_member' => $user->id_user 
-        ]);
+        // operation to enter the group
+        DB::transaction(function () use ($group, $user) {
+            
+            // save original state
+            $wasPrivate = !$group->is_public;
+
+            // if private make temporarily public
+            if ($wasPrivate) {
+                $group->is_public = true;
+                $group->save();
+            }
+
+            // now trigger accepts new user
+            GroupMember::create([
+                'id_group'  => $group->id_group,
+                'id_member' => $user->id_user
+            ]);
+
+            // get it back to private
+            if ($wasPrivate) {
+                $group->is_public = false;
+                $group->save();
+            }
+        });
 
         // delete notification
         if ($request->has('notification_id')) {
