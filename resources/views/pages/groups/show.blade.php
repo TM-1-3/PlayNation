@@ -203,16 +203,13 @@
 
 @push('scripts')
 <script>
-    // global vars accecible by chats and invites
+    // clobal vars
+    // chat and invite can use
     const groupId = "{{ $group->id_group }}";
     const currentUserId = "{{ Auth::id() }}"; 
     const currentUserName = "{{ Auth::user()->name ?? 'User' }}"; 
 
-    // moddal elements 
-    const inviteModal = document.getElementById('invite-modal');
-    const candidatesList = document.getElementById('candidates-list');
-
-    // chat logic
+    // chat logic starts with page load
     document.addEventListener('DOMContentLoaded', function() {
         
         const chatContainer = document.getElementById('chat-messages');
@@ -222,13 +219,12 @@
 
         let lastLoadedId = 0; 
 
-        // load messages func
+        // chats functions
         function loadMessages() {
             fetch(`/groups/${groupId}/messages?after_id=${lastLoadedId}`)
                 .then(response => response.json())
                 .then(messages => {
                     if (loadingMsg) loadingMsg.remove(); 
-
                     if (messages.length > 0) {
                         messages.forEach(msg => {
                             if (!document.getElementById(`msg-${msg.id_message}`)) {
@@ -244,15 +240,10 @@
                 .catch(error => console.error('Error loading:', error));
         }
 
-        // draw message
         function appendMessageToChat(msg, isOptimistic = false, customId = null) {
             const isMe = msg.id_sender == currentUserId;
             const alignmentClass = isMe ? 'justify-end' : 'justify-start';
-            
-            const bgClass = isMe 
-                ? 'bg-blue-600 text-white rounded-br-none' 
-                : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
-
+            const bgClass = isMe ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
             const elementId = customId ? customId : `msg-${msg.id_message}`;
             const opacityClass = isOptimistic ? 'opacity-70' : 'opacity-100';
             const timeDisplay = isOptimistic ? 'Sending...' : new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -269,13 +260,10 @@
                         <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group">
                             <p class="text-sm leading-relaxed">${msg.text}</p>
                         </div>
-                        <span class="text-[10px] text-gray-400 mt-1 ml-1 block message-time">
-                            ${timeDisplay}
-                        </span>
+                        <span class="text-[10px] text-gray-400 mt-1 ml-1 block message-time">${timeDisplay}</span>
                     </div>
                 </div>
             `;
-            
             chatContainer.insertAdjacentHTML('beforeend', html);
         }
 
@@ -283,96 +271,79 @@
             chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
         }
 
-        //send message
-        chatForm.addEventListener('submit', function(e) {
-            e.preventDefault(); 
-            
-            const textValue = messageInput.value.trim();
-            if (!textValue) return;
+        // sending msgs listener
+        if(chatForm){
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault(); 
+                const textValue = messageInput.value.trim();
+                if (!textValue) return;
+                
+                messageInput.value = ''; 
+                messageInput.focus();
+                const tempId = 'temp-' + Date.now();
 
-            messageInput.value = ''; 
-            messageInput.focus();
+                appendMessageToChat({
+                    id_sender: currentUserId,
+                    sender: { name: currentUserName, profile_image: "{{ Auth::user()->getProfileImage() }}" },
+                    text: textValue,
+                    date: new Date().toISOString() 
+                }, true, tempId);
 
-            const tempId = 'temp-' + Date.now();
+                scrollToBottom();
 
-            // draw with temp id
-            appendMessageToChat({
-                id_sender: currentUserId,
-                sender: { 
-                    name: currentUserName,
-                    profile_image: "{{ Auth::user()->getProfileImage() }}" 
-                },
-                text: textValue,
-                date: new Date().toISOString() 
-            }, true, tempId);
-
-            scrollToBottom();
-
-            fetch(`/groups/${groupId}/messages`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ text: textValue })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    const realMsg = data.message;
-                    const tempElement = document.getElementById(tempId);
-
-                    if (tempElement) {
-                        tempElement.id = `msg-${realMsg.id_message}`;
-                        tempElement.classList.remove('opacity-70');
-                        tempElement.classList.add('opacity-100');
-                        const timeSpan = tempElement.querySelector('.message-time');
-                        if(timeSpan) {
-                            timeSpan.innerText = new Date(realMsg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                fetch(`/groups/${groupId}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ text: textValue })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const tempElement = document.getElementById(tempId);
+                        if (tempElement) {
+                            tempElement.id = `msg-${data.message.id_message}`;
+                            tempElement.classList.remove('opacity-70');
+                            tempElement.classList.add('opacity-100');
+                            const timeSpan = tempElement.querySelector('.message-time');
+                            if(timeSpan) timeSpan.innerText = new Date(data.message.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         }
+                        if (data.message.id_message > lastLoadedId) lastLoadedId = data.message.id_message;
                     }
+                })
+                .catch(error => console.error('Error sending:', error));
+            });
+        }
 
-                    if (realMsg.id_message > lastLoadedId) {
-                        lastLoadedId = realMsg.id_message;
-                    }
-                }
-            })
-            .catch(error => console.error('Error sending:', error));
-        });
-
-        // start chat
+        // starts chat
         loadMessages();
         setInterval(loadMessages, 3000); 
     });
 
-    // invites logic
+    // invite functions
 
-    // open window
+    // open modal window
     window.openInviteModal = function() {
-        // search for model on click
         const inviteModal = document.getElementById('invite-modal');
-        const candidatesList = document.getElementById('candidates-list');
-
         if(inviteModal) {
             inviteModal.classList.remove('hidden');
-            loadCandidates(); // calls function on click
+            loadCandidates();
         } else {
-            console.error("ERRO CRÍTICO: Ainda não consigo encontrar a div com id='invite-modal'");
+            console.error("Invite modal not found");
         }
     }
 
-    // close window
+    // close modal window
     window.closeInviteModal = function() {
         const inviteModal = document.getElementById('invite-modal');
-        if(inviteModal) {
-            inviteModal.classList.add('hidden');
-        }
+        if(inviteModal) inviteModal.classList.add('hidden');
     }
 
-    // load friends candidates
+    // load candidate friends
     function loadCandidates() {
-        const candidatesList = document.getElementById('candidates-list'); // searches list here
-        
+        const candidatesList = document.getElementById('candidates-list');
         if(!candidatesList) return;
         
         candidatesList.innerHTML = '<div class="text-center py-4 text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading friends...</div>';
@@ -398,31 +369,63 @@
                         btnHtml = `<button onclick="sendInvite(${user.id}, this)" class="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded transition shadow-sm cursor-pointer">Invite</button>`;
                     }
 
+                    // img size fix
                     const html = `
-                    <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
-                        <div class="flex items-center gap-3">
-                            
-                            {{-- A SOLUÇÃO FINAL --}}
-                            {{-- Usamos o 'style' para forçar 40px de largura e altura --}}
-                            <img src="${user.profile_image}" 
-                                 alt="${user.name}"
-                                 class="rounded-full object-cover border border-gray-200 shrink-0"
-                                 style="width: 40px; height: 40px; min-width: 40px; max-width: 40px;">
-                            
-                            <div class="min-w-0">
-                                <p class="font-bold text-sm text-gray-800 truncate">${user.name}</p>
-                                <p class="text-xs text-gray-500 truncate">@${user.username}</p>
+                        <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
+                            <div class="flex items-center gap-3">
+                                <img src="${user.profile_image}" 
+                                     alt="${user.name}"
+                                     class="rounded-full object-cover border border-gray-200 shrink-0"
+                                     style="width: 40px; height: 40px; min-width: 40px; max-width: 40px;">
+                                
+                                <div class="min-w-0">
+                                    <p class="font-bold text-sm text-gray-800 truncate">${user.name}</p>
+                                    <p class="text-xs text-gray-500 truncate">@${user.username}</p>
+                                </div>
+                            </div>
+                            <div class="shrink-0 ml-2">
+                                ${btnHtml}
                             </div>
                         </div>
-                        <div class="shrink-0 ml-2">
-                            ${btnHtml}
-                        </div>
-                    </div>
-                `;
-                candidatesList.insertAdjacentHTML('beforeend', html);
+                    `;
+                    candidatesList.insertAdjacentHTML('beforeend', html);
                 });
             })
             .catch(err => console.error(err));
+    }
+
+    // send invite
+    window.sendInvite = function(userId, btnElement) {
+        console.log("A enviar convite para user:", userId); // Debug --------------------------------------------
+        
+        const originalText = btnElement.innerText;
+        btnElement.innerText = 'Sent!';
+        btnElement.disabled = true;
+        btnElement.classList.replace('bg-blue-600', 'bg-green-600');
+
+        fetch(`/groups/${groupId}/invite`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ user_id: userId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log("Convite enviado com sucesso!");
+            } else {
+                console.error("Erro no envio:", data);
+                btnElement.innerText = 'Error';
+                btnElement.classList.replace('bg-green-600', 'bg-red-600');
+            }
+        })
+        .catch(err => {
+            console.error("Erro Fetch:", err);
+            btnElement.innerText = 'Error';
+            btnElement.classList.replace('bg-green-600', 'bg-red-600');
+        });
     }
 
 </script>

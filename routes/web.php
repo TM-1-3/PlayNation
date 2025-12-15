@@ -155,4 +155,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/groups/{id}/messages', [MessageController::class, 'sendGroupMessage'])->name('groups.messages.send');
     Route::get('/groups/{id}/candidates', [GroupController::class, 'getCandidates'])->name('groups.candidates');
     Route::post('/groups/{id}/invite', [GroupController::class, 'sendInvite'])->name('groups.invite');
+    Route::post('/groups/{id}/accept-invite', [GroupController::class, 'acceptInvite'])->name('groups.accept_invite');
+    Route::delete('/groups/{id}/reject-invite', [GroupController::class, 'rejectInvite'])->name('groups.reject_invite');
 });

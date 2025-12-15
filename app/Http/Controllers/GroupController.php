@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Notification;
 use App\Models\JoinGroupRequestNotification;
+use App\Models\GroupMember;
 
 class GroupController extends Controller
 {
@@ -505,6 +506,40 @@ class GroupController extends Controller
         ]);
 
         return response()->json(['status' => 'success']);
+    }
+
+    public function acceptInvite(Request $request, $id)
+    {
+        $group = Group::findOrFail($id);
+        $user = Auth::user();
+        
+        // verify if already member 
+        if ($group->members->contains($user->id_user)) {
+            return redirect()->back()->with('error', 'You are already a member.');
+        }
+
+        // create register
+        GroupMember::create([
+            'id_group'  => $group->id_group,
+            'id_member' => $user->id_user 
+        ]);
+
+        // delete notification
+        if ($request->has('notification_id')) {
+            Notification::destroy($request->input('notification_id'));
+        }
+
+        return redirect()->route('groups.show', $group->id_group)->with('success', 'You joined the group!');
+    }
+
+    public function rejectInvite(Request $request, $id)
+    {
+        // just deletes notification
+        if ($request->has('notification_id')) {
+            Notification::destroy($request->input('notification_id'));
+        }
+
+        return redirect()->back()->with('status', 'Invite declined.');
     }
         
 }

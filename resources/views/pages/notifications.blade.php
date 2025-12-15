@@ -12,9 +12,20 @@
     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
 
          @foreach($notifications as $notification)
+            @php
+                $groupReq = $notification->joinGroupRequestNotification;
+                $isGroupInvite = false;
+
+                if ($groupReq) {
+                    // if emmiter is a member, is invite
+                    // if not member, is request
+                    $isGroupInvite = $groupReq->group->members->contains($notification->emitter->id_user);
+                }
+            @endphp
+
             <div class="p-4 border-b border-gray-100 last:border-b-0 flex items-center justify-between flex-wrap gap-4">
                 
-                {{-- user info (comon to all) --}}
+                {{-- user info --}}
                 <div class="flex items-center gap-4">
                     <a href="{{ route('profile.show', $notification->emitter->id_user) }}">
                         <img src="{{ $notification->emitter->getProfileImage() }}" 
@@ -28,16 +39,23 @@
                                 {{ $notification->emitter->name }}
                             </a>
                             
-                            {{-- Dinamic text --}}
+                            {{-- text logic --}}
                             
-                            {{-- group join request  --}}
-                            @if($notification->joinGroupRequestNotification)
-                                <span class="text-gray-600"> requested to join your group </span>
-                                <a href="{{ route('groups.show', $notification->joinGroupRequestNotification->group->id_group) }}" class="font-bold text-blue-600 hover:underline">
-                                    {{ $notification->joinGroupRequestNotification->group->name }}
+                            {{-- group notification --}}
+                            @if($groupReq)
+                                @if($isGroupInvite)
+                                    {{-- invite text --}}
+                                    <span class="text-gray-600"> invited you to join </span>
+                                @else
+                                    {{-- request text --}}
+                                    <span class="text-gray-600"> requested to join your group </span>
+                                @endif
+
+                                <a href="{{ route('groups.show', $groupReq->group->id_group) }}" class="font-bold text-blue-600 hover:underline">
+                                    {{ $groupReq->group->name }}
                                 </a>.
 
-                            {{-- friend request --}}
+                            {{-- friend fequest --}}
                             @elseif($notification->friendRequestNotification)
                                 @if($notification->emitter->verifiedUser)
                                     <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified"></i>
@@ -50,28 +68,50 @@
                     </div>
                 </div>
 
-                {{-- Botoes de Ação (Diferentes para cada tipo) --}}
+                {{-- action buttons --}}
                 <div class="flex gap-2">
                     
-                    {{-- BOTOES DE GRUPO --}}
-                    @if($notification->joinGroupRequestNotification)
-                        {{-- future routes --}}
-                        <form action="{{ route('groups.accept_request', ['group' => $notification->joinGroupRequestNotification->group->id_group, 'user' => $notification->emitter->id_user]) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors">
-                                Accept
-                            </button>
-                        </form>
-                        <form action="{{ route('groups.reject_request', ['group' => $notification->joinGroupRequestNotification->group->id_group, 'user' => $notification->emitter->id_user]) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors">
-                                Decline
-                            </button>
-                        </form>
+                    @if($groupReq)
+                        
+                        @if($isGroupInvite)
+                            {{-- accept invite --}}
+                            <form action="{{ route('groups.accept_invite', $groupReq->group->id_group) }}" method="POST">
+                                @csrf
+                                {{-- pass notification id to delete it --}}
+                                <input type="hidden" name="notification_id" value="{{ $notification->id_notification }}">
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors">
+                                    Join Group
+                                </button>
+                            </form>
+                            
+                            <form action="{{ route('groups.reject_invite', $groupReq->group->id_group) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <input type="hidden" name="notification_id" value="{{ $notification->id_notification }}">
+                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors">
+                                    Decline
+                                </button>
+                            </form>
 
-                    {{-- fiend buttons --}}
+                        @else
+                            {{-- accept request --}}
+                            <form action="{{ route('groups.accept_request', ['group' => $groupReq->group->id_group, 'user' => $notification->emitter->id_user]) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors">
+                                    Approve
+                                </button>
+                            </form>
+                            <form action="{{ route('groups.reject_request', ['group' => $groupReq->group->id_group, 'user' => $notification->emitter->id_user]) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors">
+                                    Reject
+                                </button>
+                            </form>
+                        @endif
+
                     @elseif($notification->friendRequestNotification)
+                        {{-- friend buttons --}}
                         <form action="{{ route('notifications.accept', $notification->id_notification) }}" method="POST">
                             @csrf
                             <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors">
