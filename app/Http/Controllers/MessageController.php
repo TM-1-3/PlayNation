@@ -45,7 +45,8 @@ class MessageController extends Controller
                 'id_sender'  => $user->id_user,
                 'sender'     => [
                     'name' => $user->name,
-                    'username' => $user->username
+                    'username' => $user->username,
+                    'profile_image' => $user->getProfileImage()
                 ]
             ]
         ]);
@@ -69,7 +70,10 @@ class MessageController extends Controller
                     'id_sender'  => $item->id_sender,
                     'text'       => $item->message->text,
                     'date'       => $item->message->date,
-                    'sender'     => $item->sender
+                    'sender'     => [
+                        'name' => $item->sender->name,
+                        'profile_image' => $item->sender->getProfileImage() // <--- ADICIONA ISTO
+                    ]
                 ];
             });
 

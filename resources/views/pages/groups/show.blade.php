@@ -111,11 +111,11 @@
                     </div>
 
                     {{-- messages area --}}
-                    <div class="flex-1 p-4 overflow-y-auto bg-gray-50/50 flex flex-col gap-3" id="chat-messages">
+                    <div class="flex-1 p-4 overflow-y-auto bg-gray-50/50 flex flex-col gap-3 h-[600px]" id="chat-messages">
                         {{-- JS here --}}
                         <div class="text-center text-gray-400 mt-20" id="loading-msg">
                             <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
-                            <p>Connecting to server...</p>
+                            <p>Connecting...</p>
                         </div>
                     </div>
 
@@ -205,21 +205,37 @@ document.addEventListener('DOMContentLoaded', function() {
     function appendMessageToChat(msg, isOptimistic = false, customId = null) {
         const isMe = msg.id_sender == currentUserId;
         const alignmentClass = isMe ? 'justify-end' : 'justify-start';
-        const bgClass = isMe ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
         
-        // if own message, use customId (temp id), else use real id
+        // bubble styles
+        const bgClass = isMe 
+            ? 'bg-blue-600 text-white rounded-br-none' 
+            : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
+
         const elementId = customId ? customId : `msg-${msg.id_message}`;
         const opacityClass = isOptimistic ? 'opacity-70' : 'opacity-100';
         const timeDisplay = isOptimistic ? 'Sending...' : new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
+        // img logic
+        // if me no img
+        // if not me, shows img to the left
+        // msg.sender.profile_image is provided by controller
+        const avatarHtml = !isMe 
+            ? `<img src="${msg.sender.profile_image}" alt="${msg.sender.name}" class="w-8 h-8 rounded-full object-cover mr-2 self-end mb-1 border border-gray-200 shadow-sm">` 
+            : '';
+
         const html = `
-            <div id="${elementId}" class="flex ${alignmentClass} mb-2 fade-in ${opacityClass}">
-                <div class="max-w-[75%]">
-                    ${!isMe ? `<span class="text-xs text-gray-500 mb-1 block">${msg.sender.name}</span>` : ''}
-                    <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm">
-                        <p class="text-sm">${msg.text}</p> 
+            <div id="${elementId}" class="flex ${alignmentClass} mb-4 fade-in ${opacityClass}">
+                
+                ${avatarHtml} {{-- img if not me --}}
+
+                <div class="max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                    ${!isMe ? `<span class="text-xs text-gray-500 mb-1 ml-1">${msg.sender.name}</span>` : ''}
+                    
+                    <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group">
+                        <p class="text-sm leading-relaxed">${msg.text}</p>
                     </div>
-                    <span class="text-[10px] text-gray-400 mt-1 block ${isMe ? 'text-right' : 'text-left'} message-time">
+                    
+                    <span class="text-[10px] text-gray-400 mt-1 ml-1 block message-time">
                         ${timeDisplay}
                     </span>
                 </div>
@@ -249,7 +265,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // draw with temp id
         appendMessageToChat({
             id_sender: currentUserId,
-            sender: { name: currentUserName },
+            sender: { 
+                name: currentUserName,
+                profile_image: "{{ Auth::user()->getProfileImage() }}" // img goes here
+            },
             text: textValue,
             date: new Date().toISOString() 
         }, true, tempId); // <--- temp id here
