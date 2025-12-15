@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Notification;
+use App\Models\JoinGroupRequestNotification;
 
 class GroupController extends Controller
 {
@@ -413,6 +415,96 @@ class GroupController extends Controller
             ->update(['accepted' => false]);
 
         return redirect()->back()->with('status', 'Request rejected.');
+    }
+
+    public function getCandidates(Request $request, $id)
+    {
+        $group = Group::findOrFail($id);
+        $user = Auth::user();
+
+        // only owner can invite
+        if (!$group->is_public && $group->id_owner !== $user->id_user) {
+            return response()->json(['error' => 'Not authorized'], 403);
+        }
+
+        // get friends of user  
+        // ------------------------------------------ if no friends implemented yet ill fix later
+        $friends = $user->friends; 
+
+        $candidates = $friends->map(function ($friend) use ($group) {
+            
+            // already member?
+            if ($group->members->contains($friend->id_user)) {
+                return [
+                    'id' => $friend->id_user,
+                    'name' => $friend->name,
+                    'username' => $friend->username,
+                    'profile_image' => $friend->getProfileImage(),
+                    'status' => 'member' // Botão cinzento "Member"
+                ];
+            }
+
+            // has pending request?
+            // serach in table if theres a join notification pending to this group
+            $hasPendingLink = Notification::where(function($q) use ($friend) {
+                    $q->where('id_receiver', $friend->id_user) // recieved invite
+                      ->orWhere('id_emitter', $friend->id_user); // asked to join
+                })
+                ->whereHas('joinGroupRequestNotification', function($q) use ($group) {
+                    $q->where('id_group', $group->id_group)
+                      ->whereNull('accepted'); // pending
+                })->exists();
+
+            if ($hasPendingLink) {
+                return [
+                    'id' => $friend->id_user,
+                    'name' => $friend->name,
+                    'username' => $friend->username,
+                    'profile_image' => $friend->getProfileImage(),
+                    'status' => 'pending' // pending
+                ];
+            }
+
+            // available to invite
+            return [
+                'id' => $friend->id_user,
+                'name' => $friend->name,
+                'username' => $friend->username,
+                'profile_image' => $friend->getProfileImage(),
+                'status' => 'available' // invite
+            ];
+        });
+
+        return response()->json($candidates);
+    }
+
+    public function sendInvite(Request $request, $id)
+    {
+        $group = Group::findOrFail($id);
+        $sender = Auth::user();
+        $receiverId = $request->input('user_id'); // friends id to invite
+
+        // basic validation
+        if (!$group->is_public && $group->id_owner !== $sender->id_user) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // make parent notification generic text
+        $notification = Notification::create([
+            'text' => 'invited you to join ' . $group->name,
+            'date' => now(),
+            'id_emitter' => $sender->id_user,
+            'id_receiver' => $receiverId
+        ]);
+
+        // create group linked notification using existing table model
+        JoinGroupRequestNotification::create([
+            'id_notification' => $notification->id_notification,
+            'id_group' => $group->id_group,
+            'accepted' => null // Null = pending
+        ]);
+
+        return response()->json(['status' => 'success']);
     }
         
 }

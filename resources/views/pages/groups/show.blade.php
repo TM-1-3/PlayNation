@@ -28,6 +28,7 @@
                     @endif
                 </div>
 
+                
                 <p class="text-gray-600 italic text-center mb-6 text-sm">
                     "{{ $group->description ?? 'No description.' }}"
                 </p>
@@ -89,6 +90,16 @@
                             Login to Join
                         </a>
                     @endauth
+
+                    {{-- invite btn --}}
+                    @if($group->is_public || Auth::id() === $group->id_owner)
+                        <button onclick="console.log('Botão clicado!'); openInviteModal()" 
+                                class="w-full mt-4 bg-blue-100 text-blue-600 font-bold py-2 rounded-lg hover:bg-blue-200 transition flex items-center justify-center gap-2 cursor-pointer relative z-10 shadow-sm active:scale-95">
+                            <i class="fa-solid fa-user-plus"></i> Invite Friends
+                        </button>
+                    @endif
+
+
 
                 </div>
             </div>
@@ -159,168 +170,261 @@
     </div>
 </div>
 
+{{-- invite section --}}
+<div id="invite-modal" class="fixed inset-0 bg-black/50 hidden z-[9999] flex items-center justify-center backdrop-blur-sm">
+    
+    {{-- Container Branco --}}
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 mx-4 relative z-[10000]">
+        
+        {{-- Header --}}
+        <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+            <h3 class="font-bold text-gray-700 flex items-center gap-2">
+                <i class="fa-solid fa-envelope-open-text text-blue-500"></i> Invite Friends
+            </h3>
+            <button onclick="closeInviteModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition">
+                <i class="fa-solid fa-times text-lg"></i>
+            </button>
+        </div>
+
+        {{-- Lista de Candidatos --}}
+        <div id="candidates-list" class="p-4 max-h-[400px] overflow-y-auto flex flex-col gap-2 custom-scrollbar">
+            <div class="text-center py-8">
+                <i class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"></i>
+                <p class="text-gray-500 text-sm">Loading your friends list...</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
 @endsection
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    
+    // global vars accecible by chats and invites
     const groupId = "{{ $group->id_group }}";
     const currentUserId = "{{ Auth::id() }}"; 
-    const currentUserName = "{{ Auth::user()->name }}"; 
-    
-    const chatContainer = document.getElementById('chat-messages');
-    const chatForm = document.getElementById('chat-form');
-    const messageInput = document.getElementById('message-input');
-    const loadingMsg = document.getElementById('loading-msg');
+    const currentUserName = "{{ Auth::user()->name ?? 'User' }}"; 
 
-    let lastLoadedId = 0; 
+    // moddal elements 
+    const inviteModal = document.getElementById('invite-modal');
+    const candidatesList = document.getElementById('candidates-list');
 
-    // load messages func
-    function loadMessages() {
-        fetch(`/groups/${groupId}/messages?after_id=${lastLoadedId}`)
-            .then(response => response.json())
-            .then(messages => {
-                if (loadingMsg) loadingMsg.remove(); 
-
-                if (messages.length > 0) {
-                    messages.forEach(msg => {
-                        // only ads if it doesnt exist yet
-                        if (!document.getElementById(`msg-${msg.id_message}`)) {
-                            appendMessageToChat(msg);
-                        }
-                        
-                        // updates cursor not to duplicate
-                        if (msg.id_message > lastLoadedId) {
-                            lastLoadedId = msg.id_message;
-                        }
-                    });
-                    scrollToBottom();
-                }
-            })
-            .catch(error => console.error('Error loading:', error));
-    }
-
-    // draw message
-    function appendMessageToChat(msg, isOptimistic = false, customId = null) {
-        const isMe = msg.id_sender == currentUserId;
-        const alignmentClass = isMe ? 'justify-end' : 'justify-start';
+    // chat logic
+    document.addEventListener('DOMContentLoaded', function() {
         
-        // bubble styles
-        const bgClass = isMe 
-            ? 'bg-blue-600 text-white rounded-br-none' 
-            : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
+        const chatContainer = document.getElementById('chat-messages');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const loadingMsg = document.getElementById('loading-msg');
 
-        const elementId = customId ? customId : `msg-${msg.id_message}`;
-        const opacityClass = isOptimistic ? 'opacity-70' : 'opacity-100';
-        const timeDisplay = isOptimistic ? 'Sending...' : new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        let lastLoadedId = 0; 
 
-        // img logic
-        // if me no img
-        // if not me, shows img to the left
-        // msg.sender.profile_image is provided by controller
-        const avatarHtml = !isMe 
-            ? `<img src="${msg.sender.profile_image}" alt="${msg.sender.name}" class="w-8 h-8 rounded-full object-cover mr-2 self-end mb-1 border border-gray-200 shadow-sm">` 
-            : '';
+        // load messages func
+        function loadMessages() {
+            fetch(`/groups/${groupId}/messages?after_id=${lastLoadedId}`)
+                .then(response => response.json())
+                .then(messages => {
+                    if (loadingMsg) loadingMsg.remove(); 
 
-        const html = `
-            <div id="${elementId}" class="flex ${alignmentClass} mb-4 fade-in ${opacityClass}">
-                
-                ${avatarHtml} {{-- img if not me --}}
+                    if (messages.length > 0) {
+                        messages.forEach(msg => {
+                            if (!document.getElementById(`msg-${msg.id_message}`)) {
+                                appendMessageToChat(msg);
+                            }
+                            if (msg.id_message > lastLoadedId) {
+                                lastLoadedId = msg.id_message;
+                            }
+                        });
+                        scrollToBottom();
+                    }
+                })
+                .catch(error => console.error('Error loading:', error));
+        }
 
-                <div class="max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-                    ${!isMe ? `<span class="text-xs text-gray-500 mb-1 ml-1">${msg.sender.name}</span>` : ''}
-                    
-                    <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group">
-                        <p class="text-sm leading-relaxed">${msg.text}</p>
+        // draw message
+        function appendMessageToChat(msg, isOptimistic = false, customId = null) {
+            const isMe = msg.id_sender == currentUserId;
+            const alignmentClass = isMe ? 'justify-end' : 'justify-start';
+            
+            const bgClass = isMe 
+                ? 'bg-blue-600 text-white rounded-br-none' 
+                : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
+
+            const elementId = customId ? customId : `msg-${msg.id_message}`;
+            const opacityClass = isOptimistic ? 'opacity-70' : 'opacity-100';
+            const timeDisplay = isOptimistic ? 'Sending...' : new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            const avatarHtml = !isMe 
+                ? `<img src="${msg.sender.profile_image}" alt="${msg.sender.name}" class="w-8 h-8 rounded-full object-cover mr-2 self-end mb-1 border border-gray-200 shadow-sm">` 
+                : '';
+
+            const html = `
+                <div id="${elementId}" class="flex ${alignmentClass} mb-4 fade-in ${opacityClass}">
+                    ${avatarHtml}
+                    <div class="max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                        ${!isMe ? `<span class="text-xs text-gray-500 mb-1 ml-1">${msg.sender.name}</span>` : ''}
+                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group">
+                            <p class="text-sm leading-relaxed">${msg.text}</p>
+                        </div>
+                        <span class="text-[10px] text-gray-400 mt-1 ml-1 block message-time">
+                            ${timeDisplay}
+                        </span>
                     </div>
-                    
-                    <span class="text-[10px] text-gray-400 mt-1 ml-1 block message-time">
-                        ${timeDisplay}
-                    </span>
                 </div>
-            </div>
-        `;
-        
-        chatContainer.insertAdjacentHTML('beforeend', html);
-    }
+            `;
+            
+            chatContainer.insertAdjacentHTML('beforeend', html);
+        }
 
-    function scrollToBottom() {
-        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
-    }
+        function scrollToBottom() {
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        }
 
-    //send message
-    chatForm.addEventListener('submit', function(e) {
-        e.preventDefault(); 
-        
-        const textValue = messageInput.value.trim();
-        if (!textValue) return;
+        //send message
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            const textValue = messageInput.value.trim();
+            if (!textValue) return;
 
-        messageInput.value = ''; 
-        messageInput.focus();
+            messageInput.value = ''; 
+            messageInput.focus();
 
-        // unique temp id
-        const tempId = 'temp-' + Date.now();
+            const tempId = 'temp-' + Date.now();
 
-        // draw with temp id
-        appendMessageToChat({
-            id_sender: currentUserId,
-            sender: { 
-                name: currentUserName,
-                profile_image: "{{ Auth::user()->getProfileImage() }}" // img goes here
-            },
-            text: textValue,
-            date: new Date().toISOString() 
-        }, true, tempId); // <--- temp id here
+            // draw with temp id
+            appendMessageToChat({
+                id_sender: currentUserId,
+                sender: { 
+                    name: currentUserName,
+                    profile_image: "{{ Auth::user()->getProfileImage() }}" 
+                },
+                text: textValue,
+                date: new Date().toISOString() 
+            }, true, tempId);
 
-        scrollToBottom();
+            scrollToBottom();
 
-        // 3. send to server
-        fetch(`/groups/${groupId}/messages`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ text: textValue })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                const realMsg = data.message;
-                
-                // get temp element 
-                const tempElement = document.getElementById(tempId);
+            fetch(`/groups/${groupId}/messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ text: textValue })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const realMsg = data.message;
+                    const tempElement = document.getElementById(tempId);
 
-                if (tempElement) {
-                    // transform to real message
-                    tempElement.id = `msg-${realMsg.id_message}`;
-                    
-                    // remove opacity
-                    tempElement.classList.remove('opacity-70');
-                    tempElement.classList.add('opacity-100');
+                    if (tempElement) {
+                        tempElement.id = `msg-${realMsg.id_message}`;
+                        tempElement.classList.remove('opacity-70');
+                        tempElement.classList.add('opacity-100');
+                        const timeSpan = tempElement.querySelector('.message-time');
+                        if(timeSpan) {
+                            timeSpan.innerText = new Date(realMsg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        }
+                    }
 
-                    // update sending to real time
-                    const timeSpan = tempElement.querySelector('.message-time');
-                    if(timeSpan) {
-                        timeSpan.innerText = new Date(realMsg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    if (realMsg.id_message > lastLoadedId) {
+                        lastLoadedId = realMsg.id_message;
                     }
                 }
+            })
+            .catch(error => console.error('Error sending:', error));
+        });
 
-                // update last loaded id
-                // polling already Knows our last id, but just in case
-                if (realMsg.id_message > lastLoadedId) {
-                    lastLoadedId = realMsg.id_message;
-                }
-            }
-        })
-        .catch(error => console.error('Error sending:', error));
+        // start chat
+        loadMessages();
+        setInterval(loadMessages, 3000); 
     });
 
-    // start
-    loadMessages();
-    setInterval(loadMessages, 3000); 
-});
+    // invites logic
+
+    // open window
+    window.openInviteModal = function() {
+        // search for model on click
+        const inviteModal = document.getElementById('invite-modal');
+        const candidatesList = document.getElementById('candidates-list');
+
+        if(inviteModal) {
+            inviteModal.classList.remove('hidden');
+            loadCandidates(); // calls function on click
+        } else {
+            console.error("ERRO CRÍTICO: Ainda não consigo encontrar a div com id='invite-modal'");
+        }
+    }
+
+    // close window
+    window.closeInviteModal = function() {
+        const inviteModal = document.getElementById('invite-modal');
+        if(inviteModal) {
+            inviteModal.classList.add('hidden');
+        }
+    }
+
+    // load friends candidates
+    function loadCandidates() {
+        const candidatesList = document.getElementById('candidates-list'); // searches list here
+        
+        if(!candidatesList) return;
+        
+        candidatesList.innerHTML = '<div class="text-center py-4 text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading friends...</div>';
+
+        fetch(`/groups/${groupId}/candidates`)
+            .then(res => res.json())
+            .then(users => {
+                candidatesList.innerHTML = ''; 
+
+                if (users.length === 0) {
+                    candidatesList.innerHTML = '<p class="text-center text-gray-500 py-4">No friends found to invite.</p>';
+                    return;
+                }
+
+                users.forEach(user => {
+                    let btnHtml = '';
+                    
+                    if (user.status === 'member') {
+                        btnHtml = `<span class="text-xs font-bold text-gray-400 px-3 border border-gray-200 rounded py-1 bg-gray-50">Member</span>`;
+                    } else if (user.status === 'pending') {
+                        btnHtml = `<span class="text-xs font-bold text-yellow-600 px-3 border border-yellow-200 rounded py-1 bg-yellow-50">Pending</span>`;
+                    } else {
+                        btnHtml = `<button onclick="sendInvite(${user.id}, this)" class="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded transition shadow-sm cursor-pointer">Invite</button>`;
+                    }
+
+                    const html = `
+                    <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
+                        <div class="flex items-center gap-3">
+                            
+                            {{-- A SOLUÇÃO FINAL --}}
+                            {{-- Usamos o 'style' para forçar 40px de largura e altura --}}
+                            <img src="${user.profile_image}" 
+                                 alt="${user.name}"
+                                 class="rounded-full object-cover border border-gray-200 shrink-0"
+                                 style="width: 40px; height: 40px; min-width: 40px; max-width: 40px;">
+                            
+                            <div class="min-w-0">
+                                <p class="font-bold text-sm text-gray-800 truncate">${user.name}</p>
+                                <p class="text-xs text-gray-500 truncate">@${user.username}</p>
+                            </div>
+                        </div>
+                        <div class="shrink-0 ml-2">
+                            ${btnHtml}
+                        </div>
+                    </div>
+                `;
+                candidatesList.insertAdjacentHTML('beforeend', html);
+                });
+            })
+            .catch(err => console.error(err));
+    }
+
 </script>
 
 <style>
