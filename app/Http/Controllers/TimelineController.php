@@ -81,6 +81,7 @@ class TimelineController extends Controller {
     public function searchPost(Request $request)
     {
         $search = $request->get('search');
+        $user = Auth::user();
         
         if ($search) {
             $input = $search . ':*';
@@ -102,14 +103,24 @@ class TimelineController extends Controller {
                          ->orderByDesc('rank')
                          ->pluck('id_post');
             
-            // Load the posts with relationships in the correct order
-            $posts = Post::with(['user', 'labels'])
-                         ->whereIn('id_post', $postIds)
-                         ->get()
-                         ->sortBy(function($post) use ($postIds) {
-                             return array_search($post->id_post, $postIds->toArray());
-                         })
-                         ->values();
+                         $query = Post::with(['user', 'labels'])
+                         ->whereIn('id_post', $postIds);
+    
+            if ($user) {
+                $query->where(function($q) use ($user) {
+                    $q->where('id_creator', $user->id_user)
+                    ->orWhereHas('user', function($u) { $u->where('is_public', true); })
+                    ->orWhereHas('user', function($u) use ($user) {
+                        $u->whereIn('id_user', function($sq) use ($user) {
+                            $sq->select('id_friend')->from('user_friend')->where('id_user', $user->id_user);
+                        });
+                    });
+                });
+            } else {
+                $query->whereHas('user', function($u) { $u->where('is_public', true); });
+            }
+    
+            $posts = $query->get();
         } else {
             $posts = Post::with(['user', 'labels'])->get();
         }
