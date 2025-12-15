@@ -571,5 +571,48 @@ class GroupController extends Controller
 
         return redirect()->back()->with('status', 'Invite declined.');
     }
+
+    public function getMembers(Request $request, $id)
+    {
+        $group = Group::findOrFail($id);
+        $user = Auth::user(); 
+
+        // get members
+        $members = $group->members->map(function ($member) use ($group, $user) {
+            return [
+                'id' => $member->id_user,
+                'name' => $member->name,
+                'username' => $member->username,
+                'profile_image' => asset($member->getProfileImage()), 
+                'is_owner' => $member->id_user === $group->id_owner,
+                // only show kick if its not me
+                'can_kick' => ($user->id_user === $group->id_owner) && ($member->id_user !== $user->id_user)
+            ];
+        });
+
+        return response()->json($members);
+    }
+
+    public function removeMember(Request $request, $groupId, $userId)
+    {
+        $group = Group::findOrFail($groupId);
+
+        // only owner can kick
+        if (Auth::id() !== $group->id_owner) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 403);
+        }
+
+        // cat kick myself use btn leave
+        if ((int)$userId === $group->id_owner) {
+            return response()->json(['status' => 'error', 'message' => 'Cannot kick owner'], 400);
+        }
+
+        // remove from table group_membership
+        GroupMember::where('id_group', $groupId)
+                   ->where('id_member', $userId)
+                   ->delete();
+
+        return response()->json(['status' => 'success']);
+    }
         
 }
