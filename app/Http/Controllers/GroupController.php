@@ -356,35 +356,46 @@ class GroupController extends Controller
     {
         $group = Group::findOrFail($groupId);
         
-        // security: only owner can accept
+        // security check
         if (Auth::id() !== $group->id_owner) {
             abort(403, 'Only the owner can accept requests.');
         }
         
-        // save original privacy state
-        $wasPrivate = !$group->is_public;
+        // start transaction
+        DB::transaction(function () use ($group, $userId) {
+            
+            // save state and open dor
+            $wasPrivate = !$group->is_public;
+            if ($wasPrivate) {
+                $group->is_public = true;
+                $group->save();
+            }
 
-        // if private make it public temporarily
-        // avoids trigger issues
-        if ($wasPrivate) {
-            $group->is_public = true;
-            $group->save();
-        }
+            // add member
+            // verify if exists not to duplicate
+            $exists = GroupMember::where('id_group', $group->id_group)
+                                 ->where('id_member', $userId)
+                                 ->exists();
 
-        //add member
-        if (!$group->members->contains($userId)) {
-            $group->members()->attach($userId);
-        }
+            if (!$exists) {
+                GroupMember::create([
+                    'id_group'  => $group->id_group,
+                    'id_member' => $userId
+                ]);
+            }
 
-        // return to normal privacy state
-        if ($wasPrivate) {
-            $group->is_public = false;
-            $group->save();
-        }
+            // Close Door
+            if ($wasPrivate) {
+                $group->is_public = false;
+                $group->save();
+            }
+        });
 
-        // removes pending request
+        // clean up request and notification
+        // remove pending request
         $group->joinRequests()->detach($userId);
 
+        // update notification status to accepted
         DB::table('join_group_request_notification')
             ->join('notification', 'notification.id_notification', '=', 'join_group_request_notification.id_notification')
             ->where('join_group_request_notification.id_group', $groupId)
