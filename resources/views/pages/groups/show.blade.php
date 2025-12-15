@@ -170,7 +170,7 @@
     </div>
 </div>
 
-{{-- invite section --}}
+{{-- invite section modal --}}
 <div id="invite-modal" class="fixed inset-0 bg-black/50 hidden z-[9999] flex items-center justify-center backdrop-blur-sm">
     
     {{-- Container Branco --}}
@@ -186,7 +186,7 @@
             </button>
         </div>
 
-        {{-- Lista de Candidatos --}}
+        {{-- candidates list --}}
         <div id="candidates-list" class="p-4 max-h-[400px] overflow-y-auto flex flex-col gap-2 custom-scrollbar">
             <div class="text-center py-8">
                 <i class="fa-solid fa-spinner fa-spin text-blue-500 text-3xl mb-3"></i>
@@ -194,6 +194,27 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+{{-- members section modal --}}
+<div id="members-modal" class="fixed inset-0 bg-black/50 hidden z-[9999] flex items-center justify-center backdrop-blur-sm">
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden mx-4">
+        
+        {{-- header --}}
+        <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+            <h3 class="font-bold text-gray-700 flex items-center gap-2">
+                <i class="fa-solid fa-users text-blue-500"></i> Group Members
+            </h3>
+            <button onclick="closeMembersModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full hover:bg-gray-200 transition flex items-center justify-center">
+                <i class="fa-solid fa-times text-lg"></i>
+            </button>
+        </div>
+
+        {{-- list --}}
+        <div id="members-list" class="p-4 max-h-[400px] overflow-y-auto flex flex-col gap-2 custom-scrollbar">
+            {{-- js fills this with the members --}}
+        </div>
     </div>
 </div>
 
@@ -425,6 +446,113 @@
             console.error("Erro Fetch:", err);
             btnElement.innerText = 'Error';
             btnElement.classList.replace('bg-green-600', 'bg-red-600');
+        });
+    }
+    // open
+    window.openMembersModal = function() {
+        const modal = document.getElementById('members-modal');
+        if(modal) {
+            modal.classList.remove('hidden');
+            loadMembers();
+        }
+    }
+
+    // close
+    window.closeMembersModal = function() {
+        const modal = document.getElementById('members-modal');
+        if(modal) modal.classList.add('hidden');
+    }
+
+    // load API
+    function loadMembers() {
+        const list = document.getElementById('members-list');
+        list.innerHTML = '<div class="text-center py-4 text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading members...</div>';
+
+        fetch(`/groups/${groupId}/members`)
+            .then(res => res.json())
+            .then(members => {
+                list.innerHTML = '';
+
+                members.forEach(member => {
+                    let actionHtml = '';
+
+                    // kick button
+                    if (member.can_kick) {
+                        actionHtml = `
+                            <button onclick="kickMember(${member.id}, this)" 
+                                    class="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded transition shadow-sm cursor-pointer border border-transparent"
+                                    title="Remove User">
+                                <i class="fa-solid fa-user-xmark"></i> Remove
+                            </button>
+                        `;
+                    } else if (member.is_owner) {
+                        actionHtml = `<span class="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-2 py-1 rounded">Owner</span>`;
+                    }
+
+                    const html = `
+                        <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition group">
+                            <div class="flex items-center gap-3">
+                                <img src="${member.profile_image}" 
+                                     class="rounded-full object-cover border border-gray-200 shrink-0"
+                                     style="width: 40px; height: 40px;">
+                                
+                                <div class="min-w-0">
+                                    <p class="font-bold text-sm text-gray-800 truncate">${member.name}</p>
+                                    <p class="text-xs text-gray-500 truncate">@${member.username}</p>
+                                </div>
+                            </div>
+                            <div class="shrink-0 ml-2">
+                                ${actionHtml}
+                            </div>
+                        </div>
+                    `;
+                    list.insertAdjacentHTML('beforeend', html);
+                });
+            })
+            .catch(err => console.error(err));
+    }
+
+    // kick action
+    window.kickMember = function(userId, btnElement) {
+        if(!confirm('Are you sure you want to remove this user from the group?')) return;
+
+        // visual feedback
+        const originalContent = btnElement.innerHTML;
+        btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        btnElement.disabled = true;
+
+        fetch(`/groups/${groupId}/members/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // removes from list
+                const row = btnElement.closest('.flex'); 
+                row.style.opacity = '0.5';
+                setTimeout(() => row.remove(), 300);
+                
+                // updates counter on page
+                const countEl = document.getElementById('member-count');
+                if(countEl) {
+                    let current = parseInt(countEl.innerText);
+                    countEl.innerText = Math.max(0, current - 1);
+                }
+
+            } else {
+                alert('Error removing user: ' + (data.message || 'Unknown error'));
+                btnElement.innerHTML = originalContent;
+                btnElement.disabled = false;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            btnElement.innerHTML = originalContent;
+            btnElement.disabled = false;
         });
     }
 
