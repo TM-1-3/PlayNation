@@ -33,13 +33,15 @@
                     "{{ $group->description ?? 'No description.' }}"
                 </p>
 
-                {{-- clikable counter --}}
+                <div class="flex justify-center gap-8 mb-6 border-t border-gray-100 pt-4">
+                    {{-- Counter Clicável --}}
                     <div class="text-center cursor-pointer hover:bg-gray-50 rounded p-1 transition select-none" onclick="openMembersModal()">
                         <span class="block text-xl font-bold text-blue-600" id="member-count">
                             {{ $group->members->count() }}
                         </span>
                         <span class="text-xs text-gray-500 uppercase">Members</span>
                     </div>
+                    
                 </div>
 
                 {{-- group actions --}}
