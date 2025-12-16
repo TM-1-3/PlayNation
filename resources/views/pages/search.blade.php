@@ -4,9 +4,9 @@
 
 @section('content')
 
-<div class="max-w-3xl mx-auto py-10 px-5">
+<div id="main-container" class="max-w-3xl mx-auto py-10 px-5 transition-transform duration-300 ease-in-out">
 
-    <div class="mb-5 w-full mx-auto flex justify-between">
+    <div class="mb-5 w-full mx-auto flex justify-between gap-2">
         <form id="search-user" action="{{ route('search.users') }}" method="GET" class="relative">
             
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -18,7 +18,9 @@
             
         </form>
         <div>
-            <i class="fa-solid fa-sliders text-gray-500 mr-2 cursor-pointer mt-2"></i>
+            <button id="filter-toggle" class="flex items-center" aria-expanded="false" aria-controls="filter-panel">
+                <i class="fa-solid fa-sliders text-gray-500 mr-2 cursor-pointer mt-2"></i>
+            </button>
         </div>
     </div>
     <div id="users-list" class="space-y-4">
@@ -27,5 +29,7 @@
         @endforeach
     </div>
 </div>
+
+@include('partials.filter-user')
 
 @endsection
