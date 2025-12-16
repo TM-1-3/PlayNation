@@ -8,7 +8,7 @@
     <div class="flex flex-wrap gap-8">
         
         {{-- left info --}}
-        <div class="w-full md:w-1/3 md:min-w-[280px]">
+        <div class="w-full md:w-1/3 md:min-w-[280px] ml-5">
             
             <div class="bg-white rounded-lg shadow-md p-6 sticky top-5">
                 
