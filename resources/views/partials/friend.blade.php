@@ -7,27 +7,27 @@
         </a>
         <div>
             <h3 class="font-bold text-gray-900 text-sm leading-tight">
-                <a href="{{ route('profile.show', $friend->id_user) }}" class="hover:underline">
+                <a href="{{ route('profile.show', $friend->id_user) }}" class="hover:underline" title="Click to view the profile">
                     {{ $friend->name }}
                 </a>
             </h3>
             <div class="flex items-center gap-1">
                 <p class="text-gray-500 text-xs">{{ '@' . $friend->username }}</p>
                 @if($friend->verifiedUser)
-                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified"></i>
+                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
                 @endif
 </div>
         </div>
     </div>
     <div class="flex items-center gap-2">
-        <a href="{{ route('profile.show', $friend->id_user) }}" class="hidden sm:block text-gray-600 hover:text-blue-600 text-sm font-semibold px-3 py-1 rounded bg-gray-100 hover:bg-blue-50 transition-colors">
+        <a href="{{ route('profile.show', $friend->id_user) }}" class="hidden sm:block text-gray-600 hover:text-blue-600 text-sm font-semibold px-3 py-1 rounded bg-gray-100 hover:bg-blue-50 transition-colors" title="Click to view your friend's profile">
             View
         </a>
         @if(Auth::id() === $user->id_user)
             <form action="{{ route('friend.remove', $friend->id_user) }}" method="POST" onsubmit="return confirm('Remove this friend?');">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="bg-gray-100 text-gray-700 text-sm font-semibold px-5 py-2 rounded border border-gray-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all">
+                <button type="submit" class="bg-gray-100 text-gray-700 text-sm font-semibold px-5 py-2 rounded border border-gray-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all" title="Remove this user as your friend">
                     Unfriend
                 </button>
             </form>

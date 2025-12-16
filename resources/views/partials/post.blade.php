@@ -10,12 +10,12 @@
 <div class="bg-white border border-gray-200 rounded-lg mb-5 text-left flex flex-col" id="post-{{ $post->id_post }}">
 
     <div class="flex items-center p-3.5">
-        <a href="{{ route('profile.show', $post->user->id_user) }}">
+        <a href="{{ route('profile.show', $post->user->id_user) }}" class="relative group mr-2.5" title="Click here to go to the author's profile page">
             <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" 
                 src="{{ $post->user->getProfileImage() }}" 
                 alt="avatar">
         </a>
-        <a href="{{ route('profile.show', $post->user->id_user) }}" class="font-semibold text-sm text-gray-800 no-underline">
+        <a href="{{ route('profile.show', $post->user->id_user) }}" class="relative group font-semibold text-sm text-gray-800 no-underline" title="Click here to go to the author's profile page">
             {{ $post->user->username }}
             @if($post->user->verifiedUser)
                 <i class="fa-solid fa-circle-check text-blue-500 text-[12px]"></i>
@@ -26,11 +26,11 @@
 
         @if($type == 'profile' && Auth::check() && Auth::id() == $post->id_creator)
             <div>
-                <a href="{{ route('post.edit', $post->id_post) }}" class="text-black py-1 px-1 text-xl no-underline" title="Edit post">⋮</a>
+                <a href="{{ route('post.edit', $post->id_post) }}" class="text-black py-1 px-1 text-sm no-underline" title="Edit your post">Edit</a>
             </div>
         @else
             <div>
-                <button onclick="toggleReport('post', {{ $post->id_post }})" class="text-black py-1 px-1 text-xl no-underline bg-transparent border-none cursor-pointer" title="Report post">⋮</button>
+                <button onclick="toggleReport('post', {{ $post->id_post }})" class="text-black py-1 px-1 text-xl no-underline bg-transparent border-none cursor-pointer" title="Report the post">⋮</button>
             </div>
         @endif
     </div>
@@ -40,15 +40,15 @@
     @endif
     
     <div class="flex items-center gap-4 px-4 pt-2">
-        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Like">
+        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Like the post">
             <i class="fa-regular fa-heart text-lg"></i>
             <span class="text-sm">Like</span>
         </button>
-        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
+        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment or access post's comments">
             <i class="fa-regular fa-comment text-lg"></i>
             <span class="text-sm">Comment</span>
         </button>
-        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Share">
+        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Share the post with other users">
             <i class="fa-regular fa-share-from-square text-lg"></i>
             <span class="text-sm">Share</span>
         </button>
@@ -57,16 +57,16 @@
             @php
                 $isSaved = isset($savedPostIds) && in_array($post->id_post, $savedPostIds);
             @endphp
-            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Save">
+            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="{{ $isSaved ? 'Remove from saved posts' : 'Save the post' }}">
                 <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-lg"></i>
-                <span class="text-sm">Save</span>
+                <span class="text-sm">{{ $isSaved ? 'Saved' : 'Save' }}</span>
             </button>
         </form>
     </div>
     
     <div class="py-3 px-4 text-sm leading-relaxed">
         @if($post->user)
-            <a href="{{ route('profile.show', $post->user->id_user) }}" class="font-semibold mr-1 text-gray-800 no-underline">
+            <a href="{{ route('profile.show', $post->user->id_user) }}" class="font-semibold mr-1 text-gray-800 no-underline" title="Click here to go to the author's profile page">
                 {{ $post->user->username }}
             </a>
         @endif

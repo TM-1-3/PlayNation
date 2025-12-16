@@ -17,12 +17,12 @@
         <div>
             <label for="password" class="block mb-2 font-medium text-gray-700">New Password</label>
             <input type="password" id="password" name="password" required autofocus
-                   class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+                   class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" title="Enter your New Password...">
         </div>
         <div>
             <label for="password_confirmation" class="block mb-2 font-medium text-gray-700">Confirm Password</label>
             <input type="password" id="password_confirmation" name="password_confirmation" required 
-                   class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+                   class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" title="Confirm your New Password...">
         </div>
 
         @if ($errors->any())
@@ -35,7 +35,7 @@
             </div>
         @endif
 
-        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6">
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6" title="Click here to reset the password">
             Reset Password
         </button>
     </form>

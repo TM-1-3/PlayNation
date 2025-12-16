@@ -8,9 +8,9 @@
     @auth
     <div>
         <div class="flex gap-4 justify-around items-center mb-5">
-            <a href="{{ route('home', ['timeline' => 'public']) }}" class="flex-1 text-center py-3 no-underline text-gray-500 font-semibold text-sm border-b-2 max-w-[200px] transition-colors {{ (isset($activeTimeline) && $activeTimeline === 'public') ? 'text-gray-800 border-gray-800' : 'border-transparent' }}"> Recent</a>
-            <a href="{{ route('home', ['timeline' => 'personalized']) }}" class="flex-1 text-center py-3 no-underline text-gray-500 font-semibold text-sm border-b-2 max-w-[200px] transition-colors {{ (isset($activeTimeline) && $activeTimeline === 'personalized') ? 'text-gray-800 border-gray-800' : 'border-transparent' }}">For You</a>
-            <a href="{{ route('home', ['timeline' => 'following']) }}" class="flex-1 text-center py-3 no-underline text-gray-500 font-semibold text-sm max-w-[200px] transition-colors">Friends</a>
+            <a href="{{ route('home', ['timeline' => 'public']) }}" class="flex-1 text-center py-3 no-underline text-gray-500 font-semibold text-sm border-b-2 max-w-[200px] transition-colors {{ (isset($activeTimeline) && $activeTimeline === 'public') ? 'text-gray-800 border-gray-800' : 'border-transparent' }}" title="See what users are publishing"> Recent</a>
+            <a href="{{ route('home', ['timeline' => 'personalized']) }}" class="flex-1 text-center py-3 no-underline text-gray-500 font-semibold text-sm border-b-2 max-w-[200px] transition-colors {{ (isset($activeTimeline) && $activeTimeline === 'personalized') ? 'text-gray-800 border-gray-800' : 'border-transparent' }}" title="See what's new from your interests">For You</a>
+            <a href="{{ route('home', ['timeline' => 'following']) }}" class="flex-1 text-center py-3 no-underline text-gray-500 font-semibold text-sm max-w-[200px] transition-colors" title="See what yor friends are publishing">Friends</a>
         </div>
     </div>
     @endauth
