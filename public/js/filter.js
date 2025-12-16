@@ -72,4 +72,44 @@ document.addEventListener('DOMContentLoaded', function(){
             });
         }
     }
+
+    // range input display for minimum followers (user filter)
+    var followersRange = document.getElementById('min-followers-range');
+    var followersCurrent = document.getElementById('min-followers-current');
+    var followersMax = document.getElementById('min-followers-max');
+    if(followersRange && followersCurrent && followersMax){
+        var max = followersRange.getAttribute('max') || '1000';
+        followersMax.textContent = max;
+        if(followersRange.value === undefined || followersRange.value === null || followersRange.value === '') followersRange.value = 0;
+        followersCurrent.textContent = followersRange.value;
+        followersRange.addEventListener('input', function(){
+            followersCurrent.textContent = this.value;
+        });
+        if(clearBtn){
+            clearBtn.addEventListener('click', function(){
+                followersRange.value = 0;
+                followersCurrent.textContent = '0';
+            });
+        }
+    }
+
+    // range input display for common friends (user filter)
+    var commonFriendsRange = document.getElementById('min-common-friends-range');
+    var commonFriendsCurrent = document.getElementById('min-common-friends-current');
+    var commonFriendsMax = document.getElementById('min-common-friends-max');
+    if(commonFriendsRange && commonFriendsCurrent && commonFriendsMax){
+        var max = commonFriendsRange.getAttribute('max') || '50';
+        commonFriendsMax.textContent = max;
+        if(commonFriendsRange.value === undefined || commonFriendsRange.value === null || commonFriendsRange.value === '') commonFriendsRange.value = 0;
+        commonFriendsCurrent.textContent = commonFriendsRange.value;
+        commonFriendsRange.addEventListener('input', function(){
+            commonFriendsCurrent.textContent = this.value;
+        });
+        if(clearBtn){
+            clearBtn.addEventListener('click', function(){
+                commonFriendsRange.value = 0;
+                commonFriendsCurrent.textContent = '0';
+            });
+        }
+    }
 });

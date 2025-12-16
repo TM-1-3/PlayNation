@@ -4,9 +4,9 @@
 
 @section('content')
 
-<div class="max-w-3xl mx-auto py-10 px-5">
+<div id="main-container" class="max-w-3xl mx-auto py-10 px-5 transition-transform duration-300 ease-in-out">
 
-    <div class="mb-5 w-full mx-auto flex justify-between">
+    <div class="mb-5 w-full mx-auto flex justify-between gap-2">
         <form id="search-user" action="{{ route('search.users') }}" method="GET" class="relative">
             
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -18,29 +18,25 @@
             
         </form>
         <div>
-            <i class="fa-solid fa-sliders text-gray-500 mr-2 cursor-pointer mt-2"></i>
+            <button id="filter-toggle" class="flex items-center" aria-expanded="false" aria-controls="filter-panel">
+                <i class="fa-solid fa-sliders text-gray-500 mr-2 cursor-pointer mt-2"></i>
+            </button>
         </div>
     </div>
     <div id="users-list" class="space-y-4">
-        @foreach($users as $user)
-        <div class="flex bg-white border border-gray-200 rounded-lg p-5 transition-all hover:shadow-md hover:border-blue-400">
-            <a href="{{ route('profile.show', $user->id_user) }}" class="mt-2 mr-1">
-                <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" 
-                    src="{{ $user->getProfileImage() }}" 
-                    alt="avatar">
-            </a>
-            <div class="flex-col">
-                <a href="{{ route('profile.show',$user->id_user) }}" class="block text-lg font-semibold text-gray-800 no-underline transition-colors hover:text-blue-600">{{ $user->name }}</a>
-                <a href="{{ route('profile.show',$user->id_user) }}" class="block text-sm text-gray-500 no-underline transition-colors hover:text-blue-500 ">
-                    {{ $user->username }}
-                    @if($user->verifiedUser)
-                        <i class="fa-solid fa-circle-check text-blue-500 text-lg" title="Verified Account"></i>
-                    @endif
-                </a>
+        @if($users->isNotEmpty())
+            @foreach($users as $user)
+                @include('partials.user-card', ['friend' => $user, 'user' => Auth::user()])
+            @endforeach
+        @else
+            <div class="text-center py-10 text-gray-500">
+                <i class="fa-solid fa-user-slash text-4xl mb-4"></i>
+                <p>No users found</p>
             </div>
-        </div>
-        @endforeach
+        @endif
     </div>
 </div>
+
+@include('partials.filter-user')
 
 @endsection

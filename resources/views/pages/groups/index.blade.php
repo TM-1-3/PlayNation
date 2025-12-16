@@ -11,20 +11,18 @@
         <h2 class="text-3xl font-bold text-gray-800">Communities</h2>
         
         {{-- searchbar --}}
-        <div class="flex justify-around w-full">
-            <form id="search-group" action="{{ route('search.groups') }}" method="GET" class="relative w-full md:max-w-md">
-                <div class="relative w-full md:max-w-md">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-                    </div>
-                    <input type="text" name="search" id="group-search" placeholder="Search for groups..." 
-                        class="block h-[2em] w-[40vw] pl-10 pr-4 py-2.5 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
+        <div class="flex gap-5 items-center">
+            <form id="search-group" action="{{ route('search.groups') }}" method="GET" class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                 </div>
+                <input type="text" name="search" id="group-search" placeholder="Search for groups..." 
+                    class="h-[2em] w-full md:w-[500px] pl-10 pr-4 py-2.5 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
             </form>
 
-            <div>
-                <i class="fa-solid fa-sliders text-gray-500 mr-2 cursor-pointer mt-2"></i>
-            </div>
+            <button id="filter-toggle" class="flex items-center" aria-expanded="false" aria-controls="filter-panel">
+                <i class="fa-solid fa-sliders text-gray-500 cursor-pointer"></i>
+            </button>
         </div>
 
         @auth
