@@ -57,13 +57,16 @@ class Group extends Model
         return $this->belongsToMany(User::class, 'group_join_request', 'id_group', 'id_requester');
     }
 
-    public function getGroupPicture()
-    {
+    public function getGroupPicture() {
+        // if bd has an image associated
         if ($this->picture) {
-            // Nova lógica: Procura na pasta pública 'group/'
-            return asset('storage/group/' . $this->picture);
+            
+            // verifyes the file exists in storage
+            return FileController::get('group', $this->id_group);
         }
-        return asset('img/default-group.png');
+
+        // else return default image
+        return asset('public/img/default-post.png');
     }
 
     public function posts()
@@ -74,6 +77,11 @@ class Group extends Model
     public function messages()
     {
         return $this->hasMany(Message::class, 'id_group', 'id_group');
+    }
+
+    public function reports(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Report::class, 'report_group', 'id_group', 'id_report');
     }
 
 }

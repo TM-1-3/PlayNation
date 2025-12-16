@@ -8,7 +8,7 @@
     <div class="flex flex-wrap gap-8">
         
         {{-- left info --}}
-        <div class="w-full md:w-1/3 md:min-w-[280px]">
+        <div class="w-full md:w-1/3 md:min-w-[280px] ml-5">
             
             <div class="bg-white rounded-lg shadow-md p-6 sticky top-5">
                 
@@ -98,6 +98,14 @@
                             <i class="fa-solid fa-user-plus"></i> Invite Friends
                         </button>
                     @endif
+
+                    {{-- report group button --}}
+                    <button onclick="toggleReport('group', {{ $group->id_group }})" 
+                            class="w-full mt-2 bg-transparent text-red-600 border border-red-100 py-2 rounded-lg hover:bg-red-50 transition font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-flag mr-1"></i> Report Group
+                    </button>
+
+                    {{-- report modal moved to page bottom to avoid stacking issues --}}
 
 
 
@@ -221,6 +229,14 @@
 
 
 @endsection
+
+@include('partials.report_modal', [
+    'modalId' => "report-modal-group-{$group->id_group}",
+    'action' => route('report.submit'),
+    'title' => 'Report Group',
+    'target_type' => 'group',
+    'target_id' => $group->id_group,
+])
 
 @push('scripts')
 <script>

@@ -13,7 +13,7 @@
         </form>
     </div>
 
-    <div class="flex-1 overflow-y-auto">
+    <div class="flex-1 overflow-y-auto pb-5">
         <div id="admin-groups-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($groups as $group)
                 @include('partials.group-card', ['group' => $group])

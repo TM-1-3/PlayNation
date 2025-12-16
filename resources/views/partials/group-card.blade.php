@@ -14,12 +14,24 @@
         </div>
     </div>
     
-    <div class="p-3 flex-1 flex flex-col">
+    <div class="p-3 pb-0 flex-1 flex flex-col h-[12vh]">
         <h3 class="text-xl font-bold mb-2 text-gray-800 truncate">{{ $group->name }}</h3>
         
         <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
             {{ $group->description ?? 'No description available.' }}
         </p>
     </div>
+
+     @if(request()->routeIs('admin', ['type' => 'group']))
+        <div class="flex justify-center mb-5">
+            <form action="{{ route('admin.group.delete', $group->id_group) }}" method="POST" onsubmit="return confirm('Delete this group?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="bg-red-600 text-white text-sm py-1 px-3 rounded-lg hover:bg-red-700 transition">Delete Group</button>
+            </form>
+        </div>
+    @endif
+
     </a>
+
 </article>

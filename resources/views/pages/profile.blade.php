@@ -72,6 +72,16 @@
                         @endif
                     {{-- msg button --}}
                     <a href="#" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white">💬 Message</a>
+
+                    <button onclick="toggleReport('user', {{ $user->id_user }})" class="bg-transparent text-red-600 border border-red-200 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-red-50 ml-2">🚩 Report</button>
+
+                    @include('partials.report_modal', [
+                        'modalId' => "report-modal-user-{$user->id_user}",
+                        'action' => route('report.submit'),
+                        'title' => 'Report User',
+                        'target_type' => 'user',
+                        'target_id' => $user->id_user,
+                    ])
                 
                 @else
                     {{-- not logged in--}}

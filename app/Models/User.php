@@ -120,4 +120,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Post::class, 'post_save', 'id_user', 'id_post');
     }
+
+    public function reports(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Report::class, 'report_user', 'id_user', 'id_report');
+    }
 }

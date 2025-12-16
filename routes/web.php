@@ -17,6 +17,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\FriendController; 
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MessageController;
+use \App\Http\Controllers\ReportController;
 
 // Home
 Route::redirect('/', '/login');
@@ -57,7 +58,10 @@ Route::controller(AdminController::class)->group(function () {
     Route::put('/admin/user/{id}', 'editUser')->name('admin.edit.action');
     Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
     Route::delete('/admin/post/{id}', 'deletePost')->name('admin.post.delete');
-    Route::post('/admin/post/{id}/dismiss', 'dismissReports')->name('admin.post.dismiss');
+    Route::post('/admin/post/{id}/dismiss', 'dismissPostReports')->name('admin.post.dismiss');
+    Route::post('/admin/user/{id}/dismiss', 'dismissUserReports')->name('admin.user.dismiss');
+    Route::post('/admin/group/{id}/dismiss', 'dismissGroupReports')->name('admin.group.dismiss');
+    Route::delete('/admin/group/{id}', 'deleteGroup')->name('admin.group.delete');
 });
 Route::get('/admin/group', [GroupController::class, 'searchGroup'])->name('admin.group');
 
@@ -116,6 +120,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
     Route::post('/post/{id}/report', [PostController::class, 'report'])->name('post.report');
+    Route::post('/report', [ReportController::class, 'store'])->name('report.submit');
     Route::post('/post/{id}/save', [PostController::class, 'save'])->name('post.save');
 
 

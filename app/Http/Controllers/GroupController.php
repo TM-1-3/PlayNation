@@ -126,15 +126,17 @@ class GroupController extends Controller
         // make it public first
         $group->is_public = true; 
 
-        // picture upload
-        if ($request->hasFile('picture')) {
-            $file = $request->file('picture');
-            $fileName = $file->hashName();
-            $file->storeAs('group', $fileName, 'public');
-            $group->picture = $fileName;
-        }
-
         $group->save(); //  saves as public
+
+        // picture upload using FileController (keeps behaviour consistent with posts)
+        if ($request->hasFile('picture')) {
+            $uploadrequest = new \Illuminate\Http\Request([
+                'id' => $group->id_group,
+                'type' => 'group'
+            ]);
+            $uploadrequest->files->set('file', $request->file('picture'));
+            app(FileController::class)->upload($uploadrequest);
+        }
 
         // adds memnbership for owner trigger dos not activate becouse its public
         $group->members()->attach(Auth::user()->id_user);
@@ -182,17 +184,12 @@ class GroupController extends Controller
         $group->is_public = $request->input('is_public', false);
 
         if ($request->hasFile('picture')) {
-            // delete old one if it exists
-            if ($group->picture && Storage::disk('public')->exists('group/' . $group->picture)) {
-                Storage::disk('public')->delete('group/' . $group->picture);
-            }
-
-            // saves new one
-            $file = $request->file('picture');
-            $fileName = $file->hashName();
-            $file->storeAs('group', $fileName, 'public');
-            
-            $group->picture = $fileName;
+            $uploadrequest = new \Illuminate\Http\Request([
+                'id' => $group->id_group,
+                'type' => 'group'
+            ]);
+            $uploadrequest->files->set('file', $request->file('picture'));
+            app(FileController::class)->upload($uploadrequest);
         }
         
         $group->save();

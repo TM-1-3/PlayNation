@@ -19,4 +19,14 @@ class Report extends Model
     {
         return $this->belongsToMany(Post::class, 'report_post', 'id_report', 'id_post');
     }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'report_user', 'id_report', 'id_user');
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Group::class, 'report_group', 'id_report', 'id_group');
+    }
 }
