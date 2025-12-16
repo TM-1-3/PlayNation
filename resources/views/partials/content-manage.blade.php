@@ -46,7 +46,7 @@
                                 </button>
                             </form>
                             <a href="{{ route('profile.show', $post->user->id_user) }}" class="bg-blue-500 text-white text-sm py-1 px-3 rounded-lg hover:bg-blue-600 transition inline-block">
-                                View Content
+                                View Post
                             </a>
                         </div>
                     </div>

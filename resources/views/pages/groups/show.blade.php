@@ -105,13 +105,7 @@
                         <i class="fa-solid fa-flag mr-1"></i> Report Group
                     </button>
 
-                    @include('partials.report_modal', [
-                        'modalId' => "report-modal-group-{$group->id_group}",
-                        'action' => route('report.submit'),
-                        'title' => 'Report Group',
-                        'target_type' => 'group',
-                        'target_id' => $group->id_group,
-                    ])
+                    {{-- report modal moved to page bottom to avoid stacking issues --}}
 
 
 
@@ -214,6 +208,14 @@
 
 
 @endsection
+
+@include('partials.report_modal', [
+    'modalId' => "report-modal-group-{$group->id_group}",
+    'action' => route('report.submit'),
+    'title' => 'Report Group',
+    'target_type' => 'group',
+    'target_id' => $group->id_group,
+])
 
 @push('scripts')
 <script>
