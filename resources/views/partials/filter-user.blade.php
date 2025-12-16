@@ -25,7 +25,7 @@
         </div>
 
         <div class="mb-4">
-            <label class="block text-sm text-gray-600 mb-1">Minimum followers</label>
+            <label class="block text-sm text-gray-600 mb-1">Minimum friends</label>
             <div class="flex items-center gap-3">
                 <span id="min-followers-current" class="w-10 text-sm text-gray-700 text-right">{{ request('min_followers', 0) }}</span>
                 <input id="min-followers-range" name="min_followers" type="range" min="0" max="1000" value="{{ request('min_followers', 0) }}" class="flex-1 h-2 rounded-lg cursor-pointer accent-blue-500 bg-gray-300">
@@ -37,7 +37,7 @@
             <label class="block text-sm text-gray-600 mb-1">Sort by</label>
             <select name="sort" class="appearance-none border-none rounded-lg cursor-pointer shadow-md hover:shadow-xl transition-shadow duration-300 text-gray-900 bg-white outline-none w-full px-3 py-2 text-sm">
                 <option value="relevance" {{ request('sort') == 'relevance' ? 'selected' : '' }}>Relevance</option>
-                <option value="followers" {{ request('sort') == 'followers' ? 'selected' : '' }}>Most followers</option>
+                <option value="followers" {{ request('sort') == 'friends' ? 'selected' : '' }}>Most friends</option>
                 <option value="common_friends" {{ request('sort') == 'common_friends' ? 'selected' : '' }}>Common friends</option>
                 <option value="username" {{ request('sort') == 'username' ? 'selected' : '' }}>Username (A-Z)</option>
             </select>
