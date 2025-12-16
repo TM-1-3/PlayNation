@@ -71,11 +71,69 @@ class TimelineController extends Controller {
             });
         }
 
+        // Apply filters from filter form
+        $query = $this->filterPosts($query, $request, $timelineType);
+
         $posts = $query->get();
 
         $savedPostIds = $user ? $user->savedPosts()->pluck('post.id_post')->toArray() : [];
 
         return view('pages.home', ['posts' => $posts, 'activeTimeline' => $timelineType, 'savedPostIds' => $savedPostIds]);
+    }
+
+    private function filterPosts($query, Request $request, $timelineType)
+    {
+        // Filter by username using full-text search
+        $username = $request->query('username');
+        if ($username) {
+            $input = $username . ':*';
+            $query->whereHas('user', function($q) use ($input) {
+                $q->whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input]);
+            });
+        }
+
+        // Filter by tags using full-text search
+        $tags = $request->query('tags');
+        if ($tags) {
+            $tagList = array_filter(array_map('trim', explode(',', $tags)));
+            if (!empty($tagList)) {
+                $query->whereHas('labels', function($q) use ($tagList) {
+                    $q->where(function($labelQuery) use ($tagList) {
+                        foreach ($tagList as $tag) {
+                            $input = $tag . ':*';
+                            $labelQuery->orWhereRaw("to_tsvector('portuguese', designation) @@ to_tsquery('portuguese', ?)", [$input]);
+                        }
+                    });
+                });
+            }
+        }
+
+        // Filter: only posts with images
+        if ($request->has('with_images')) {
+            $query->where(function($q) {
+                $q->whereNotNull('image')->where('image', '!=', '');
+            });
+        }
+
+        // Filter: only from verified users
+        if ($request->has('verified')) {
+            $query->whereHas('user', function($q) {
+                $q->whereHas('verifiedUser');
+            });
+        }
+
+        // Apply sort option (overrides timeline-based sorting if specified)
+        $sort = $request->query('sort');
+        if ($sort === 'oldest') {
+            $query->reorder()->orderBy('date', 'asc');
+        } elseif ($sort === 'most_liked') {
+            // TODO: Implement most_liked sorting with post_like count
+            $query->reorder()->orderByDesc('date');
+        } elseif ($sort === 'newest') {
+            $query->reorder()->orderByDesc('date');
+        }
+
+        return $query;
     }
 
     public function searchPost(Request $request)
