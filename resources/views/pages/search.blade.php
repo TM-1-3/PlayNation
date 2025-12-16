@@ -23,22 +23,7 @@
     </div>
     <div id="users-list" class="space-y-4">
         @foreach($users as $user)
-        <div class="flex bg-white border border-gray-200 rounded-lg p-5 transition-all hover:shadow-md hover:border-blue-400">
-            <a href="{{ route('profile.show', $user->id_user) }}" class="mt-2 mr-1">
-                <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" 
-                    src="{{ $user->getProfileImage() }}" 
-                    alt="avatar">
-            </a>
-            <div class="flex-col">
-                <a href="{{ route('profile.show',$user->id_user) }}" class="block text-lg font-semibold text-gray-800 no-underline transition-colors hover:text-blue-600">{{ $user->name }}</a>
-                <a href="{{ route('profile.show',$user->id_user) }}" class="block text-sm text-gray-500 no-underline transition-colors hover:text-blue-500 ">
-                    {{ $user->username }}
-                    @if($user->verifiedUser)
-                        <i class="fa-solid fa-circle-check text-blue-500 text-lg" title="Verified Account"></i>
-                    @endif
-                </a>
-            </div>
-        </div>
+            @include('partials.user-card', ['friend' => $user, 'user' => Auth::user()])
         @endforeach
     </div>
 </div>

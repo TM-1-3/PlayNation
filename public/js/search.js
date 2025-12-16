@@ -292,7 +292,7 @@ function searchHandler(response, searchType) {
       } else {
         response.users.forEach(user => {
           const userDiv = document.createElement('div');
-          userDiv.className = 'flex bg-white border border-gray-200 rounded-lg p-5 transition-all hover:shadow-md hover:border-blue-400';
+          userDiv.className = 'flex bg-white rounded-lg p-5 transition-all shadow-md hover:shadow-xl hover:border-blue-400';
           
           const profileUrl = `/profile/${user.id_user}`;
           const profileImage = user.profile_image;

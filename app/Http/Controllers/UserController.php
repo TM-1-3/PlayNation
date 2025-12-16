@@ -156,7 +156,7 @@ class UserController extends Controller
         }
         
         // If it's a standard request, return the full view
-        return view('pages.search', ['users' => $users]);
+        return view('pages.search', ['users' => $users, '']);
     }
 
 }
