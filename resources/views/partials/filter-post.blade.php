@@ -30,7 +30,11 @@
 
         <div class="mb-4">
             <label class="block text-sm text-gray-600 mb-1">Minimum likes</label>
-            <input name="min_likes" type="range" min="0" class="w-full h-2 rounded-lg cursor-pointer accent-blue-500 bg-gray-300">
+            <div class="flex items-center gap-3">
+                <span id="min-likes-current" class="w-10 text-sm text-gray-700 text-right">{{ request('min_likes', 0) }}</span>
+                <input id="min-likes-range" name="min_likes" type="range" min="0" max="100" value="{{ request('min_likes', 0) }}" class="flex-1 h-2 rounded-lg cursor-pointer accent-blue-500 bg-gray-300">
+                <span id="min-likes-max" class="w-10 text-sm text-gray-700 text-left">100</span>
+            </div>
         </div>
 
         <div class="mb-4">
@@ -73,4 +77,3 @@
         </div>
     </form>
 </aside>
-

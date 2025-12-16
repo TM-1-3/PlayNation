@@ -49,4 +49,27 @@ document.addEventListener('DOMContentLoaded', function(){
             form.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
         });
     }
+
+    // range input display for minimum likes
+    var range = document.getElementById('min-likes-range');
+    var current = document.getElementById('min-likes-current');
+    var maxSpan = document.getElementById('min-likes-max');
+    if(range && current && maxSpan){
+        var max = range.getAttribute('max') || '100';
+        maxSpan.textContent = max;
+        // ensure initial value is shown
+        if(range.value === undefined || range.value === null || range.value === '') range.value = 0;
+        current.textContent = range.value;
+        range.addEventListener('input', function(){
+            current.textContent = this.value;
+        });
+
+        // when clearing the form, also reset the range to 0 and update display
+        if(clearBtn){
+            clearBtn.addEventListener('click', function(){
+                range.value = 0;
+                current.textContent = '0';
+            });
+        }
+    }
 });
