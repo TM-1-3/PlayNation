@@ -80,7 +80,7 @@ class FileController extends Controller
                 case 'posts':
                     $post = Post::find($id);
                     if ($post) {
-                        $post->image = null; 
+                        $post->image = ''; 
                         $post->save();
                     }
                     break;

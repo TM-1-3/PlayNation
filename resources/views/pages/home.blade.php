@@ -4,7 +4,8 @@
 
 @section('content')
 
-<div class="max-w-3xl mx-auto p-5">
+<div id="main-container" class="max-w-3xl mx-auto transition-transform duration-300 ease-in-out px-5">
+    <div class="fixed bg-gray-50 w-[54vw] pt-5">
     @auth
     <div>
         <div class="flex gap-4 justify-around items-center mb-5">
@@ -14,7 +15,7 @@
         </div>
     </div>
     @endauth
-    <div class="mb-5 mx-auto">
+    <div class="mb-2 mx-auto flex justify-between">
         <form  id="search-home" action="{{ route('search.posts') }}" method="GET" class="relative">
                             
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -22,10 +23,16 @@
             </div>
                                 
             <input id="search-input-home" type="text" name="search" placeholder="Search for posts by username, tags or description.." 
-                    class="h-[2em] block w-full pl-10 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">        
+                    class="h-[2em] w-[50vw] block pl-10 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">        
         </form>
+        <div>
+            <button id="filter-toggle" class="flex items-center" aria-expanded="false" aria-controls="filter-panel">
+                <i class="fa-solid fa-sliders text-gray-500 mr-2 cursor-pointer mt-2"></i>
+            </button>
+        </div>
     </div>
-    <div id="timeline" class="w-full pb-12">
+    </div>
+    <div id="timeline" class="w-full pb-12 pt-35">
             @if(isset($posts) && $posts->isEmpty())
                 <div class="text-center py-10 text-gray-500">
                     <p>No posts found.</p>
@@ -39,6 +46,11 @@
                 @endforeach
             @endif
         </div>
-</div>
-</div>
-@endsection
+    </div>
+
+    @include('partials.filter-post')
+
+    
+
+    </div>
+    @endsection

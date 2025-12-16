@@ -14,6 +14,7 @@
     <!-- Scripts -->
     <script src="{{ asset('js/search.js') }}" defer></script>
     <script src="{{ asset('js/home.js') }}" defer></script>
+    <script src="{{ asset('js/filter.js') }}" defer></script>
     @stack('scripts')
 </head>
 <body class="m-0 p-0 min-h-screen overflow-x-hidden bg-white text-gray-800 font-sans">
@@ -24,12 +25,12 @@
         </a>
         <nav class="flex flex-col gap-0.5 flex-grow">
             
-            <a href="{{ route('home') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->is('/') || request()->routeIs('home') ? 'font-bold text-blue-600' : '' }}">
+            <a href="{{ route('home') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->is('/') || request()->routeIs('home') ? 'font-bold text-blue-600' : '' }}">
                 <i class="fa-solid fa-house w-8 text-xl text-center mr-2.5"></i> 
                 Feed
             </a>
 
-            <a href="{{ route('search.users') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('search.users') ? 'font-bold text-blue-600' : '' }}">
+            <a href="{{ route('search.users') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('search.users') ? 'font-bold text-blue-600' : '' }}">
                 <i class="fa-solid fa-magnifying-glass w-8 text-xl text-center mr-2.5"></i> 
                 Search Users
             </a>
@@ -37,51 +38,53 @@
             @if(Auth::check())
                     {{-- auth user zone --}}
 
-                    <a href="{{ route('post.create') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('post.create') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('post.create') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('post.create') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-circle-plus w-8 text-xl text-center mr-2.5"></i> 
                         Create Post
                     </a>
 
-                    <a href="{{ route('profile.show', Auth::user()->id_user) }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('profile.show', Auth::user()->id_user) ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('profile.show', Auth::user()->id_user) }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('profile.show', Auth::user()->id_user) ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-user w-8 text-xl text-center mr-2.5"></i> 
                         My Profile
                     </a>
-                    <a href="{{ route('groups.index') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('groups.index') ? 'font-bold text-blue-600' : '' }}">
+
+                    <a href="{{ route('groups.index') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('groups.index') ? 'font-bold text-blue-600' : '' }}">
+
                         <i class="fa-solid fa-users w-8 text-xl text-center mr-2.5"></i> 
                         My Groups
                     </a>
 
-                    <a href="{{ route('messages.index') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('messages.index') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('messages.index') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('messages.index') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-regular fa-comments w-8 text-xl text-center mr-2.5"></i> 
                         Messages
                     </a>
 
-                    <a href="{{ route('notifications.index') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('notifications.index') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('notifications.index') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('notifications.index') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-bell w-8 text-xl text-center mr-2.5"></i> 
                         Notifications 
                         <span class="bg-red-600 text-white text-xs py-0.5 px-1.5 rounded-full ml-auto">3</span>
                     </a>
 
-                    <a href="{{ route('saved.index') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('saved.index') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('saved.index') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('saved.index') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-bookmark w-8 text-xl text-center mr-2.5"></i>
                         Saved Posts
                     </a>
 
                     @if(Auth::user()->isAdmin())
-                    <a href="{{ route('admin') }}" class="flex items-center p-3 text-orange-500 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('admin') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('admin') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-orange-500 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('admin') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-shield-halved w-8 text-xl text-center mr-2.5"></i>
                         Admin Panel
                     </a>
                     @endif
 
-                    <a href="{{ route('settings.index') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('settings.index') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('settings.index') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('settings.index') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-gear w-8 text-xl text-center mr-2.5"></i> 
                         Settings
                     </a>
 
                     <form action="{{ route('logout') }}" method="POST" class="mt-2.5">
                         @csrf
-                        <button type="submit" class="flex items-center p-3 bg-transparent border-none w-full text-red-600 cursor-pointer text-base rounded-lg transition-colors hover:bg-gray-100 m-0">
+                        <button type="submit" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 bg-transparent border-none w-full text-red-600 cursor-pointer text-base rounded-lg transition-colors hover:bg-gray-100 m-0">
                             <i class="fa-solid fa-arrow-right-from-bracket w-8 text-xl text-center mr-2.5"></i>
                             Log Out
                         </button>
@@ -90,16 +93,16 @@
                 @else
                     {{-- visitors zone --}}
 
-                    <a href="{{ route('groups.index') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('groups.index') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('groups.index') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('groups.index') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-users w-8 text-xl text-center mr-2.5"></i> 
                         Groups
                     </a>
 
-                    <a href="{{ route('login') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('login') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('login') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('login') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-right-to-bracket w-8 text-xl text-center mr-2.5"></i> 
                         Login
                     </a>
-                    <a href="{{ route('register') }}" class="flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('register') ? 'font-bold text-blue-600' : '' }}">
+                    <a href="{{ route('register') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('register') ? 'font-bold text-blue-600' : '' }}">
                         <i class="fa-solid fa-user-plus w-8 text-xl text-center mr-2.5"></i> 
                         Register
                     </a>
@@ -108,7 +111,7 @@
         </nav>
 
         <div class="border-t border-gray-400 text-xs text-gray-500 text-center mt-0 pt-2.5">
-            <a href="{{ route('about.index') }}" class="text-gray-500 no-underline mx-1 hover:underline">About</a> | <a href="#" class="text-gray-500 no-underline mx-1 hover:underline">Help</a>
+            <a href="{{ route('about.index') }}" class="hover:shadow-xl transition-shadow duration-200 text-gray-500 no-underline mx-1 hover:underline">About</a> | <a href="#" class="text-gray-500 no-underline mx-1 hover:underline">Help</a>
             <br>
             <p class="mt-2.5">&copy; {{ date('Y') }} PlayNation</p>
         </div>
@@ -161,7 +164,7 @@
             </script>
         @endif
 
-        <section id="content" class="ml-64 min-h-screen bg-gray-50 pt-5">
+        <section id="content" class="ml-64 min-h-screen bg-gray-50">
             @yield('content')
         </section>
     </div>

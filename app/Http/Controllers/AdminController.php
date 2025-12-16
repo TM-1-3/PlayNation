@@ -136,55 +136,11 @@ class AdminController extends Controller
 
     public function showEditUserForm($id)
     {
-        $user = User::findOrFail($id);
-
-        return view('pages.edit_user', ['user' => $user]);
+        // Redirect to unified edit form with admin flag
+        return redirect()->route('profile.edit', ['id' => $id, 'from' => 'admin']);
     }
 
-    public function editUser(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-
-        // validation
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => ['required', 'string', 'max:255', Rule::unique('registered_user')->ignore($user->id_user, 'id_user')],
-            'email' => ['required', 'email', 'max:255', Rule::unique('registered_user')->ignore($user->id_user, 'id_user')],
-            'biography' => 'nullable|string|max:500',
-            'profile_picture' => 'nullable|image|max:4096', // Max 4MB
-            'password' => 'nullable|string|min:8|confirmed',
-        ]);
-
-        // update user data
-        $user->name = $request->name;
-        $user->username = $request->username;
-        $user->email = $request->email;
-        $user->biography = $request->biography;
-        
-        $user->is_public = $request->has('is_public');
-
-        // Password updates only if provided
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
-        // Upload Image
-        if ($request->hasFile('profile_picture')) {
-    
-            if ($user->profile_picture && $user->profile_picture !== 'img/default-user.png') {
-                
-                $oldPath = str_replace('storage/', '', $user->profile_picture);
-                Storage::disk('public')->delete($oldPath);
-            }
-
-            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $user->profile_picture = 'storage/' . $path;
-        }
-
-        $user->save();
-
-        return redirect()->route('admin');
-    }
+    // Removed: editUser method - now handled by UserController::update
 
     public function verifyUser($id){
 

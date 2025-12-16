@@ -53,24 +53,33 @@ class UserController extends Controller
         ]);
     }
     
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser && $currentUser->isAdmin();
 
-        // only profile owner can edit
-        if (Auth::id() !== $user->id_user) {
+        // only profile owner or admin can edit
+        if (Auth::id() !== $user->id_user && !$isAdmin) {
             return redirect()->route('profile.show', $id)
                 ->with('status', 'Não tens permissão para editar este perfil.');
         }
 
-        return view('pages.edit_profile', ['user' => $user]);
+        return view('pages.edit_profile', [
+            'user' => $user,
+            'isAdmin' => $isAdmin,
+            'fromAdmin' => $request->query('from') === 'admin'
+        ]);
     }
 
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser && $currentUser->isAdmin();
 
-        if (Auth::id() !== $user->id_user) { // only profile owner can update
+        // only profile owner or admin can update
+        if (Auth::id() !== $user->id_user && !$isAdmin) {
             return redirect()->route('profile.show', $id)->with('status', 'Unauthorized action.');
         }
 
@@ -107,6 +116,12 @@ class UserController extends Controller
         }
 
         $user->save();
+
+        // Redirect based on where the edit came from
+        $fromAdmin = $request->input('from_admin');
+        if ($fromAdmin && $isAdmin) {
+            return redirect()->route('admin')->with('status', 'User updated successfully!');
+        }
 
         return redirect()->route('profile.show', $user->id_user)
             ->with('status', 'Profile updated successfully!');
