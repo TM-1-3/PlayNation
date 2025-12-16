@@ -41,8 +41,28 @@ class AdminController extends Controller
                     return $post;
                 })
                 ->sortByDesc('report_count');
-            
-            return view('pages.admin', ['reportedPosts' => $reportedPosts, 'type' => $type]);
+
+            $reportedUsers = User::whereHas('reports')
+                ->with(['verifiedUser', 'reports'])
+                ->get()
+                ->map(function($user) {
+                    $user->report_count = $user->reports->count();
+                    $user->report_descriptions = $user->reports->pluck('description')->toArray();
+                    return $user;
+                })
+                ->sortByDesc('report_count');
+
+            $reportedGroups = Group::whereHas('reports')
+                ->with(['owner', 'reports'])
+                ->get()
+                ->map(function($group) {
+                    $group->report_count = $group->reports->count();
+                    $group->report_descriptions = $group->reports->pluck('description')->toArray();
+                    return $group;
+                })
+                ->sortByDesc('report_count');
+
+            return view('pages.admin', ['reportedPosts' => $reportedPosts, 'reportedUsers' => $reportedUsers, 'reportedGroups' => $reportedGroups, 'type' => $type]);
         }
 
         if ($user->isAdmin() && $type == 'group') {
@@ -182,6 +202,30 @@ class AdminController extends Controller
         $post->delete();
 
         return redirect()->back()->with('status', 'Reported post deleted successfully.');
+    }
+
+    public function dismissUserReports($id)
+    {
+        $user = User::findOrFail($id);
+        $user->reports()->detach();
+
+        return redirect()->back()->with('status', 'User reports dismissed successfully.');
+    }
+
+    public function dismissGroupReports($id)
+    {
+        $group = Group::findOrFail($id);
+        $group->reports()->detach();
+
+        return redirect()->back()->with('status', 'Group reports dismissed successfully.');
+    }
+
+    public function deleteGroup($id)
+    {
+        $group = Group::findOrFail($id);
+        $group->delete();
+
+        return redirect()->back()->with('status', 'Group deleted successfully.');
     }
 
     public function dismissReports($id)

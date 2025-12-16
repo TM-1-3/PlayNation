@@ -76,4 +76,9 @@ class Group extends Model
         return $this->hasMany(Message::class, 'id_group', 'id_group');
     }
 
+    public function reports(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Report::class, 'report_group', 'id_group', 'id_report');
+    }
+
 }

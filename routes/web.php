@@ -58,7 +58,10 @@ Route::controller(AdminController::class)->group(function () {
     Route::put('/admin/user/{id}', 'editUser')->name('admin.edit.action');
     Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
     Route::delete('/admin/post/{id}', 'deletePost')->name('admin.post.delete');
-    Route::post('/admin/post/{id}/dismiss', 'dismissReports')->name('admin.post.dismiss');
+    Route::post('/admin/post/{id}/dismiss', 'dismissPostReports')->name('admin.post.dismiss');
+    Route::post('/admin/user/{id}/dismiss', 'dismissUserReports')->name('admin.user.dismiss');
+    Route::post('/admin/group/{id}/dismiss', 'dismissGroupReports')->name('admin.group.dismiss');
+    Route::delete('/admin/group/{id}', 'deleteGroup')->name('admin.group.delete');
 });
 Route::get('/admin/group', [GroupController::class, 'searchGroup'])->name('admin.group');
 

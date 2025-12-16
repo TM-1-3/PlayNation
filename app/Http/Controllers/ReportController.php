@@ -9,15 +9,40 @@ class ReportController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'target_type' => 'nullable|string',
-            'target_id' => 'nullable|integer',
+            'target_type' => 'required|string|in:post,user,group',
+            'target_id' => 'required|integer',
             'reason' => 'required|string',
             'details' => 'nullable|string',
         ]);
 
-        // Currently we only accept and acknowledge the report on the UI level.
-        // Persisting to the database or notifying admins can be implemented later.
+        $description = $data['reason'];
+        if (!empty($data['details'])) {
+            $description .= ': ' . $data['details'];
+        }
 
-        return redirect()->back()->with('status', 'Report submitted. Thank you.');
+        $report = \App\Models\Report::create(['description' => $description]);
+
+        switch ($data['target_type']) {
+            case 'post':
+                \DB::table('report_post')->insert([
+                    'id_report' => $report->id_report,
+                    'id_post' => $data['target_id']
+                ]);
+                break;
+            case 'user':
+                \DB::table('report_user')->insert([
+                    'id_report' => $report->id_report,
+                    'id_user' => $data['target_id']
+                ]);
+                break;
+            case 'group':
+                \DB::table('report_group')->insert([
+                    'id_report' => $report->id_report,
+                    'id_group' => $data['target_id']
+                ]);
+                break;
+        }
+
+        return redirect()->back()->with('status', 'Report submitted. Admins will review it.');
     }
 }
