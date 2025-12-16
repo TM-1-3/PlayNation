@@ -11,15 +11,21 @@
         <h2 class="text-3xl font-bold text-gray-800">Communities</h2>
         
         {{-- searchbar --}}
-        <form id="search-group" action="{{ route('search.groups') }}" method="GET" class="relative w-full md:max-w-md">
-            <div class="relative w-full md:max-w-md">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+        <div class="flex justify-around w-full">
+            <form id="search-group" action="{{ route('search.groups') }}" method="GET" class="relative w-full md:max-w-md">
+                <div class="relative w-full md:max-w-md">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                    </div>
+                    <input type="text" name="search" id="group-search" placeholder="Search for groups..." 
+                        class="block h-[2em] w-[40vw] pl-10 pr-4 py-2.5 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
                 </div>
-                <input type="text" name="search" id="group-search" placeholder="Search for groups..." 
-                    class="block h-[2em] w-full pl-10 pr-4 py-2.5 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
+            </form>
+
+            <div>
+                <i class="fa-solid fa-sliders text-gray-500 mr-2"></i>
             </div>
-        </form>
+        </div>
 
         @auth
             <a href="{{ route('groups.create') }}" class="bg-blue-600 text-white py-2.5 px-5 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 no-underline font-semibold shadow-md text-sm whitespace-nowrap">

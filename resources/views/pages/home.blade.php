@@ -14,7 +14,7 @@
         </div>
     </div>
     @endauth
-    <div class="mb-5 mx-auto">
+    <div class="mb-5 mx-auto flex justify-between">
         <form  id="search-home" action="{{ route('search.posts') }}" method="GET" class="relative">
                             
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -22,8 +22,11 @@
             </div>
                                 
             <input id="search-input-home" type="text" name="search" placeholder="Search for posts by username, tags or description.." 
-                    class="h-[2em] block w-full pl-10 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">        
+                    class="h-[2em] w-[50vw] block pl-10 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">        
         </form>
+        <div>
+            <i class="fa-solid fa-sliders text-gray-500 mr-2"></i>
+        </div>
     </div>
     <div id="timeline" class="w-full pb-12">
             @if(isset($posts) && $posts->isEmpty())
