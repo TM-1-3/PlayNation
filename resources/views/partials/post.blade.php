@@ -42,7 +42,9 @@
     <div class="flex items-center gap-4 px-4 pt-2">
         <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Like">
             <i class="fa-regular fa-heart text-lg"></i>
-            <span class="text-sm">Like</span>
+            <span class="text-sm">
+                {{ $post->likes_count ?? $post->likes->count() }}
+            </span>
         </button>
         <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
             <i class="fa-regular fa-comment text-lg"></i>

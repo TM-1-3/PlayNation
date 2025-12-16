@@ -185,7 +185,11 @@ class PostController extends Controller
     public function showSaved()
     {
         $user = Auth::user();
-        $posts = $user->savedPosts()->with(['user.verifiedUser', 'labels'])->orderByDesc('date')->get();
+        $posts = $user->savedPosts()
+        ->withCount('likes')
+        ->with(['user.verifiedUser', 'labels'])
+        ->orderByDesc('date')
+        ->get();
         $savedPostIds = $posts->pluck('id_post')->toArray();
         
         return view('pages.saved', ['posts' => $posts, 'savedPostIds' => $savedPostIds]);
