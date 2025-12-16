@@ -152,7 +152,8 @@ class UserController extends Controller
                     'id_user' => $user->id_user,
                     'name' => $user->name,
                     'username' => $user->username,
-                    'profile_image' => $user->getProfileImage()
+                    'profile_image' => $user->getProfileImage(),
+                    'is_verified' => $user->verifiedUser !== null
                 ];
             });
             

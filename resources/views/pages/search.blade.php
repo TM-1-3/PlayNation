@@ -24,9 +24,16 @@
         </div>
     </div>
     <div id="users-list" class="space-y-4">
-        @foreach($users as $user)
-            @include('partials.user-card', ['friend' => $user, 'user' => Auth::user()])
-        @endforeach
+        @if($users->isNotEmpty())
+            @foreach($users as $user)
+                @include('partials.user-card', ['friend' => $user, 'user' => Auth::user()])
+            @endforeach
+        @else
+            <div class="text-center py-10 text-gray-500">
+                <i class="fa-solid fa-user-slash text-4xl mb-4"></i>
+                <p>No users found</p>
+            </div>
+        @endif
     </div>
 </div>
 
