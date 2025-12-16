@@ -5,7 +5,7 @@
 @section('content')
 
 <div id="main-container" class="max-w-3xl mx-auto transition-transform duration-300 ease-in-out px-5">
-    <div class="fixed w-auto pt-5">
+    <div class="fixed w-auto bg-gray-50 pt-5 px-5">
         @auth
         <div>
             <div class="flex gap-4 justify-around items-center mb-5">
@@ -15,7 +15,7 @@
             </div>
         </div>
         @endauth
-        <div class="mb-2 mx-auto flex gap-5 justify-between">
+        <div class="mb-2 mx-auto flex gap-2 justify-between">
             <form  id="search-home" action="{{ route('search.posts') }}" method="GET" class="relative">
                                 
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
