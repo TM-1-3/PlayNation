@@ -26,7 +26,7 @@
         </div>
 
         @auth
-            <a href="{{ route('groups.create') }}" class="bg-blue-600 text-white py-2.5 px-5 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 no-underline font-semibold shadow-md text-sm whitespace-nowrap">
+            <a href="{{ route('groups.create') }}" class="bg-blue-600 text-white py-2.5 px-5 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 no-underline font-semibold shadow-md text-sm whitespace-nowrap" title="Create new group">
                 <i class="fa-solid fa-plus"></i> New Group
             </a>
         @endauth

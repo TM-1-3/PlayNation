@@ -23,19 +23,19 @@
 
         <div>
             <label for="profile_picture" class="block mb-2 font-medium text-gray-700">Profile Picture</label>
-            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="w-full p-2 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="w-full p-2 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" title="Insert your profile picture">
             @error('profile_picture') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
         </div>
 
         <div>
             <label for="biography" class="block mb-2 font-medium text-gray-700">Biography</label>
-            <textarea id="biography" name="biography" rows="3" placeholder="I love running and eating pizza..." class="w-full p-3 border border-gray-300 rounded focus:border-blue-600 focus:outline-none"></textarea>
+            <textarea id="biography" name="biography" rows="3" placeholder="Enter your Biography..." class="w-full p-3 border border-gray-300 rounded focus:border-blue-600 focus:outline-none"></textarea>
             @error('biography') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
         </div>
 
         <div class="flex items-center gap-2.5 my-4">
-            <input type="checkbox" id="is_public" name="is_public" checked class="w-4 h-4">
-            <label for="is_public" class="m-0 font-medium text-gray-700">Make Profile Public?</label>
+            <input type="checkbox" id="is_public" name="is_public" checked class="w-4 h-4" title="Define if your profilw will be public or private">
+            <label for="is_public" class="m-0 font-medium text-gray-700" title="Define if your profilw will be public or private">Make Profile Public?</label>
         </div>
 
         <label class="block mb-3 font-medium text-gray-700">Interests (Select all that apply)</label>
@@ -44,7 +44,7 @@
                 <label class="cursor-pointer">
                     <input type="checkbox" name="labels[]" value="{{ $label->id_label }}" class="hidden peer">
                     
-                    <div class="bg-white border-2 border-gray-300 rounded-lg p-4 text-center transition-all hover:border-blue-500 hover:shadow-md peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                    <div class="bg-white border-2 border-gray-300 rounded-lg p-4 text-center transition-all hover:border-blue-500 hover:shadow-md peer-checked:border-blue-600 peer-checked:bg-blue-50" title="Click here to select it as a topic of interest">
                         <img src="{{ asset($label->image) }}" alt="icon" class="w-16 h-16 mx-auto mb-2 object-contain">
                         <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-600">{{ $label->designation }}</span>
                     </div>
@@ -52,7 +52,7 @@
             @endforeach
         </div>
         
-        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6">Finish Setup</button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6" title="Click here to finish setting up your account">Finish Setup</button>
     </form>
 </div>
 

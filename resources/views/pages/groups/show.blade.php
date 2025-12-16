@@ -36,7 +36,7 @@
                 <div class="flex justify-center gap-8 mb-6 border-t border-gray-100 pt-4">
                     {{-- Counter Clicável --}}
                     <div class="text-center cursor-pointer hover:bg-gray-50 rounded p-1 transition select-none" onclick="openMembersModal()">
-                        <span class="block text-xl font-bold text-blue-600" id="member-count">
+                        <span class="block text-xl font-bold text-blue-600" id="member-count" title="Click to see the group's members">
                             {{ $group->members->count() }}
                         </span>
                         <span class="text-xs text-gray-500 uppercase">Members</span>
@@ -50,7 +50,7 @@
                     @auth
                         {{-- Owner? shows edit --}}
                         @if(Auth::id() === $group->id_owner)
-                            <a href="{{ route('groups.edit', $group->id_group) }}" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-lg hover:bg-gray-200 transition font-bold text-center no-underline border border-gray-300">
+                            <a href="{{ route('groups.edit', $group->id_group) }}" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-lg hover:bg-gray-200 transition font-bold text-center no-underline border border-gray-300" title="Edit the group settings">
                                 Edit Group Settings
                             </a>
                         
@@ -94,14 +94,14 @@
                     {{-- invite btn --}}
                     @if($group->is_public || Auth::id() === $group->id_owner)
                         <button onclick="console.log('Botão clicado!'); openInviteModal()" 
-                                class="w-full mt-4 bg-blue-100 text-blue-600 font-bold py-2 rounded-lg hover:bg-blue-200 transition flex items-center justify-center gap-2 cursor-pointer relative z-10 shadow-sm active:scale-95">
+                                class="w-full mt-4 bg-blue-100 text-blue-600 font-bold py-2 rounded-lg hover:bg-blue-200 transition flex items-center justify-center gap-2 cursor-pointer relative z-10 shadow-sm active:scale-95" title="Invite users to the group">
                             <i class="fa-solid fa-user-plus"></i> Invite Friends
                         </button>
                     @endif
 
                     {{-- report group button --}}
                     <button onclick="toggleReport('group', {{ $group->id_group }})" 
-                            class="w-full mt-2 bg-transparent text-red-600 border border-red-100 py-2 rounded-lg hover:bg-red-50 transition font-bold flex items-center justify-center gap-2">
+                            class="w-full mt-2 bg-transparent text-red-600 border border-red-100 py-2 rounded-lg hover:bg-red-50 transition font-bold flex items-center justify-center gap-2" title="Report the group">
                         <i class="fa-solid fa-flag mr-1"></i> Report Group
                     </button>
 

@@ -11,12 +11,12 @@
                                 <input id="search-input-user" type="text" name="search" placeholder="Search by Name, Username or Email..." 
                                     class="h-[2em] block w-full pl-10 pr-4 py-2 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
                             </div>
-                            <button type="submit" class="h-[2em] bg-blue-500 text-white border-none py-1 px-3 rounded-lg text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600 font-medium">Search</button>
+                            <button type="submit" class="h-[2em] bg-blue-500 text-white border-none py-1 px-3 rounded-lg text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600 font-medium" text="Submit your user search">Search</button>
                         </form>
                     </div>
                     <form action="{{ route('admin.create') }}" method="GET">
                         @csrf
-                        <button type="submit" class="h-[2em] rounded-lg bg-green-600 text-white border-none py-1 px-3 text-base cursor-pointer transition-colors font-semibold whitespace-nowrap hover:bg-green-700">Create New User</button>
+                        <button type="submit" class="h-[2em] rounded-lg bg-green-600 text-white border-none py-1 px-3 text-base cursor-pointer transition-colors font-semibold whitespace-nowrap hover:bg-green-700" title="Create new user account">Create New User</button>
                     </form>
                 </div>
 
@@ -33,8 +33,8 @@
                     <tbody id="admin-users-body">
                         @forelse($users as $user)
                         <tr class="border-b border-gray-200 transition-colors hover:bg-gray-50">
-                            <td class="p-4 text-gray-800 text-sm font-medium"><a href="{{ route('profile.show',$user->id_user) }}" class="no-underline text-gray-800 hover:text-blue-600">{{ $user->name }}</a></td>
-                            <td class="p-4 text-gray-800 text-sm font-medium"><a href="{{ route('profile.show',$user->id_user) }}" class="no-underline text-gray-800 hover:text-blue-600">
+                            <td class="p-4 text-gray-800 text-sm font-medium"><a href="{{ route('profile.show',$user->id_user) }}" class="no-underline text-gray-800 hover:text-blue-600" text="Click to acess the user's page">{{ $user->name }}</a></td>
+                            <td class="p-4 text-gray-800 text-sm font-medium"><a href="{{ route('profile.show',$user->id_user) }}" class="no-underline text-gray-800 hover:text-blue-600" text="Click to acess the user's page">
                                 {{ $user->username }}
                                 @if($user->verifiedUser)
                                     <i class="fa-solid fa-circle-check text-blue-500 text-lg" title="Verified Account"></i>
@@ -45,11 +45,11 @@
                             <td class="p-4 text-gray-800 text-sm">{{ $user->is_public ? 'Public' : 'Private' }}</td>
                             <td class="p-4">
                                 <div class="flex items-center gap-4">
-                                    <a href="{{ route('admin.edit', $user->id_user) }}" class="bg-none text-blue-500 text-sm font-medium no-underline">Edit</a>
+                                    <a href="{{ route('admin.edit', $user->id_user) }}" class="bg-none text-blue-500 text-sm font-medium no-underline" title="Edit user information">Edit</a>
                                     @if(!$user->verifiedUser)
                                         <form action="{{ route('admin.verify', $user->id_user) }}" method="POST" class="m-0">
                                             @csrf
-                                            <button type="submit" class="bg-none text-green-600 text-sm font-medium cursor-pointer border-none pb-1 hover:text-green-700">
+                                            <button type="submit" class="bg-none text-green-600 text-sm font-medium cursor-pointer border-none pb-1 hover:text-green-700" title="Verify the user">
                                                 Verify
                                             </button>
                                         </form>
@@ -57,7 +57,7 @@
                                     <form action="{{ route('admin.delete', $user->id_user) }}" method="POST" class="m-0">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="bg-none text-red-500 text-sm font-medium cursor-pointer border-none pb-1" onclick="return confirm('Are you sure you want to delete this user?')">
+                                        <button type="submit" class="bg-none text-red-500 text-sm font-medium cursor-pointer border-none pb-1" onclick="return confirm('Are you sure you want to delete this user?')" title="Delete the account">
                                             Delete
                                         </button>
                                     </form>

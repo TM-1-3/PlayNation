@@ -1,4 +1,4 @@
-<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full" title="Access the group">
     <a href="{{ route('groups.show', $group->id_group) }}" class="block w-full text-center transition font-medium no-underline">
     <div class="h-40 overflow-hidden relative">
         <img src="{{ $group->getGroupPicture() }}" 
@@ -27,7 +27,7 @@
             <form action="{{ route('admin.group.delete', $group->id_group) }}" method="POST" onsubmit="return confirm('Delete this group?')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="bg-red-600 text-white text-sm py-1 px-3 rounded-lg hover:bg-red-700 transition">Delete Group</button>
+                <button type="submit" class="bg-red-600 text-white text-sm py-1 px-3 rounded-lg hover:bg-red-700 transition" title="Delete the group">Delete Group</button>
             </form>
         </div>
     @endif

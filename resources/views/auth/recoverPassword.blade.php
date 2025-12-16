@@ -12,7 +12,7 @@
 
         <div>
             <label for="email" class="block mb-2 font-medium text-gray-700">Email</label>
-            <input type="email" id="email" name="email" required autofocus value="{{ old('email') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            <input type="email" id="email" name="email" required autofocus value="{{ old('email') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" title="Enter your Email...">
         </div>
 
         @if ($errors->any())
@@ -21,7 +21,7 @@
             </div>
         @endif
 
-        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6">Send</button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6" title="Click here to send the password reset email">Send</button>
     </form>
 </div>
 
