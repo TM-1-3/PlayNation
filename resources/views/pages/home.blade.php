@@ -5,7 +5,7 @@
 @section('content')
 
 <div id="main-container" class="max-w-3xl mx-auto transition-transform duration-300 ease-in-out px-5">
-    <div class="fixed w-auto bg-gray-50 pt-5 px-5">
+    <div class="fixed w-auto bg-gray-50 pt-5 px-5 content-center">
         @auth
         <div>
             <div class="flex gap-4 justify-around items-center mb-5">
@@ -32,7 +32,11 @@
             </div>
         </div>
     </div>
-    <div id="timeline" class="w-full pb-12 pt-35">
+    @if(Auth::check())
+        <div id="timeline" class="w-full pb-12 pt-35">
+    @else
+        <div id="timeline" class="w-full pb-12 pt-20">
+    @endif
             @if(isset($posts) && $posts->isEmpty())
                 <div class="text-center py-10 text-gray-500">
                     <p>No posts found.</p>
@@ -52,5 +56,5 @@
 
     
 
-    </div>
-    @endsection
+</div>
+@endsection
