@@ -8,7 +8,7 @@
     
     {{-- header n search--}}
     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-        <h2 class="text-3xl font-bold text-gray-800">Communities</h2>
+        <h2 class="text-3xl font-bold text-gray-800">Groups</h2>
         
         {{-- searchbar --}}
         <div class="flex gap-5 items-center">
