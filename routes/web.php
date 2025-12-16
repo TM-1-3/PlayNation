@@ -55,7 +55,6 @@ Route::controller(AdminController::class)->group(function () {
     Route::post('/admin/create', 'createUser')->name('admin.create.action');
     Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
     Route::get('/admin/edit/{id}', 'showEditUserForm')->name('admin.edit');
-    Route::put('/admin/user/{id}', 'editUser')->name('admin.edit.action');
     Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
     Route::delete('/admin/post/{id}', 'deletePost')->name('admin.post.delete');
     Route::post('/admin/post/{id}/dismiss', 'dismissPostReports')->name('admin.post.dismiss');
