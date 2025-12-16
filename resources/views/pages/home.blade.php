@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="max-w-3xl mx-auto p-5">
+<div id="main-container" class="max-w-3xl mx-auto p-5 transition-transform duration-300 ease-in-out ">
     @auth
     <div>
         <div class="flex gap-4 justify-around items-center mb-5">
@@ -25,7 +25,9 @@
                     class="h-[2em] w-[50vw] block pl-10 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">        
         </form>
         <div>
-            <i class="fa-solid fa-sliders text-gray-500 mr-2"></i>
+            <button id="filter-toggle" class="flex items-center" aria-expanded="false" aria-controls="filter-panel">
+                <i class="fa-solid fa-sliders text-gray-500 mr-2 cursor-pointer mt-2"></i>
+            </button>
         </div>
     </div>
     <div id="timeline" class="w-full pb-12">
@@ -42,6 +44,11 @@
                 @endforeach
             @endif
         </div>
-</div>
-</div>
-@endsection
+    </div>
+
+    @include('partials.filter-post')
+
+    
+
+    </div>
+    @endsection

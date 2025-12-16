@@ -18,7 +18,7 @@
             
         </form>
         <div>
-            <i class="fa-solid fa-sliders text-gray-500 mr-2"></i>
+            <i class="fa-solid fa-sliders text-gray-500 mr-2 cursor-pointer mt-2"></i>
         </div>
     </div>
     <div id="users-list" class="space-y-4">
