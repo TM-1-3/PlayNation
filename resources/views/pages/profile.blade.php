@@ -28,6 +28,15 @@
             <p class="italic text-gray-600 mb-6">
                 "{{ $user->biography ?? 'This user has no bio yet.' }}"
             </p>
+            @if($user->labels->isNotEmpty())
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                    @foreach($user->labels as $label)
+                        <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded border border-blue-200">
+                            {{ $label->designation }}
+                        </span>
+                    @endforeach
+                </div>
+            @endif
 
             
             <div class="mt-5 flex justify-center items-center gap-4 flex-wrap">
