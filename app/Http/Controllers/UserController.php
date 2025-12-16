@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Label;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +36,7 @@ class UserController extends Controller
                 ->exists();
         }
 
-        $user = User::withCount(['posts', 'followers', 'following'])->findOrFail($id);
+        $user = User::withCount(['posts', 'followers', 'following'])->with('labels')->findOrFail($id);
 
         $posts = $user->posts()
                       ->orderBy('date', 'desc')
@@ -65,10 +66,13 @@ class UserController extends Controller
                 ->with('status', 'Não tens permissão para editar este perfil.');
         }
 
+        $allLabels = Label::all();
+
         return view('pages.edit_profile', [
             'user' => $user,
             'isAdmin' => $isAdmin,
-            'fromAdmin' => $request->query('from') === 'admin'
+            'fromAdmin' => $request->query('from') === 'admin',
+            'allLabels' => $allLabels
         ]);
     }
 
@@ -89,8 +93,10 @@ class UserController extends Controller
             'username' => ['required', 'string', 'max:255', Rule::unique('registered_user')->ignore($user->id_user, 'id_user')],
             'email' => ['required', 'email', 'max:255', Rule::unique('registered_user')->ignore($user->id_user, 'id_user')],
             'biography' => 'nullable|string|max:500',
-            'profile_picture' => 'nullable|image|max:4096', // Max 4MB
+            'profile_picture' => 'nullable|image|max:4096', 
             'password' => 'nullable|string|min:8|confirmed',
+            'labels' => 'array', 
+            'labels.*' => 'exists:label,id_label'
         ]);
 
         // update user data
@@ -116,6 +122,8 @@ class UserController extends Controller
         }
 
         $user->save();
+
+        $user->labels()->sync($request->input('labels', []));
 
         // Redirect based on where the edit came from
         $fromAdmin = $request->input('from_admin');
