@@ -123,8 +123,6 @@ class DirectMessageController extends Controller
     {
         $user = Auth::user();
         
-        // Assume que tens a relação 'friends' no model User
-        // Se não tiveres, diz-me que ajustamos a query
         $friends = $user->friends->map(function($friend) {
             return [
                 'id' => $friend->id_user,
