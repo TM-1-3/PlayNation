@@ -81,28 +81,10 @@
                 @endphp
                 <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Save">
                     <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-lg"></i>
-                    <span class="text-sm">Save</span>
+                    <span class="text-sm">{{ $isSaved ? 'Saved' : 'Save' }}</span>
                 </button>
             </form>
         </div>
-        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
-            <i class="fa-regular fa-comment text-lg"></i>
-            <span class="text-sm">Comment</span>
-        </button>
-        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Share the post with other users">
-            <i class="fa-regular fa-share-from-square text-lg"></i>
-            <span class="text-sm">Share</span>
-        </button>
-        <form action="{{ route('post.save', $post->id_post) }}" method="POST" class="ml-auto">
-            @csrf
-            @php
-                $isSaved = isset($savedPostIds) && in_array($post->id_post, $savedPostIds);
-            @endphp
-            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="{{ $isSaved ? 'Remove from saved posts' : 'Save the post' }}">
-                <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-lg"></i>
-                <span class="text-sm">{{ $isSaved ? 'Saved' : 'Save' }}</span>
-            </button>
-        </form>
     </div>
     
     <div class="py-3 px-4 text-sm leading-relaxed">
