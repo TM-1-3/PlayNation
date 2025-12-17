@@ -9,7 +9,7 @@
                 <input id="search-input-group" type="text" name="search" placeholder="Search by Group Name or Description..." 
                         class="h-[2em] block w-full pl-10 pr-4 py-2 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
             </div>
-            <button type="submit" class="h-[2em] bg-blue-500 text-white border-none py-1 px-3 rounded-lg text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600 font-medium">Search</button>
+            <button type="submit" class="h-[2em] bg-blue-500 text-white border-none py-1 px-3 rounded-lg text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600 font-medium" title="Submit your group search">Search</button>
         </form>
     </div>
 

@@ -21,12 +21,12 @@
 
         <div>
             <label for="login" class="block mb-2 font-medium text-gray-700">Email or Username</label>
-            <input type="text" id="login" name="usernameEmail" required autofocus value="{{ old('login') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            <input type="text" id="login" name="usernameEmail" required autofocus value="{{ old('login') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" placeholder="Enter your Email...">
         </div>
 
         <div>
             <label for="password" class="block mb-2 font-medium text-gray-700">Password</label>
-            <input type="password" id="password" name="password" required class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            <input type="password" id="password" name="password" required class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" placeholder="Enter your Password...">
         </div>
 
         @if ($errors->any())
@@ -35,15 +35,15 @@
             </div>
         @endif
 
-        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6">Log in</button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6" title="Click here to login">Log in</button>
     </form>
-    <a href="{{ route('register') }}" class="block text-center mt-4 text-blue-600 no-underline text-sm hover:underline">
+    <a href="{{ route('register') }}" class="block text-center mt-4 text-blue-600 no-underline text-sm hover:underline" title="Click here to register a new account">
         Don't have an account? Register
     </a>
-    <a href="{{ route('recoverPassword') }}" class="block text-center mt-2.5 text-black-500 no-underline text-sm hover:underline">
+    <a href="{{ route('recoverPassword') }}" class="block text-center mt-2.5 text-black-500 no-underline text-sm hover:underline" title="Click here to reset your password">
         Forgot The Password?
     </a>
-    <a href="{{ route('home') }}" class="block text-center mt-2.5 text-gray-500 no-underline text-sm hover:underline">
+    <a href="{{ route('home') }}" class="block text-center mt-2.5 text-gray-500 no-underline text-sm hover:underline" title="Click here if you want to access without logging in">
         Continue without logging in
     </a>
 </div>

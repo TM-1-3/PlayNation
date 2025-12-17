@@ -21,37 +21,37 @@
 
         <div>
             <label for="name" class="block mb-2 font-medium text-gray-700">Name</label>
-            <input type="text" id="name" name="name" required value="{{ old('name') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            <input type="text" id="name" name="name" required value="{{ old('name') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" placeholder="Enter your Name...">
             @error('name') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
         </div>
 
         <div>
             <label for="username" class="block mb-2 font-medium text-gray-700">Username</label>
-            <input type="text" id="username" name="username" required value="{{ old('username') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            <input type="text" id="username" name="username" required value="{{ old('username') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" placeholder="Enter your Username...">
             @error('username') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
         </div>
 
         <div>
             <label for="email" class="block mb-2 font-medium text-gray-700">Email</label>
-            <input type="email" id="email" name="email" required value="{{ old('email') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            <input type="email" id="email" name="email" required value="{{ old('email') }}" class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" placeholder="Enter your Email...">
             @error('email') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
         </div>
 
         <div>
             <label for="password" class="block mb-2 font-medium text-gray-700">Password</label>
-            <input type="password" id="password" name="password" required class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            <input type="password" id="password" name="password" required class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" placeholder="Enter your Password...">
             @error('password') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
         </div>
 
         <div>
             <label for="password_confirmation" class="block mb-2 font-medium text-gray-700">Confirm Password</label>
-            <input type="password" id="password_confirmation" name="password_confirmation" required class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
+            <input type="password" id="password_confirmation" name="password_confirmation" required class="w-full p-3 mb-0 border border-gray-300 rounded focus:border-blue-600 focus:outline-none" placeholder="Confirm your Password...">
         </div>
 
-        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6">Register</button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 px-4 rounded font-semibold cursor-pointer transition-colors hover:bg-blue-700 mt-6" title="Click here to register the new account">Register</button>
     </form>
 
-    <a href="{{ route('login') }}" class="block text-center mt-4 text-blue-600 no-underline text-sm hover:underline">Already have an account? Login</a>
+    <a href="{{ route('login') }}" class="block text-center mt-4 text-blue-600 no-underline text-sm hover:underline" title="Click here to login to an existing account">Already have an account? Login</a>
 </div>
 
 @endsection

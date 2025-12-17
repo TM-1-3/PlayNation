@@ -13,7 +13,7 @@
 
     {{-- Friends List --}}
     @if($friends->isEmpty())
-        <div class="text-center text-gray-500 mt-10 p-8 bg-gray-50 rounded-lg border border-gray-100">
+        <div class="text-center text-gray-500 mt-10 p-8 bg-gray-50 rounded-lg">
             <p>This user has no friends yet.</p>
         </div>
     @else
@@ -21,7 +21,7 @@
         <div class="flex flex-col gap-2 max-w-3xl mx-auto">
             @foreach($friends as $friend)
                 
-                @include('partials.friend', ['friend' => $friend, 'user' => $user])
+                @include('partials.user-card', ['friend' => $friend, 'user' => $user])
 
             @endforeach
         </div>

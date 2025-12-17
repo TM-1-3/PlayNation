@@ -35,10 +35,9 @@
                     
                     <div>
                         <p class="text-sm text-gray-800">
-                            <a href="{{ route('profile.show', $notification->emitter->id_user) }}" class="font-bold hover:underline text-gray-900">
-                                {{ $notification->emitter->name }}
+                            <a href="{{ route('profile.show', $notification->emitter->id_user) }}" class="font-bold hover:underline text-gray-900" title="Click here to go to the user's profile page">
+                                {{ $notification->emitter->username }}
                             </a>
-                            
                             {{-- text logic --}}
                             
                             {{-- group notification --}}
@@ -58,7 +57,7 @@
                             {{-- friend fequest --}}
                             @elseif($notification->friendRequestNotification)
                                 @if($notification->emitter->verifiedUser)
-                                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified"></i>
+                                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
                                 @endif
                                 <span class="text-gray-600"> wants to be your friend.</span>
                             @endif
@@ -79,7 +78,7 @@
                                 @csrf
                                 {{-- pass notification id to delete it --}}
                                 <input type="hidden" name="notification_id" value="{{ $notification->id_notification }}">
-                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors">
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors" title="Accept invitation to join the group">
                                     Join Group
                                 </button>
                             </form>
@@ -88,7 +87,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <input type="hidden" name="notification_id" value="{{ $notification->id_notification }}">
-                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors">
+                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Decline the invitation to join the group">
                                     Decline
                                 </button>
                             </form>
@@ -97,14 +96,14 @@
                             {{-- accept request --}}
                             <form action="{{ route('groups.accept_request', ['group' => $groupReq->group->id_group, 'user' => $notification->emitter->id_user]) }}" method="POST">
                                 @csrf
-                                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors">
+                                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors" title="Approve the user entering the group">
                                     Approve
                                 </button>
                             </form>
                             <form action="{{ route('groups.reject_request', ['group' => $groupReq->group->id_group, 'user' => $notification->emitter->id_user]) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors">
+                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Reject the user entering the group">
                                     Reject
                                 </button>
                             </form>
@@ -114,13 +113,13 @@
                         {{-- friend buttons --}}
                         <form action="{{ route('notifications.accept', $notification->id_notification) }}" method="POST">
                             @csrf
-                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors">
+                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors" title="Accept friend request">
                                 Accept
                             </button>
                         </form>
                         <form action="{{ route('notifications.deny', $notification->id_notification) }}" method="POST">
                             @csrf
-                            <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors">
+                            <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Deny friend request">
                                 Deny
                             </button>
                         </form>
