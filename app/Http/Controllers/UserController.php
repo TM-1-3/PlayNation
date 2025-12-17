@@ -45,12 +45,18 @@ class UserController extends Controller
         $currentUser = Auth::user();
         $savedPostIds = $currentUser ? $currentUser->savedPosts()->pluck('post.id_post')->toArray() : [];
 
+        $likedPostIds = $currentUser ? DB::table('post_like')
+            ->where('id_user', $currentUser->id_user)
+            ->pluck('id_post')
+            ->toArray() : [];
+
         return view('pages.profile', [
             'user' => $user,
             'posts' => $posts,
             'isFriend' => $isFriend,
             'requestSent' => $requestSent,
-            'savedPostIds' => $savedPostIds
+            'savedPostIds' => $savedPostIds,
+            'likedPostIds' => $likedPostIds
         ]);
     }
     

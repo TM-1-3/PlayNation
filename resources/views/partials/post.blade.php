@@ -53,12 +53,38 @@
     @endif
     
     <div class="flex items-center gap-4 px-4 pt-2">
-        <button onclick="toggleLikes({{ $post->id_post }})" class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600" title="View likes">
-            <i class="fa-regular fa-heart text-lg"></i>
-            <span class="text-sm">
-                {{ $post->likes_count ?? $post->likes->count() }}
-            </span>
-        </button>
+        <div class="flex items-center gap-4 px-4 pt-2">
+            @php
+                $isLiked = isset($likedPostIds) && in_array($post->id_post, $likedPostIds);
+            @endphp
+            <button onclick="toggleLike({{ $post->id_post }})" 
+                    id="like-btn-{{ $post->id_post }}"
+                    class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-red-600" 
+                    title="Like">
+                <i class="{{ $isLiked ? 'fa-solid text-red-600' : 'fa-regular' }} fa-heart text-lg" id="like-icon-{{ $post->id_post }}"></i>
+                <span class="text-sm" id="like-count-{{ $post->id_post }}" onclick="event.stopPropagation(); toggleLikes({{ $post->id_post }})" style="cursor:pointer;">
+                    {{ $post->likes_count ?? $post->likes->count() }}
+                </span>
+            </button>
+            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
+                <i class="fa-regular fa-comment text-lg"></i>
+                <span class="text-sm">Comment</span>
+            </button>
+            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Share">
+                <i class="fa-regular fa-share-from-square text-lg"></i>
+                <span class="text-sm">Share</span>
+            </button>
+            <form action="{{ route('post.save', $post->id_post) }}" method="POST" class="ml-auto">
+                @csrf
+                @php
+                    $isSaved = isset($savedPostIds) && in_array($post->id_post, $savedPostIds);
+                @endphp
+                <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Save">
+                    <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-lg"></i>
+                    <span class="text-sm">Save</span>
+                </button>
+            </form>
+        </div>
         <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
             <i class="fa-regular fa-comment text-lg"></i>
             <span class="text-sm">Comment</span>
@@ -129,5 +155,33 @@ function toggleLikes(postId) {
     } else {
         modal.classList.add('hidden');
     }
+}
+
+function toggleLike(postId) {
+    fetch(`/post/${postId}/like`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const icon = document.getElementById(`like-icon-${postId}`);
+        const count = document.getElementById(`like-count-${postId}`);
+        
+        if (data.liked) {
+            icon.classList.remove('fa-regular');
+            icon.classList.add('fa-solid', 'text-red-600');
+        } else {
+            icon.classList.remove('fa-solid', 'text-red-600');
+            icon.classList.add('fa-regular');
+        }
+        
+        count.textContent = data.like_count;
+    })
+    .catch(error => {
+        console.error('Error toggling like:', error);
+    });
 }
 </script>
