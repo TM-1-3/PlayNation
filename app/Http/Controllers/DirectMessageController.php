@@ -27,7 +27,7 @@ class DirectMessageController extends Controller
             ->orderBy('message.date', 'desc')
             ->get();
 
-        // Agrupar por "Outro Utilizador" para ficarmos apenas com 1 entrada por conversa
+        // group other user so we only get 1 user by convo
         $conversations = $allMessages->map(function($pm) use ($myId) {
             $isMeSender = $pm->id_sender == $myId;
             $otherUser = $isMeSender ? $pm->receiver : $pm->sender;
@@ -36,41 +36,38 @@ class DirectMessageController extends Controller
                 'user_id' => $otherUser->id_user,
                 'name' => $otherUser->name,
                 'username' => $otherUser->username,
-                'avatar' => asset($otherUser->getProfileImage()), // ✅ Asset fix
+                'avatar' => asset($otherUser->getProfileImage()),
                 'last_message' => $pm->message->text,
                 'date' => $pm->message->date,
-                'timestamp' => strtotime($pm->message->date) // para ordenar
+                'timestamp' => strtotime($pm->message->date) // to sorganize
             ];
-        })->unique('user_id')->values(); // Unique remove duplicados, values reseta as chaves do array
+        })->unique('user_id')->values(); // filter duplicates
 
         return view('pages.messages.index', [
             'conversations' => $conversations
         ]);
     }
 
-    /**
-     * API: /messages/{id}
-     * Carrega as mensagens de uma conversa específica (Polling)
-     */
+    // load messages from a specific convo
     public function show($id)
     {
         $myId = Auth::id();
         $friendId = $id;
 
-        // Buscar mensagens entre Mim e o Amigo (nos dois sentidos)
+        // get msgs form me n friend (both ways)
         $messages = PrivateMessage::with(['message', 'sender'])
             ->join('message', 'message.id_message', '=', 'private_message.id_message')
             ->where(function($q) use ($myId, $friendId) {
-                // Eu enviei, ele recebeu
+                // i send / they recieve
                 $q->where('id_sender', $myId)
                   ->where('id_receiver', $friendId);
             })
             ->orWhere(function($q) use ($myId, $friendId) {
-                // Ele enviou, eu recebi
+                // they send / I recieve
                 $q->where('id_sender', $friendId)
                   ->where('id_receiver', $myId);
             })
-            ->orderBy('message.date', 'asc') // Cronológico
+            ->orderBy('message.date', 'asc') // cronological
             ->get()
             ->map(function($pm) {
                 return [
@@ -86,10 +83,6 @@ class DirectMessageController extends Controller
         return response()->json($messages);
     }
 
-    /**
-     * API: POST /messages/{id}
-     * Enviar mensagem nova
-     */
     public function store(Request $request, $id)
     {
         $request->validate(['text' => 'required|string|max:1000']);
@@ -97,16 +90,16 @@ class DirectMessageController extends Controller
         $myId = Auth::id();
         $friendId = $id;
 
-        // Transaction para garantir consistência nas duas tabelas
+        // transaction to gurrenty concistency between tables
         $messageData = DB::transaction(function () use ($request, $myId, $friendId) {
             
-            // 1. Criar na tabela pai (MESSAGE)
+            // create on parent table
             $msg = Message::create([
                 'text' => $request->text,
                 'date' => now()
             ]);
 
-            // 2. Criar na tabela filha (PRIVATE_MESSAGE)
+            // create on child table(private messages)
             PrivateMessage::create([
                 'id_message' => $msg->id_message,
                 'id_sender'  => $myId,
@@ -124,5 +117,23 @@ class DirectMessageController extends Controller
                 'date' => $messageData->date
             ]
         ]);
+    }
+
+    public function getFriendsToChat(Request $request)
+    {
+        $user = Auth::user();
+        
+        // Assume que tens a relação 'friends' no model User
+        // Se não tiveres, diz-me que ajustamos a query
+        $friends = $user->friends->map(function($friend) {
+            return [
+                'id' => $friend->id_user,
+                'name' => $friend->name,
+                'username' => $friend->username,
+                'image' => asset($friend->getProfileImage())
+            ];
+        });
+
+        return response()->json($friends);
     }
 }

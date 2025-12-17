@@ -3,14 +3,16 @@
 @section('title', 'My Messages')
 
 @section('content')
-<div class="max-w-7xl mx-auto h-[calc(100vh-80px)] p-4"> <div class="bg-white border border-gray-200 rounded-2xl shadow-sm h-full flex overflow-hidden">
+<div class="max-w-7xl mx-auto h-[calc(100vh-80px)] p-4"> 
+    
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm h-full flex overflow-hidden">
         
         <div class="w-full md:w-1/3 border-r border-gray-200 flex flex-col h-full bg-gray-50/50">
             
             <div class="p-4 border-b border-gray-200 bg-white flex justify-between items-center shrink-0">
                 <h2 class="text-xl font-bold text-gray-800">Messages</h2>
                 {{-- new chat btn --}}
-                <button class="text-gray-400 hover:text-blue-600 transition" title="New Message">
+                <button onclick="openNewChatModal()" class="text-gray-400 hover:text-blue-600 transition p-2 rounded-full hover:bg-gray-100" title="Start new conversation">
                     <i class="fa-solid fa-pen-to-square text-lg"></i>
                 </button>
             </div>
@@ -20,6 +22,8 @@
                     @foreach($conversations as $convo)
                         <div onclick="loadConversation({{ $convo['user_id'] }}, this)" 
                              id="convo-{{ $convo['user_id'] }}"
+                             data-name="{{ $convo['name'] }}"
+                             data-img="{{ $convo['avatar'] }}"
                              class="conversation-item flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-gray-100 transition group">
                             
                             <img src="{{ $convo['avatar'] }}" alt="{{ $convo['name'] }}" class="w-12 h-12 rounded-full object-cover border border-gray-200 shrink-0">
@@ -36,11 +40,12 @@
                         </div>
                     @endforeach
                 @else
-                    <div class="text-center py-10 px-4">
+                    <div id="no-convos-msg" class="text-center py-10 px-4">
                         <div class="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
                             <i class="fa-regular fa-paper-plane text-2xl text-gray-400"></i>
                         </div>
                         <p class="text-gray-500 text-sm">No conversations yet.</p>
+                        <button onclick="openNewChatModal()" class="text-blue-600 font-bold text-sm mt-2 hover:underline">Start one now</button>
                     </div>
                 @endif
             </div>
@@ -53,7 +58,7 @@
                     <i class="fa-solid fa-comments text-4xl text-blue-300"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Your Messages</h3>
-                <p class="text-gray-500 max-w-xs">Select a conversation from the left or start a new one to verify connect with your friends.</p>
+                <p class="text-gray-500 max-w-xs">Select a conversation from the left or start a new one.</p>
             </div>
 
             <div id="active-chat-container" class="hidden flex flex-col h-full w-full">
@@ -63,7 +68,7 @@
                     <div>
                         <h3 id="chat-header-name" class="font-bold text-gray-900 leading-tight"></h3>
                         <span class="text-xs text-green-500 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Online (Fake)
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Online
                         </span>
                     </div>
                 </div>
@@ -92,17 +97,33 @@
     </div>
 </div>
 
+{{-- new chat modal --}}
+<div id="new-chat-modal" class="fixed inset-0 bg-black/50 hidden z-[9999] flex items-center justify-center backdrop-blur-sm">
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden mx-4 animate-scale-in">
+        <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+            <h3 class="font-bold text-gray-700 flex items-center gap-2">
+                <i class="fa-solid fa-pen text-blue-500"></i> New Message
+            </h3>
+            <button onclick="closeNewChatModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full hover:bg-gray-200 transition flex items-center justify-center">
+                <i class="fa-solid fa-times text-lg"></i>
+            </button>
+        </div>
+        <div id="friends-list" class="p-4 max-h-[400px] overflow-y-auto flex flex-col gap-2 custom-scrollbar">
+            {{-- JS preenche isto --}}
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        
         // global vars
         const currentUserId = "{{ Auth::id() }}";
         let activeFriendId = null;
         let pollingInterval = null;
-        let isFirstLoad = true; // controll scroll
+        let isFirstLoad = true;
 
         const feed = document.getElementById('messages-feed');
         const form = document.getElementById('dm-form');
@@ -112,40 +133,37 @@
         const emptyState = document.getElementById('empty-state');
         const chatContainer = document.getElementById('active-chat-container');
 
-        // open chat
+        // load convo
         window.loadConversation = function(friendId, element) {
-            // select current chat
+            // ui update sidebar
             document.querySelectorAll('.conversation-item').forEach(el => {
                 el.classList.remove('bg-blue-50', 'border-l-4', 'border-blue-600', 'rounded-r-xl');
-                el.classList.add('rounded-xl'); // undo selection
+                el.classList.add('rounded-xl');
             });
             
             if(element) {
                 element.classList.remove('rounded-xl');
                 element.classList.add('bg-blue-50', 'border-l-4', 'border-blue-600', 'rounded-r-xl');
+                
+                // load header
+                headerName.innerText = element.dataset.name;
+                headerImg.src = element.dataset.img;
             }
 
-            // show chat area
+            // show chat
             emptyState.classList.add('hidden');
             chatContainer.classList.remove('hidden');
             
-            // clean feed when switching chat
             if (activeFriendId !== friendId) {
                 feed.innerHTML = '<div class="flex justify-center py-10" id="loading-spinner"><i class="fa-solid fa-spinner fa-spin text-gray-400 text-2xl"></i></div>';
                 isFirstLoad = true;
             }
 
             activeFriendId = friendId;
-
-            // reset old pooling
             if (pollingInterval) clearInterval(pollingInterval);
 
-            // initial fetch and start pooling
             fetchMessages();
             pollingInterval = setInterval(fetchMessages, 3000);
-
-            // focus on input
-            setTimeout(() => input.focus(), 100);
         }
 
         function fetchMessages() {
@@ -154,38 +172,26 @@
             fetch(`/messages/${activeFriendId}`)
                 .then(res => res.json())
                 .then(messages => {
-                    const spinner = document.getElementById('loading-spinner');//visual loading
+                    const spinner = document.getElementById('loading-spinner');
                     if(spinner) spinner.remove();
-
                     renderChat(messages);
                 })
-                .catch(err => console.error('Error fetching chat:', err));
+                .catch(err => console.error(err));
         }
 
-        // static render
         function renderChat(messages) {
-            if (messages.length === 0) return;
-
-            // update header based on last receved msg
-            const otherMsg = messages.find(m => m.id_sender != currentUserId);
-            if (otherMsg) {
-                headerName.innerText = otherMsg.sender_name;
-                headerImg.src = otherMsg.sender_image;
-            }
-
+            // if no msgs does nothing header was already updated
+            
             let newMessagesAdded = false;
 
             messages.forEach(msg => {
-                // only adds new msg if there is a new one
                 const existingMsg = document.getElementById(`msg-${msg.id_message}`);
-                
                 if (!existingMsg) {
                     appendMessage(msg, feed);
                     newMessagesAdded = true;
                 }
             });
 
-            // screoll to bottom if there is new msgs or first time
             if (newMessagesAdded || isFirstLoad) {
                 scrollToBottom();
                 isFirstLoad = false;
@@ -197,8 +203,6 @@
             const alignClass = isMe ? 'justify-end' : 'justify-start';
             const bgClass = isMe ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
             const time = new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            // unique ide for no dulpicates
             const msgId = `msg-${msg.id_message}`; 
 
             const html = `
@@ -218,38 +222,38 @@
             feed.scrollTo({ top: feed.scrollHeight, behavior: 'smooth' });
         }
 
-        // send msg
+        // send
         if (form) {
             form.addEventListener('submit', function(e) {
-                e.preventDefault(); // prevents page refresh
-                
+                e.preventDefault();
                 const text = input.value.trim();
-
                 if (!text || !activeFriendId) return;
 
-                // clear input
                 input.value = '';
                 input.focus();
 
-                // shows message instantly for fast visuals
-                // use temp id
                 const tempId = 'temp-' + Date.now();
                 appendMessage({
-                    id_message: tempId, // temp id
+                    id_message: tempId,
                     id_sender: currentUserId,
                     text: text,
                     date: new Date().toISOString()
                 }, feed);
                 scrollToBottom();
 
-                // update sidebar with this last msg
+                // update sidebar
                 const sidebarItem = document.getElementById(`convo-${activeFriendId}`);
                 if(sidebarItem) {
                     const lastMsgEl = sidebarItem.querySelector('.last-msg-text');
+                    const timeEl = sidebarItem.querySelector('span.text-xs'); // time element
                     if(lastMsgEl) lastMsgEl.innerText = text;
+                    if(timeEl) timeEl.innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    // move to top
+                    const list = document.getElementById('conversations-list');
+                    list.prepend(sidebarItem);
                 }
 
-                // AJAX POST
                 fetch(`/messages/${activeFriendId}`, {
                     method: 'POST',
                     headers: {
@@ -261,21 +265,94 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // update temp id for real one
                         const tempEl = document.getElementById(`msg-${tempId}`);
                         if(tempEl) tempEl.id = `msg-${data.message.id_message}`;
-                    } else {
-                        console.error('Send failed');
                     }
                 })
-                .catch(err => console.error('Error sending:', err));
+                .catch(err => console.error(err));
             });
         }
     });
+
+    // new chat modal logic
+    function openNewChatModal() {
+        const modal = document.getElementById('new-chat-modal');
+        const list = document.getElementById('friends-list');
+        modal.classList.remove('hidden');
+        
+        list.innerHTML = '<div class="text-center py-4 text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading friends...</div>';
+
+        fetch('/messages/friends')
+            .then(res => res.json())
+            .then(friends => {
+                list.innerHTML = '';
+                if(friends.length === 0) {
+                    list.innerHTML = '<p class="text-center text-gray-500">No friends found.</p>';
+                    return;
+                }
+                
+                friends.forEach(friend => {
+                    const html = `
+                        <div onclick="startNewChat(${friend.id}, '${friend.name}', '${friend.image}')" 
+                             class="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg cursor-pointer transition">
+                            <img src="${friend.image}" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                            <div>
+                                <p class="font-bold text-sm text-gray-800">${friend.name}</p>
+                                <p class="text-xs text-gray-500">@${friend.username}</p>
+                            </div>
+                        </div>
+                    `;
+                    list.insertAdjacentHTML('beforeend', html);
+                });
+            })
+            .catch(err => console.error(err));
+    }
+
+    function closeNewChatModal() {
+        document.getElementById('new-chat-modal').classList.add('hidden');
+    }
+
+    function startNewChat(id, name, image) {
+        closeNewChatModal();
+
+        // veryfies if friend is in the sidebar
+        let existingItem = document.getElementById(`convo-${id}`);
+        
+        // if not create it temporarely on the top
+        if (!existingItem) {
+            const list = document.getElementById('conversations-list');
+            const noMsg = document.getElementById('no-convos-msg');
+            if(noMsg) noMsg.remove(); // remove msg no conversaton
+
+            const html = `
+                <div onclick="loadConversation(${id}, this)" 
+                     id="convo-${id}"
+                     data-name="${name}"
+                     data-img="${image}"
+                     class="conversation-item flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-gray-100 transition group fade-in">
+                    <img src="${image}" alt="${name}" class="w-12 h-12 rounded-full object-cover border border-gray-200 shrink-0">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex justify-between items-baseline mb-0.5">
+                            <h3 class="font-bold text-gray-900 truncate">${name}</h3>
+                            <span class="text-xs text-gray-400 shrink-0">Now</span>
+                        </div>
+                        <p class="text-sm text-gray-500 truncate last-msg-text group-hover:text-gray-700">
+                            New conversation
+                        </p>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('afterbegin', html);
+            existingItem = document.getElementById(`convo-${id}`);
+        }
+
+        // clicks it to open
+        existingItem.click();
+    }
 </script>
 
 <style>
-    /* custom scroll */
+    /* scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
@@ -283,5 +360,9 @@
     
     .fade-in { animation: fadeIn 0.2s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* modal animation */
+    .animate-scale-in { animation: scaleIn 0.2s ease-out forwards; }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 </style>
 @endpush
