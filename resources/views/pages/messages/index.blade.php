@@ -202,14 +202,49 @@
             const isMe = msg.id_sender == currentUserId;
             const alignClass = isMe ? 'justify-end' : 'justify-start';
             const bgClass = isMe ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
+            
+            // date n id
             const time = new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             const msgId = `msg-${msg.id_message}`; 
 
+            // cleaning , hiding post tag [post:N123]
+            // if msg is "txt [post123]" just show "txt "
+            let displayText = msg.text.replace(/\[post:\d+\]/, '').trim();
+
+            // detection see if laravel sent post data
+            const post = msg.shared_post_data || (msg.message ? msg.message.shared_post_data : null);
+
+            let contentHtml = '';
+
+            // draws post card
+            if (post) {
+                // if shared post has no msg we write by default: "Shared a post"
+                if (!displayText) displayText = "Shared a post";
+
+                contentHtml += `
+                    <div class="mb-2 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:opacity-90 transition" 
+                         onclick="window.location.href='/post/${post.id_post}'">
+                        ${post.image ? `<img src="/storage/${post.image}" class="w-full h-32 object-cover">` : ''} <div class="p-2">
+                            <div class="flex items-center gap-1 mb-1">
+                                <span class="text-xs font-bold text-gray-600 truncate">${post.user ? post.user.name : 'User'}</span>
+                            </div>
+                            <p class="text-sm font-semibold text-gray-800 line-clamp-2 text-left">${post.text_content || 'View Post'}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // adds msgs text
+            if (displayText) {
+                contentHtml += `<p>${displayText}</p>`;
+            }
+
+            // msgs final baloon
             const html = `
                 <div id="${msgId}" class="flex ${alignClass} fade-in mb-4">
                     <div class="max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative text-sm leading-relaxed break-words">
-                            <p>${msg.text}</p>
+                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative text-sm leading-relaxed break-words overflow-hidden">
+                            ${contentHtml}
                         </div>
                         <span class="text-[10px] text-gray-400 mt-1 px-1">${time}</span>
                     </div>
