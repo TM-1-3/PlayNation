@@ -11,6 +11,14 @@
         <div class="w-full md:w-1/3 md:min-w-[280px] ml-5">
             
             <div class="bg-white rounded-lg shadow-md p-6 sticky top-5">
+
+                <div class="mb-4">
+                    <a href="{{ route('groups.index') }}" 
+                       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 font-semibold transition-colors group">
+                        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                        Back to Groups
+                    </a>
+                </div>
                 
                 <div class="relative w-full h-48 mb-6 rounded-lg overflow-hidden shadow-sm">
                     <img src="{{ $group->getGroupPicture() }}" 
