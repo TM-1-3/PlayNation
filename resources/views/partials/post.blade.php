@@ -12,7 +12,7 @@
 </div>
 
 {{-- report modal include --}}
-@include('partials.report_modal', [
+@include('partials.report-modal', [
     'modalId' => "report-modal-post-{$post->id_post}",
     'action' => route('post.report', $post->id_post),
     'title' => 'Report Post',

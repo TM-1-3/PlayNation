@@ -230,7 +230,7 @@
 
 @endsection
 
-@include('partials.report_modal', [
+@include('partials.report-modal', [
     'modalId' => "report-modal-group-{$group->id_group}",
     'action' => route('report.submit'),
     'title' => 'Report Group',

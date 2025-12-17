@@ -5,7 +5,7 @@
 @section('content')
 
 <div id="main-container" class="max-w-3xl mx-auto transition-transform duration-300 ease-in-out px-5">
-    <div class="fixed bg-gray-50 pt-5 px-5 max-w-3xl content-center">
+    <div class="fixed bg-gray-50 pt-5 px-5 w-full max-w-3xl content-center">
         @auth
         <div>
             <div class="flex gap-4 justify-around items-center mb-5">
