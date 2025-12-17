@@ -138,6 +138,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/notifications/{id}/accept', [NotificationController::class, 'acceptFriendRequest'])->name('notifications.accept');
     Route::post('/notifications/{id}/deny', [NotificationController::class, 'denyFriendRequest'])->name('notifications.deny');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markNotificationAsRead'])->name('notifications.read');
 });
 
 Route::get('/profile/{id}/friends', [FriendController::class, 'showFriendsPage'])->name('user.friends');

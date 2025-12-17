@@ -23,7 +23,7 @@
         <a href="{{ route('profile.show', $friend->id_user) }}" class="hidden sm:block text-gray-600 hover:text-blue-600 text-sm font-semibold px-3 py-1 rounded bg-gray-100 hover:bg-blue-50 transition-colors" title="Click to view your friend's profile">
             View
         </a>
-        @if(Auth::id() === $user->id_user)
+        @if(Auth::id() === $user->id_user && Route::is('user.friends'))
             <form action="{{ route('friend.remove', $friend->id_user) }}" method="POST" onsubmit="return confirm('Remove this friend?');">
                 @csrf
                 @method('DELETE')
@@ -34,3 +34,5 @@
         @endif
     </div>
 </div>
+
+
