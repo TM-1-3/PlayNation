@@ -133,13 +133,22 @@ class TimelineController extends Controller {
             });
         }
 
-        // Apply sort option (overrides timeline-based sorting if specified)
+        // Filter: minimum number of likes
+        $minLikes = $request->query('min_likes');
         $sort = $request->query('sort');
+        
+        if ($minLikes !== null && $minLikes > 0) {
+            $query->whereRaw(
+                '(SELECT COUNT(*) FROM post_like WHERE post_like.id_post = post.id_post) >= ?',
+                [$minLikes]
+            );
+        }
+
+        // Apply sort option (overrides timeline-based sorting if specified)
         if ($sort === 'oldest') {
             $query->reorder()->orderBy('date', 'asc');
         } elseif ($sort === 'most_liked') {
-            // TODO: Implement most_liked sorting with post_like count
-            $query->reorder()->orderByDesc('date');
+            $query->withCount('likes')->reorder()->orderByDesc('likes_count')->orderByDesc('date');
         } elseif ($sort === 'newest') {
             $query->reorder()->orderByDesc('date');
         }
