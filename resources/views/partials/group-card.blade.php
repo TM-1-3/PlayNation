@@ -1,9 +1,9 @@
-<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full" title="Access the group">
+<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full w-[350px]" title="Access the group">
     <a href="{{ route('groups.show', $group->id_group) }}" class="block w-full text-center transition font-medium no-underline">
     <div class="h-40 overflow-hidden relative">
         <img src="{{ $group->getGroupPicture() }}" 
              alt="{{ $group->name }}" 
-             class="w-[400px] h-[200px] object-cover">
+             class="w-full h-full object-cover">
         
         <div class="absolute top-2 right-2">
             @if($group->is_public)

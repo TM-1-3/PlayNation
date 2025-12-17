@@ -4,10 +4,11 @@
 
 @section('content')
 
-<div class="max-w-6xl mx-auto p-5 pb-20">
+<div class="max-w-6xl mx-auto">
     
     {{-- header n search--}}
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <div class="fixed bg-gray-50 p-5 pb-2 pr-10 z-50 w-6xl">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
         <h2 class="text-3xl font-bold text-gray-800">Groups</h2>
         
         {{-- searchbar --}}
@@ -31,7 +32,9 @@
             </a>
         @endauth
     </div>
+    </div>
 
+    <div id="main-container" class="pt-20 p-5">
     @auth
         {{-- my groups--}}
         @if($myGroups->isNotEmpty())
@@ -40,7 +43,7 @@
                     <i class="fa-solid fa-user-group text-blue-500"></i> My Groups
                 </h3>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="my-groups-grid">
+                <div class="flex flex-wrap gap-5 justify-start" id="my-groups-grid">
                     @foreach($myGroups as $group)
                         @include('partials.group-card', ['group' => $group])
                     @endforeach
@@ -60,7 +63,7 @@
                 <p>No more groups to discover right now.</p>
             </div>
         @else
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="other-groups-grid">
+            <div class="flex flex-wrap gap-5 justify-start" id="other-groups-grid">
                 @foreach($otherGroups as $group)
                     @include('partials.group-card', ['group' => $group])
                 @endforeach
@@ -72,6 +75,7 @@
             <i class="fa-solid fa-filter-circle-xmark text-4xl mb-2"></i>
             <p>No groups found matching your filter.</p>
         </div>
+    </div>
     </div>
 
     @include('partials.filter-groups')
