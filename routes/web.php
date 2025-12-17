@@ -87,9 +87,9 @@ Route::middleware(['auth'])->group(function () {
     
     Route::put('/profile/{id}', [UserController::class, 'update'])->name('profile.update');
 
-    Route::get('/messages', function () {
-        return view('pages.placeholder', ['title' => 'My Conversations']);
-    })->name('messages.index');
+    Route::get('/messages', [DirectMessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{user}', [DirectMessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages/{user}', [DirectMessageController::class, 'store'])->name('messages.store');
 
     Route::get('/notifications', function () {
         return view('pages.placeholder', ['title' => 'Notifications']);
