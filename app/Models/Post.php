@@ -60,4 +60,9 @@ class Post extends Model
         // else return default image
         return asset('public/img/default-post.png');
     }
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(PostLike::class, 'id_post', 'id_post');
+    }
 }

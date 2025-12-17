@@ -9,6 +9,8 @@ use App\Models\Label;
 use App\Models\Report;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 
 class PostController extends Controller
@@ -185,10 +187,23 @@ class PostController extends Controller
     public function showSaved()
     {
         $user = Auth::user();
-        $posts = $user->savedPosts()->with(['user.verifiedUser', 'labels'])->orderByDesc('date')->get();
+        $posts = $user->savedPosts()
+        ->withCount('likes')
+        ->with(['user.verifiedUser', 'labels'])
+        ->orderByDesc('date')
+        ->get();
         $savedPostIds = $posts->pluck('id_post')->toArray();
+
+        $likedPostIds = DB::table('post_like')
+            ->where('id_user', $user->id_user)
+            ->pluck('id_post')
+            ->toArray();
         
-        return view('pages.saved', ['posts' => $posts, 'savedPostIds' => $savedPostIds]);
+        return view('pages.saved', [
+            'posts' => $posts,
+            'savedPostIds' => $savedPostIds,
+            'likedPostIds' => $likedPostIds
+        ]);
     }
 
     public function report(Request $request, $id)
@@ -210,5 +225,61 @@ class PostController extends Controller
         $report->posts()->attach($id);
 
         return redirect()->back()->with('status', 'Post reported successfully. Admins will review it.');
+    }
+
+    public function getLikes($id)
+    {
+        $post = Post::findOrFail($id);
+        
+        $likers = User::join('post_like', 'registered_user.id_user', '=', 'post_like.id_user')
+            ->where('post_like.id_post', $id)
+            ->select('registered_user.id_user', 'registered_user.username', 'registered_user.name', 'registered_user.profile_picture')
+            ->get()
+            ->map(function($user) {
+                return [
+                    'id_user' => $user->id_user,
+                    'username' => $user->username,
+                    'name' => $user->name,
+                    'profile_picture' => $user->getProfileImage()
+                ];
+            });
+        return response()->json(['likers' => $likers]);
+        
+    }
+
+    public function toggleLike($id)
+    {
+        $post = Post::findOrFail($id);
+        $user = Auth::user();
+
+        // Check if user already liked the post
+        $existingLike = DB::table('post_like')
+            ->where('id_post', $id)
+            ->where('id_user', $user->id_user)
+            ->exists();
+
+        if ($existingLike) {
+            // Unlike
+            DB::table('post_like')
+                ->where('id_post', $id)
+                ->where('id_user', $user->id_user)
+                ->delete();
+            $liked = false;
+        } else {
+            // Like
+            DB::table('post_like')->insert([
+                'id_post' => $id,
+                'id_user' => $user->id_user
+            ]);
+            $liked = true;
+        }
+
+        // Get updated like count
+        $likeCount = DB::table('post_like')->where('id_post', $id)->count();
+
+        return response()->json([
+            'liked' => $liked,
+            'like_count' => $likeCount
+        ]);
     }
 }

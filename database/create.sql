@@ -39,10 +39,12 @@ DROP TABLE IF EXISTS verified_user CASCADE;
 DROP TABLE IF EXISTS administrator CASCADE;
 DROP TABLE IF EXISTS registered_user CASCADE;
 DROP TABLE IF EXISTS user_block CASCADE;
+DROP TABLE IF EXISTS user_ban CASCADE;
 DROP TABLE IF EXISTS user_tag CASCADE;
 DROP TABLE IF EXISTS message CASCADE;
 DROP TABLE IF EXISTS admin_block CASCADE;
 DROP TABLE IF EXISTS admin_ban CASCADE;
+DROP TABLE IF EXISTS password_reset_tokens CASCADE;
 
 
 -- create tables
@@ -273,6 +275,12 @@ CREATE TABLE user_block(
     PRIMARY KEY (id_user, id_blocked)
 );
 
+CREATE TABLE user_ban(
+    id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
+    id_banned INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
+    PRIMARY KEY (id_user, id_banned)
+);
+
 CREATE TABLE user_tag(
     id_post INTEGER NOT NULL REFERENCES post (id_post) ON DELETE CASCADE,
     id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
@@ -289,6 +297,13 @@ CREATE TABLE admin_ban(
     id_admin INTEGER NOT NULL REFERENCES administrator (id_admin) ON DELETE CASCADE,
     id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
     PRIMARY KEY (id_admin, id_user)
+);
+
+CREATE TABLE password_reset_tokens (
+    email VARCHAR(255) NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP(0) WITHOUT TIME ZONE NULL,
+    PRIMARY KEY (email)
 );
 
 -- Indexes
@@ -613,5 +628,4 @@ BEFORE INSERT OR UPDATE ON post
 FOR EACH ROW
 EXECUTE FUNCTION check_post_content();
 
-
-
+DROP TRIGGER profile_visibility_trigger ON user_friend;

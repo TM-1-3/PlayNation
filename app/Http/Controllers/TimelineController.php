@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TimelineController extends Controller {
 
@@ -16,7 +17,7 @@ class TimelineController extends Controller {
 
         $timelineType = $request->query('timeline', 'public');
 
-        $query = Post::with(['user.verifiedUser', 'labels']);
+        $query = Post::with(['user.verifiedUser', 'labels'])->withCount('likes');
 
         if ($user && $timelineType === 'following') {
             // avoid ambiguity between registered_user.id_user and user_friend.id_user
@@ -78,7 +79,17 @@ class TimelineController extends Controller {
 
         $savedPostIds = $user ? $user->savedPosts()->pluck('post.id_post')->toArray() : [];
 
-        return view('pages.home', ['posts' => $posts, 'activeTimeline' => $timelineType, 'savedPostIds' => $savedPostIds]);
+        $likedPostIds = $user ? DB::table('post_like')
+            ->where('id_user', $user->id_user)
+            ->pluck('id_post')
+            ->toArray() : [];
+
+        return view('pages.home', [
+            'posts' => $posts, 
+            'activeTimeline' => $timelineType, 
+            'savedPostIds' => $savedPostIds,
+            'likedPostIds' => $likedPostIds
+        ]);
     }
 
     private function filterPosts($query, Request $request, $timelineType)
@@ -162,6 +173,7 @@ class TimelineController extends Controller {
                          ->pluck('id_post');
             
                          $query = Post::with(['user', 'labels'])
+                         ->withCount('likes')
                          ->whereIn('id_post', $postIds);
     
             if ($user) {

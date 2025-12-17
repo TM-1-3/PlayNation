@@ -1,3 +1,16 @@
+{{-- likes modal (hidden) --}}
+<div id="likes-modal-{{ $post->id_post }}" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="if(event.target === this) toggleLikes({{ $post->id_post }})">
+    <div class="bg-white rounded-lg w-full max-w-md max-h-96 overflow-hidden">
+        <div class="flex justify-between items-center p-4 border-b">
+            <h4 class="font-semibold text-lg">Liked by</h4>
+            <button onclick="toggleLikes({{ $post->id_post }})" class="text-gray-600 hover:text-gray-800 font-bold text-2xl leading-none">&times;</button>
+        </div>
+        <div id="likes-list-{{ $post->id_post }}" class="p-4 overflow-y-auto max-h-80">
+            <div class="text-center text-gray-500">Loading...</div>
+        </div>
+    </div>
+</div>
+
 {{-- report modal include --}}
 @include('partials.report_modal', [
     'modalId' => "report-modal-post-{$post->id_post}",
@@ -40,11 +53,39 @@
     @endif
     
     <div class="flex items-center gap-4 px-4 pt-2">
-        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Like the post">
-            <i class="fa-regular fa-heart text-lg"></i>
-            <span class="text-sm">Like</span>
-        </button>
-        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment or access post's comments">
+        <div class="flex items-center gap-4 px-4 pt-2">
+            @php
+                $isLiked = isset($likedPostIds) && in_array($post->id_post, $likedPostIds);
+            @endphp
+            <button onclick="toggleLike({{ $post->id_post }})" 
+                    id="like-btn-{{ $post->id_post }}"
+                    class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-red-600" 
+                    title="Like">
+                <i class="{{ $isLiked ? 'fa-solid text-red-600' : 'fa-regular' }} fa-heart text-lg" id="like-icon-{{ $post->id_post }}"></i>
+                <span class="text-sm" id="like-count-{{ $post->id_post }}" onclick="event.stopPropagation(); toggleLikes({{ $post->id_post }})" style="cursor:pointer;">
+                    {{ $post->likes_count ?? $post->likes->count() }}
+                </span>
+            </button>
+            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
+                <i class="fa-regular fa-comment text-lg"></i>
+                <span class="text-sm">Comment</span>
+            </button>
+            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Share">
+                <i class="fa-regular fa-share-from-square text-lg"></i>
+                <span class="text-sm">Share</span>
+            </button>
+            <form action="{{ route('post.save', $post->id_post) }}" method="POST" class="ml-auto">
+                @csrf
+                @php
+                    $isSaved = isset($savedPostIds) && in_array($post->id_post, $savedPostIds);
+                @endphp
+                <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Save">
+                    <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-lg"></i>
+                    <span class="text-sm">Save</span>
+                </button>
+            </form>
+        </div>
+        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
             <i class="fa-regular fa-comment text-lg"></i>
             <span class="text-sm">Comment</span>
         </button>
@@ -81,3 +122,66 @@
         </div>
     @endif
 </div>
+
+<script>
+function toggleLikes(postId) {
+    const modal = document.getElementById(`likes-modal-${postId}`);
+    const likesList = document.getElementById(`likes-list-${postId}`);
+    
+    if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        
+        fetch(`/post/${postId}/likes`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.likers.length === 0) {
+                    likesList.innerHTML = '<div class="text-center text-gray-500">No likes yet</div>';
+                } else {
+                    likesList.innerHTML = data.likers.map(user => `
+                        <a href="/profile/${user.id_user}" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded no-underline">
+                            <img src="${user.profile_picture}" alt="${user.username}" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                            <div>
+                                <div class="font-semibold text-gray-800">${user.username}</div>
+                                <div class="text-sm text-gray-500">${user.name}</div>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+            })
+            .catch(error => {
+                likesList.innerHTML = '<div class="text-center text-red-500">Error loading likes</div>';
+                console.error('Error:', error);
+            });
+    } else {
+        modal.classList.add('hidden');
+    }
+}
+
+function toggleLike(postId) {
+    fetch(`/post/${postId}/like`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const icon = document.getElementById(`like-icon-${postId}`);
+        const count = document.getElementById(`like-count-${postId}`);
+        
+        if (data.liked) {
+            icon.classList.remove('fa-regular');
+            icon.classList.add('fa-solid', 'text-red-600');
+        } else {
+            icon.classList.remove('fa-solid', 'text-red-600');
+            icon.classList.add('fa-regular');
+        }
+        
+        count.textContent = data.like_count;
+    })
+    .catch(error => {
+        console.error('Error toggling like:', error);
+    });
+}
+</script>
