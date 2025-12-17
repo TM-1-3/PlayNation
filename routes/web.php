@@ -18,6 +18,7 @@ use App\Http\Controllers\FriendController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MessageController;
 use \App\Http\Controllers\ReportController;
+use App\Http\Controllers\DirectMessageController;
 
 // Home
 Route::redirect('/', '/login');
