@@ -57,6 +57,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
     Route::get('/admin/edit/{id}', 'showEditUserForm')->name('admin.edit');
     Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
+    Route::delete('/admin/users/{id}/unverify','unverifyUser')->name('admin.unverify');
     Route::delete('/admin/post/{id}', 'deletePost')->name('admin.post.delete');
     Route::post('/admin/post/{id}/dismiss', 'dismissPostReports')->name('admin.post.dismiss');
     Route::post('/admin/user/{id}/dismiss', 'dismissUserReports')->name('admin.user.dismiss');
@@ -140,6 +141,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/notifications/{id}/accept', [NotificationController::class, 'acceptFriendRequest'])->name('notifications.accept');
     Route::post('/notifications/{id}/deny', [NotificationController::class, 'denyFriendRequest'])->name('notifications.deny');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markNotificationAsRead'])->name('notifications.read');
 });
 
 Route::get('/profile/{id}/friends', [FriendController::class, 'showFriendsPage'])->name('user.friends');
