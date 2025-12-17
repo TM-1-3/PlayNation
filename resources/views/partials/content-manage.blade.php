@@ -94,7 +94,7 @@
                             <form action="{{ route('admin.delete', $u->id_user) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="bg-red-600 text-white text-sm py-1 px-3 rounded-lg hover:bg-red-700 transition" onclick="return confirm('Delete this user?')" title="Delete user account">Delete User</button>
+                                <button type="submit" class="bg-red-600 text-white text-sm py-1 px-3 rounded-lg hover:bg-red-700 transition" onclick="return confirm('Delete this user?')" title="Delete user account">Ban User</button>
                             </form>
 
                             <form action="{{ route('admin.user.dismiss', $u->id_user) }}" method="POST" class="inline">
