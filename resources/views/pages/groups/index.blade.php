@@ -74,6 +74,8 @@
         </div>
     </div>
 
+    @include('partials.filter-groups')
+
 </div>
 
 @endsection

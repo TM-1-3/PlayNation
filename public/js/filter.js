@@ -112,4 +112,24 @@ document.addEventListener('DOMContentLoaded', function(){
             });
         }
     }
+
+    // range input display for minimum members (group filter)
+    var membersRange = document.getElementById('min-members-range');
+    var membersCurrent = document.getElementById('min-members-current');
+    var membersMax = document.getElementById('min-members-max');
+    if(membersRange && membersCurrent && membersMax){
+        var max = membersRange.getAttribute('max') || '50';
+        membersMax.textContent = max;
+        if(membersRange.value === undefined || membersRange.value === null || membersRange.value === '') membersRange.value = 0;
+        membersCurrent.textContent = membersRange.value;
+        membersRange.addEventListener('input', function(){
+            membersCurrent.textContent = this.value;
+        });
+        if(clearBtn){
+            clearBtn.addEventListener('click', function(){
+                membersRange.value = 0;
+                membersCurrent.textContent = '0';
+            });
+        }
+    }
 });
