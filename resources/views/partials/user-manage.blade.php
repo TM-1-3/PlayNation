@@ -53,6 +53,14 @@
                                                 Verify
                                             </button>
                                         </form>
+                                    @else
+                                        <form action="{{ route('admin.unverify', $user->id_user) }}" method="POST" class="m-0">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="bg-none text-amber-600 text-sm font-medium cursor-pointer border-none pb-1 hover:text-amber-700" title="Remove verification status" onclick="return confirm('Are you sure you want to unverify this user?')">
+                                                Unverify
+                                            </button>
+                                        </form>
                                     @endif
                                     <form action="{{ route('admin.delete', $user->id_user) }}" method="POST" class="m-0">
                                         @csrf

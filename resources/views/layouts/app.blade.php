@@ -62,7 +62,6 @@
                     <a href="{{ route('notifications.index') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('notifications.index') ? 'font-bold text-blue-600' : '' }}" title="See your received notifications">
                         <i class="fa-solid fa-bell w-8 text-xl text-center mr-2.5"></i> 
                         Notifications 
-                        <span class="bg-red-600 text-white text-xs py-0.5 px-1.5 rounded-full ml-auto">3</span>
                     </a>
 
                     <a href="{{ route('saved.index') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('saved.index') ? 'font-bold text-blue-600' : '' }}" title="See your saved posts">
