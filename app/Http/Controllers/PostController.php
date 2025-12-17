@@ -9,6 +9,7 @@ use App\Models\Label;
 use App\Models\Report;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 
 class PostController extends Controller
@@ -214,5 +215,30 @@ class PostController extends Controller
         $report->posts()->attach($id);
 
         return redirect()->back()->with('status', 'Post reported successfully. Admins will review it.');
+    }
+
+    public function getLikes($id)
+    {
+        try {
+            $post = Post::findOrFail($id);
+            
+            $likers = User::join('post_like', 'registered_user.id_user', '=', 'post_like.id_user')
+                ->where('post_like.id_post', $id)
+                ->select('registered_user.id_user', 'registered_user.username', 'registered_user.name', 'registered_user.profile_picture')
+                ->get()
+                ->map(function($user) {
+                    return [
+                        'id_user' => $user->id_user,
+                        'username' => $user->username,
+                        'name' => $user->name,
+                        'profile_picture' => $user->getProfileImage()
+                    ];
+                });
+
+            return response()->json(['likers' => $likers]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching likes: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

@@ -1,3 +1,16 @@
+{{-- likes modal (hidden) --}}
+<div id="likes-modal-{{ $post->id_post }}" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="if(event.target === this) toggleLikes({{ $post->id_post }})">
+    <div class="bg-white rounded-lg w-full max-w-md max-h-96 overflow-hidden">
+        <div class="flex justify-between items-center p-4 border-b">
+            <h4 class="font-semibold text-lg">Liked by</h4>
+            <button onclick="toggleLikes({{ $post->id_post }})" class="text-gray-600 hover:text-gray-800 font-bold text-2xl leading-none">&times;</button>
+        </div>
+        <div id="likes-list-{{ $post->id_post }}" class="p-4 overflow-y-auto max-h-80">
+            <div class="text-center text-gray-500">Loading...</div>
+        </div>
+    </div>
+</div>
+
 {{-- report modal include --}}
 @include('partials.report_modal', [
     'modalId' => "report-modal-post-{$post->id_post}",
@@ -40,7 +53,7 @@
     @endif
     
     <div class="flex items-center gap-4 px-4 pt-2">
-        <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Like">
+        <button onclick="toggleLikes({{ $post->id_post }})" class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600" title="View likes">
             <i class="fa-regular fa-heart text-lg"></i>
             <span class="text-sm">
                 {{ $post->likes_count ?? $post->likes->count() }}
@@ -83,3 +96,38 @@
         </div>
     @endif
 </div>
+
+<script>
+function toggleLikes(postId) {
+    const modal = document.getElementById(`likes-modal-${postId}`);
+    const likesList = document.getElementById(`likes-list-${postId}`);
+    
+    if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        
+        fetch(`/post/${postId}/likes`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.likers.length === 0) {
+                    likesList.innerHTML = '<div class="text-center text-gray-500">No likes yet</div>';
+                } else {
+                    likesList.innerHTML = data.likers.map(user => `
+                        <a href="/profile/${user.id_user}" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded no-underline">
+                            <img src="${user.profile_picture}" alt="${user.username}" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                            <div>
+                                <div class="font-semibold text-gray-800">${user.username}</div>
+                                <div class="text-sm text-gray-500">${user.name}</div>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+            })
+            .catch(error => {
+                likesList.innerHTML = '<div class="text-center text-red-500">Error loading likes</div>';
+                console.error('Error:', error);
+            });
+    } else {
+        modal.classList.add('hidden');
+    }
+}
+</script>

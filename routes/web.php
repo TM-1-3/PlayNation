@@ -78,6 +78,8 @@ Route::post('/profile/setup', [SetupController::class, 'store'])->name('profile.
 Route::get('/profile/{id}', [UserController::class, 'show'])->name('profile.show');
 
 Route::middleware(['auth'])->group(function () {
+    
+    Route::get('/post/{id}/likes', [PostController::class, 'getLikes'])->name('post.likes');
 
     Route::get('/profile/{id}/edit', [UserController::class, 'edit'])->name('profile.edit');
     
