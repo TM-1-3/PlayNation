@@ -215,27 +215,27 @@
 
             // draw card post partial style
             if (post) {
+                // placeholder txt
                 if (!displayText) displayText = "Shared a post";
-
-                // security placeholders
-                const username = post.user ? post.user.username : 'Unknown';
-                // users img or placeholder
-                const userImg = post.user && post.user.profile_image 
-                    ? post.user.profile_image 
-                    : 'https://ui-avatars.com/api/?name=' + username;
                 
+                // username placeholder
+                const username = post.user ? post.user.username : 'Unknown';
+
+                // pfp
+                const userImg = post.author_image 
+                    ? post.author_image 
+                    : 'https://ui-avatars.com/api/?name=' + username;
+
+                // post description/content
                 const description = post.description || post.text_content || ''; 
 
                 contentHtml += `
-                    <div class="mt-1 mb-2 bg-white rounded-lg border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow text-left"
+                    <div class="mt-1 mb-2 bg-white rounded-lg border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow text-left group-post"
                          onclick="window.location.href='/post/${post.id_post}'">
                         
                         <div class="flex items-center p-3 border-b border-gray-100 bg-white">
-                            <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" 
-                                 src="${userImg}">
-                            <div class="font-semibold text-sm text-gray-800">
-                                ${username}
-                            </div>
+                            <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" src="${userImg}">
+                            <div class="font-semibold text-sm text-gray-800">${username}</div>
                         </div>
 
                         ${post.image ? `

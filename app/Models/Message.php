@@ -15,14 +15,23 @@ class Message extends Model
     // creates atribute 'shares_post_data' automatically
     public function getSharedPostDataAttribute()
     {
-        // searches for pattern [post:NUM] in messages txt
+        // Procura pelo padrão [post:NUMERO]
         if (preg_match('/\[post:(\d+)\]/', $this->text, $matches)) {
             $postId = $matches[1];
             
-            // gets post and author from bd
+            // gets post n user associated
             $post = Post::with('user')->find($postId);
             
-            return $post; // returns complete post null if error
+            if ($post) {
+                // author img with complete path
+                if ($post->user) {
+                    $post->author_image = asset($post->user->getProfileImage());
+                } else {
+                    $post->author_image = null;
+                }
+                
+                return $post; 
+            }
         }
 
         return null;

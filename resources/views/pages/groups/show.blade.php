@@ -333,13 +333,18 @@
 
             // draw post card like in feed
             if (post) {
+                // placeholder txt
                 if (!displayText) displayText = "Shared a post";
-
-                // data pesets
+                
+                // username placeholder
                 const username = post.user ? post.user.username : 'Unknown';
-                const userImg = post.user && post.user.profile_image 
-                    ? post.user.profile_image 
+
+                // pfp
+                const userImg = post.author_image 
+                    ? post.author_image 
                     : 'https://ui-avatars.com/api/?name=' + username;
+
+                // post description/content
                 const description = post.description || post.text_content || ''; 
 
                 contentHtml += `
