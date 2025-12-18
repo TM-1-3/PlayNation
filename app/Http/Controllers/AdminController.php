@@ -180,7 +180,7 @@ class AdminController extends Controller
         return redirect()->back()->with('status', 'Group deleted successfully.');
     }
 
-    public function dismissReports($id)
+    public function dismissPostReports($id)
     {
         $post = Post::findOrFail($id);
         

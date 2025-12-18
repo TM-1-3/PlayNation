@@ -1,4 +1,4 @@
-<div id="{{ $modalId }}" class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center backdrop-blur-sm">
+<div id="report-modal-{{ $target_type }}-{{ $target_id }}" class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center backdrop-blur-sm">
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 mx-4 relative z-[10000]">
         <div class="p-4 border-b flex justify-between items-center bg-gray-50">
             <h3 class="font-bold text-gray-700 flex items-center gap-2">

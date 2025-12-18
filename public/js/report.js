@@ -1,16 +1,5 @@
-function toggleReport(typeOrId, maybeId) {
-  // signature: toggleReport(type, id) or fallback toggleReport(id)
-  let type, id;
-  if (maybeId === undefined) {
-    // called with single numeric id (legacy)
-    type = null;
-    id = typeOrId;
-  } else {
-    type = typeOrId;
-    id = maybeId;
-  }
-
-  const modalId = type ? `report-modal-${type}-${id}` : `report-modal-${id}`;
+function toggleReport(type, id) {
+  const modalId = `report-modal-${type}-${id}`;
   const modal = document.getElementById(modalId);
 
   if (modal) {
@@ -24,12 +13,5 @@ function toggleReport(typeOrId, maybeId) {
       document.documentElement.classList.remove('overflow-hidden');
       document.body.classList.remove('overflow-hidden');
     }
-    return;
-  }
-
-  // fallback: legacy inline card
-  const reportCard = document.getElementById(`report-card-${id}`);
-  if (reportCard) {
-    reportCard.classList.toggle('hidden');
   }
 }
