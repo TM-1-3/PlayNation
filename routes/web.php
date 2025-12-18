@@ -122,7 +122,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
     Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/post/{id}', [PostController::class, 'destroy'])->name('post.destroy');
-    Route::post('/post/{id}/report', [PostController::class, 'report'])->name('post.report');
     Route::post('/report', [ReportController::class, 'store'])->name('report.submit');
     Route::post('/post/{id}/save', [PostController::class, 'save'])->name('post.save');
 

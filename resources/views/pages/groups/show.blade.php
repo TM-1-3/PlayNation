@@ -231,8 +231,6 @@
 @endsection
 
 @include('partials.report-modal', [
-    'modalId' => "report-modal-group-{$group->id_group}",
-    'action' => route('report.submit'),
     'title' => 'Report Group',
     'target_type' => 'group',
     'target_id' => $group->id_group,

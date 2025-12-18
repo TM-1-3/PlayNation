@@ -13,8 +13,6 @@
 
 {{-- report modal include --}}
 @include('partials.report-modal', [
-    'modalId' => "report-modal-post-{$post->id_post}",
-    'action' => route('post.report', $post->id_post),
     'title' => 'Report Post',
     'target_type' => 'post',
     'target_id' => $post->id_post,
