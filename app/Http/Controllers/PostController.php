@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use App\Models\Comment;
 
 
 class PostController extends Controller
@@ -217,7 +218,8 @@ class PostController extends Controller
     {
         $user = Auth::user();
         $posts = $user->savedPosts()
-        ->withCount('likes')
+        ->with(['comments.user'])
+        ->withCount(['likes', 'comments'])
         ->with(['user.verifiedUser', 'labels'])
         ->orderByDesc('date')
         ->get();
@@ -289,5 +291,132 @@ class PostController extends Controller
             'liked' => $liked,
             'like_count' => $likeCount
         ]);
+    }
+
+    public function getComments($id)
+    {
+        try {
+            $post = Post::findOrFail($id);
+            $currentUserId = Auth::id();
+            
+            $comments = $post->comments()
+                ->with('user')
+                ->orderBy('date', 'desc')
+                ->get()
+                ->map(function($comment) use ($currentUserId) {
+                    return [
+                        'id_comment' => $comment->id_comment,
+                        'text' => $comment->text,
+                        'date' => \Carbon\Carbon::parse($comment->date)->diffForHumans(),
+                        'is_owner' => $currentUserId === $comment->id_user,
+                        'user' => [
+                            'id_user' => $comment->user->id_user,
+                            'username' => $comment->user->username,
+                            'name' => $comment->user->name,
+                            'profile_picture' => $comment->user->getProfileImage(),
+                        ]
+                    ];
+                });
+
+            return response()->json(['comments' => $comments]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching comments: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function addComment(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'comment_text' => 'required|string|max:1000',
+            ]);
+
+            $post = Post::findOrFail($id);
+            $user = Auth::user();
+
+            $comment = Comment::create([
+                'id_post' => $id,
+                'id_user' => $user->id_user,
+                'text' => $request->comment_text,
+                'date' => now(),
+            ]);
+
+            // Return the new comment with user data
+            return response()->json([
+                'success' => true,
+                'comment' => [
+                    'id_comment' => $comment->id_comment,
+                    'text' => $comment->text,
+                    'date' => \Carbon\Carbon::parse($comment->date)->diffForHumans(),
+                    'user' => [
+                        'id_user' => $user->id_user,
+                        'username' => $user->username,
+                        'name' => $user->name,
+                        'profile_picture' => $user->getProfileImage(),
+                    ]
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error adding comment: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateComment(Request $request, $id)
+    {
+        try {
+            $comment = Comment::findOrFail($id);
+            
+            // Check if user owns the comment
+            if (Auth::id() !== $comment->id_user) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+
+            $request->validate([
+                'text' => 'required|string|max:1000',
+            ]);
+
+            $comment->text = $request->text;
+            $comment->save();
+
+            return response()->json([
+                'success' => true,
+                'comment' => [
+                    'id_comment' => $comment->id_comment,
+                    'text' => $comment->text,
+                    'date' => \Carbon\Carbon::parse($comment->date)->diffForHumans(),
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error updating comment: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteComment($id)
+    {
+        try {
+            $comment = Comment::findOrFail($id);
+            
+            // Check if user owns the comment
+            if (Auth::id() !== $comment->id_user) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+
+            $postId = $comment->id_post;
+            $comment->delete();
+
+            // Get updated comment count
+            $commentCount = Comment::where('id_post', $postId)->count();
+
+            return response()->json([
+                'success' => true,
+                'comment_count' => $commentCount
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting comment: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

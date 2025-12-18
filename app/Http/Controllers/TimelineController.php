@@ -17,7 +17,8 @@ class TimelineController extends Controller {
 
         $timelineType = $request->query('timeline', 'public');
 
-        $query = Post::with(['user.verifiedUser', 'labels'])->withCount('likes');
+        $query = Post::with(['user.verifiedUser', 'labels', 'comments.user'])
+                     ->withCount(['likes', 'comments']);
 
         if ($user && $timelineType === 'following') {
             // avoid ambiguity between registered_user.id_user and user_friend.id_user
@@ -184,8 +185,8 @@ class TimelineController extends Controller {
                          ->orderByDesc('rank')
                          ->pluck('id_post');
             
-                         $query = Post::with(['user', 'labels'])
-                         ->withCount('likes')
+                         $query = Post::with(['user', 'labels', 'comments.user'])
+                         ->withCount(['likes', 'comments'])
                          ->whereIn('id_post', $postIds);
     
             if ($user) {

@@ -39,7 +39,8 @@ class UserController extends Controller
         $user = User::withCount(['posts', 'followers', 'following'])->with('labels')->findOrFail($id);
 
         $posts = $user->posts()
-                      ->withCount('likes')
+                      ->with(['comments.user'])
+                      ->withCount(['likes', 'comments'])
                       ->orderBy('date', 'desc')
                       ->get();
 
