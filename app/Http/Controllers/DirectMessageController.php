@@ -11,13 +11,10 @@ use App\Models\User;
 
 class DirectMessageController extends Controller
 {
-    public function index()
+    public function index(Request $request) 
     {
         $myId = Auth::id();
 
-        // querry to get last message of each conversation
-        // select every msg where im sender or reciever
-        // order by recency
         $allMessages = PrivateMessage::with(['message', 'sender', 'receiver'])
             ->join('message', 'message.id_message', '=', 'private_message.id_message')
             ->where(function($q) use ($myId) {
@@ -27,7 +24,6 @@ class DirectMessageController extends Controller
             ->orderBy('message.date', 'desc')
             ->get();
 
-        // group other user so we only get 1 user by convo
         $conversations = $allMessages->map(function($pm) use ($myId) {
             $isMeSender = $pm->id_sender == $myId;
             $otherUser = $isMeSender ? $pm->receiver : $pm->sender;
@@ -39,12 +35,29 @@ class DirectMessageController extends Controller
                 'avatar' => asset($otherUser->getProfileImage()),
                 'last_message' => $pm->message->text,
                 'date' => $pm->message->date,
-                'timestamp' => strtotime($pm->message->date) // to sorganize
+                'timestamp' => strtotime($pm->message->date)
             ];
-        })->unique('user_id')->values(); // filter duplicates
+        })->unique('user_id')->values();
 
+        $targetUser = null;
+        
+        if ($request->has('start_chat')) {
+            $u = \App\Models\User::find($request->get('start_chat'));
+            
+            // only prepares data if user exists and is not me
+            if ($u && $u->id_user !== $myId) {
+                $targetUser = [
+                    'id' => $u->id_user,
+                    'name' => $u->name,
+                    'image' => asset($u->getProfileImage())
+                ];
+            }
+        }
+
+        // only return view with evrything
         return view('pages.messages.index', [
-            'conversations' => $conversations
+            'conversations' => $conversations,
+            'targetUser' => $targetUser 
         ]);
     }
 
