@@ -97,25 +97,25 @@
         }
     }
 
-    // 4. SELECIONAR DESTINATÁRIO
+    // select receiver
     function selectTarget(el, id, type) {
-        // Remove active class from all
+        // remove active class from all
         document.querySelectorAll('.target-item').forEach(i => {
             i.classList.remove('bg-blue-100', 'border-blue-200');
             i.querySelector('.selection-check').classList.add('hidden');
         });
 
-        // Add to selected
+        // add to selected
         el.classList.add('bg-blue-100', 'border-blue-200');
         el.querySelector('.selection-check').classList.remove('hidden');
 
-        // Store
+        // store
         document.getElementById('selected-target-id').value = id;
         document.getElementById('selected-target-type').value = type;
         document.getElementById('btn-share-send').disabled = false;
     }
 
-    // 5. ENVIAR (A MAGIA ACONTECE AQUI) ✨
+    // send
     function sendShare() {
         const id = document.getElementById('selected-target-id').value;
         const type = document.getElementById('selected-target-type').value;
@@ -126,13 +126,13 @@
         btn.innerText = 'Sending...';
         btn.disabled = true;
 
-        // Constrói a mensagem com a Magic Tag
+        // buids msg with post tag
         const finalMessage = `${messageText} [post:${postId}]`.trim();
 
-        // Decide a URL baseada no tipo (User vs Group)
+        // decides url based in groups ag
         const url = type === 'user' 
-            ? `/messages/${id}`            // Rota de DMs
-            : `/groups/${id}/messages`;     // Rota de Grupos (verifica o nome da tua rota!)
+            ? `/messages/${id}`             // DMs
+            : `/groups/${id}/messages`;     // groups
 
         fetch(url, {
             method: 'POST',
@@ -155,7 +155,7 @@
         });
     }
 
-    // 6. FILTRO DE PESQUISA (BÓNUS)
+    // search filter
     document.getElementById('share-search').addEventListener('input', function(e) {
         const term = e.target.value.toLowerCase();
         const filtered = {

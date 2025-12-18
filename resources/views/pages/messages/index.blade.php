@@ -68,7 +68,7 @@
                     <div>
                         <h3 id="chat-header-name" class="font-bold text-gray-900 leading-tight"></h3>
                         <span class="text-xs text-green-500 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Online
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Online 
                         </span>
                     </div>
                 </div>

@@ -15,7 +15,7 @@ class Message extends Model
     // creates atribute 'shares_post_data' automatically
     public function getSharedPostDataAttribute()
     {
-        // Procura pelo padrão [post:NUMERO]
+        // searchers for pattern [post:num]
         if (preg_match('/\[post:(\d+)\]/', $this->text, $matches)) {
             $postId = $matches[1];
             

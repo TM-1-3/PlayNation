@@ -163,17 +163,16 @@ class DirectMessageController extends Controller
                 'id' => $f->id_user,
                 'name' => $f->name,
                 'image' => asset($f->getProfileImage()),
-                'type' => 'user' // Importante para sabermos a URL de envio
+                'type' => 'user' // sending url
             ];
         });
 
-        // 2. Grupos (onde sou membro ou dono)
-        // Junta os ownedGroups com os groups onde sou membro
+        // groups
         $groups = $user->groups->merge($user->ownedGroups)->unique('id_group')->map(function($g) {
             return [
                 'id' => $g->id_group,
                 'name' => $g->name,
-                'image' => $g->getGroupPicture(), // Confirma se tens este método ou usa asset()
+                'image' => $g->getGroupPicture(), 
                 'type' => 'group'
             ];
         });
