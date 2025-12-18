@@ -60,6 +60,17 @@
                                     <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
                                 @endif
                                 <span class="text-gray-600"> wants to be your friend.</span>
+                            @elseif($notification->friendRequestResultNotification)
+                                @if($notification->emitter->verifiedUser)
+                                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
+                                @endif
+                                <span class="text-gray-600">
+                                    @if(str_contains($notification->text, 'is now your friend'))
+                                        is now your friend
+                                    @else
+                                        has denied your friend request
+                                    @endif
+                                </span>
                             @endif
                         </p>
                         
@@ -123,8 +134,14 @@
                                 Deny
                             </button>
                         </form>
+                    @elseif($notification->friendRequestResultNotification)
+                        <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
+                                Mark as Read
+                            </button>
+                        </form>
                     @endif
-
                 </div>
             </div>
         @endforeach

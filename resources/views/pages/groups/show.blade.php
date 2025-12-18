@@ -11,6 +11,14 @@
         <div class="w-full md:w-1/3 md:min-w-[280px] ml-5">
             
             <div class="bg-white rounded-lg shadow-md p-6 sticky top-5">
+
+                <div class="mb-4">
+                    <a href="{{ route('groups.index') }}" 
+                       class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 font-semibold transition-colors group">
+                        <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                        Back to Groups
+                    </a>
+                </div>
                 
                 <div class="relative w-full h-48 mb-6 rounded-lg overflow-hidden shadow-sm">
                     <img src="{{ $group->getGroupPicture() }}" 
@@ -117,43 +125,48 @@
         <div class="flex-1 min-w-0">
             
             @if($canViewContent)
-                <div class="bg-white rounded-lg shadow-md h-[600px] flex flex-col relative overflow-hidden">
+                <div class="bg-white rounded-lg shadow-md h-[calc(100vh-150px)] min-h-[500px] flex flex-col relative overflow-hidden border border-gray-200">
                     
                     {{-- header --}}
-                    <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
-                        <h3 class="font-bold text-gray-700">
-                            <i class="fa-regular fa-comments mr-2"></i> Group Chat
+                    <div class="p-4 border-b bg-white flex justify-between items-center shadow-sm z-10">
+                        <h3 class="font-bold text-gray-800 flex items-center">
+                            <span class="text-lg">{{ $group->name }}</span>
                         </h3>
-                        <span class="text-xs text-gray-500 flex items-center gap-1">
-                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Live
+                        <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100 flex items-center gap-1 font-medium">
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Live Chat
                         </span>
                     </div>
 
                     {{-- messages area --}}
-                    <div class="flex-1 p-4 overflow-y-auto bg-gray-50/50 flex flex-col gap-3 h-[600px]" id="chat-messages">
-                        {{-- JS here --}}
+                    {{-- backgound like in dms --}}
+                    <div class="flex-1 p-4 overflow-y-auto bg-gray-50 flex flex-col gap-3 custom-scrollbar scroll-smooth" id="chat-messages">
+                        {{-- O JS vai preencher isto --}}
                         <div class="text-center text-gray-400 mt-20" id="loading-msg">
                             <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
-                            <p>Connecting...</p>
+                            <p>Loading messages...</p>
                         </div>
                     </div>
 
-                    {{-- input --}}
-                    <div class="p-4 border-t bg-white">
-                       
-                        <form id="chat-form" class="flex items-center gap-2">
+                    {{-- input area --}}
+                    <div class="p-4 bg-white border-t border-gray-100 shrink-0">
+                        <form id="chat-form" class="relative flex items-center gap-2">
                             
-                            {{-- text --}}
+                            {{-- attachments btn (nothing for now) --}}
+                            <button type="button" class="text-gray-400 hover:text-gray-600 p-2 rounded-full transition" title="Attach file">
+                                <i class="fa-solid fa-paperclip"></i>
+                            </button>
+                            
+                            {{-- txt input --}}
                             <input type="text" 
                                    id="message-input"
                                    name="text"
                                    placeholder="Type a message..." 
-                                   class="flex-1 border border-gray-300 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-gray-700 transition-shadow"
+                                   class="w-full bg-gray-100 border-0 rounded-full py-3 px-5 focus:ring-2 focus:ring-blue-500 focus:bg-white transition text-sm"
                                    autocomplete="off">
                             
-                            <button type="submit" 
-                                    class="bg-transparent border-none p-2 cursor-pointer transition-transform hover:scale-110 active:scale-95 group">
-                                <i class="fa-solid fa-paper-plane text-2xl text-blue-600 group-hover:text-blue-700"></i>
+                            {{-- send btn --}}
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-md transition transform active:scale-95 flex items-center justify-center w-10 h-10 group">
+                                <i class="fa-solid fa-paper-plane text-sm group-hover:animate-pulse"></i>
                             </button>
 
                         </form>
@@ -161,15 +174,17 @@
 
                 </div>
             @else
-                {{-- blockage --}}
-                <div class="bg-white rounded-lg shadow-md p-10 text-center border border-gray-200">
-                    <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fa-solid fa-lock text-4xl text-gray-400"></i>
+                {{-- block content btn --}}
+                <div class="bg-white rounded-lg shadow-md h-[500px] flex items-center justify-center text-center border border-gray-200 p-10">
+                    <div>
+                        <div class="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fa-solid fa-lock text-4xl text-gray-400"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Private Group</h2>
+                        <p class="text-gray-500 max-w-md mx-auto">
+                            This group is private. Join the group to access the chat and see what's happening inside.
+                        </p>
                     </div>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Private Group</h2>
-                    <p class="text-gray-500 max-w-md mx-auto">
-                        This group is private. Join the group to access the chat.
-                    </p>
                 </div>
             @endif
 
@@ -238,62 +253,91 @@
 
 @push('scripts')
 <script>
-    // clobal vars
-    // chat and invite can use
+    // global vars
     const groupId = "{{ $group->id_group }}";
     const currentUserId = "{{ Auth::id() }}"; 
     const currentUserName = "{{ Auth::user()->name ?? 'User' }}"; 
+    
+    // state controll
+    let lastLoadedId = 0; 
+    let isFirstLoad = true; // for smooth scroll
+    let pollingInterval = null;
 
-    // chat logic starts with page load
     document.addEventListener('DOMContentLoaded', function() {
         
+        // DOM elements
         const chatContainer = document.getElementById('chat-messages');
         const chatForm = document.getElementById('chat-form');
         const messageInput = document.getElementById('message-input');
         const loadingMsg = document.getElementById('loading-msg');
 
-        let lastLoadedId = 0; 
-
-        // chats functions
         function loadMessages() {
+            //?after_id for performance, only loads new msgs
             fetch(`/groups/${groupId}/messages?after_id=${lastLoadedId}`)
                 .then(response => response.json())
                 .then(messages => {
+                    // removes animated spinner
                     if (loadingMsg) loadingMsg.remove(); 
+                    
                     if (messages.length > 0) {
-                        messages.forEach(msg => {
-                            if (!document.getElementById(`msg-${msg.id_message}`)) {
-                                appendMessageToChat(msg);
-                            }
-                            if (msg.id_message > lastLoadedId) {
-                                lastLoadedId = msg.id_message;
-                            }
-                        });
-                        scrollToBottom();
+                        renderChat(messages);
                     }
                 })
                 .catch(error => console.error('Error loading:', error));
         }
 
+        function renderChat(messages) {
+            let newMessagesAdded = false;
+
+            messages.forEach(msg => {
+                // only adds if they exist
+                if (!document.getElementById(`msg-${msg.id_message}`)) {
+                    appendMessageToChat(msg);
+                    
+                    // updates controll id for next search
+                    if (msg.id_message > lastLoadedId) {
+                        lastLoadedId = msg.id_message;
+                    }
+                    newMessagesAdded = true;
+                }
+            });
+
+            // scroll id loading for first time or if theres new msgs
+            if (newMessagesAdded || isFirstLoad) {
+                scrollToBottom();
+                isFirstLoad = false;
+            }
+        }
+
         function appendMessageToChat(msg, isOptimistic = false, customId = null) {
             const isMe = msg.id_sender == currentUserId;
+            
+            // style classes
             const alignmentClass = isMe ? 'justify-end' : 'justify-start';
             const bgClass = isMe ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
-            const elementId = customId ? customId : `msg-${msg.id_message}`;
             const opacityClass = isOptimistic ? 'opacity-70' : 'opacity-100';
+            
+            // id and data
+            const elementId = customId ? customId : `msg-${msg.id_message}`;
             const timeDisplay = isOptimistic ? 'Sending...' : new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
+            // pfp for others not me
             const avatarHtml = !isMe 
                 ? `<img src="${msg.sender.profile_image}" alt="${msg.sender.name}" class="w-8 h-8 rounded-full object-cover mr-2 self-end mb-1 border border-gray-200 shadow-sm">` 
+                : '';
+            
+            //name for others not me
+            const nameHtml = !isMe 
+                ? `<span class="text-xs text-gray-500 mb-1 ml-1">${msg.sender.name}</span>` 
                 : '';
 
             const html = `
                 <div id="${elementId}" class="flex ${alignmentClass} mb-4 fade-in ${opacityClass}">
                     ${avatarHtml}
                     <div class="max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-                        ${!isMe ? `<span class="text-xs text-gray-500 mb-1 ml-1">${msg.sender.name}</span>` : ''}
-                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group">
-                            <p class="text-sm leading-relaxed">${msg.text}</p>
+                        ${nameHtml}
+                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group text-sm leading-relaxed break-words">
+                            <p>${msg.text}</p>
                         </div>
                         <span class="text-[10px] text-gray-400 mt-1 ml-1 block message-time">${timeDisplay}</span>
                     </div>
@@ -306,26 +350,30 @@
             chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
         }
 
-        // sending msgs listener
+        // send msg
         if(chatForm){
             chatForm.addEventListener('submit', function(e) {
                 e.preventDefault(); 
                 const textValue = messageInput.value.trim();
                 if (!textValue) return;
                 
+                // clear input n focus
                 messageInput.value = ''; 
                 messageInput.focus();
+                
+                // temp id
                 const tempId = 'temp-' + Date.now();
 
                 appendMessageToChat({
                     id_sender: currentUserId,
-                    sender: { name: currentUserName, profile_image: "{{ Auth::user()->getProfileImage() }}" },
+                    sender: { name: currentUserName, profile_image: "{{ Auth::user()->getProfileImage() }}" }, // for visuals
                     text: textValue,
                     date: new Date().toISOString() 
                 }, true, tempId);
 
                 scrollToBottom();
 
+                // ajax send
                 fetch(`/groups/${groupId}/messages`, {
                     method: 'POST',
                     headers: {
@@ -337,14 +385,17 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
+                        // sitch temp id for real one
                         const tempElement = document.getElementById(tempId);
                         if (tempElement) {
                             tempElement.id = `msg-${data.message.id_message}`;
                             tempElement.classList.remove('opacity-70');
                             tempElement.classList.add('opacity-100');
+                            
                             const timeSpan = tempElement.querySelector('.message-time');
                             if(timeSpan) timeSpan.innerText = new Date(data.message.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         }
+                        // update cursor
                         if (data.message.id_message > lastLoadedId) lastLoadedId = data.message.id_message;
                     }
                 })
@@ -352,31 +403,25 @@
             });
         }
 
-        // starts chat
+        //starts 
         loadMessages();
-        setInterval(loadMessages, 3000); 
+        pollingInterval = setInterval(loadMessages, 3000); 
     });
 
-    // invite functions
-
-    // open modal window
+    
     window.openInviteModal = function() {
         const inviteModal = document.getElementById('invite-modal');
         if(inviteModal) {
             inviteModal.classList.remove('hidden');
             loadCandidates();
-        } else {
-            console.error("Invite modal not found");
         }
     }
 
-    // close modal window
     window.closeInviteModal = function() {
         const inviteModal = document.getElementById('invite-modal');
         if(inviteModal) inviteModal.classList.add('hidden');
     }
 
-    // load candidate friends
     function loadCandidates() {
         const candidatesList = document.getElementById('candidates-list');
         if(!candidatesList) return;
@@ -387,15 +432,13 @@
             .then(res => res.json())
             .then(users => {
                 candidatesList.innerHTML = ''; 
-
                 if (users.length === 0) {
                     candidatesList.innerHTML = '<p class="text-center text-gray-500 py-4">No friends found to invite.</p>';
                     return;
                 }
-
                 users.forEach(user => {
+                    // btns logic
                     let btnHtml = '';
-                    
                     if (user.status === 'member') {
                         btnHtml = `<span class="text-xs font-bold text-gray-400 px-3 border border-gray-200 rounded py-1 bg-gray-50">Member</span>`;
                     } else if (user.status === 'pending') {
@@ -404,23 +447,16 @@
                         btnHtml = `<button onclick="sendInvite(${user.id}, this)" class="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded transition shadow-sm cursor-pointer">Invite</button>`;
                     }
 
-                    // img size fix
                     const html = `
                         <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition">
                             <div class="flex items-center gap-3">
-                                <img src="${user.profile_image}" 
-                                     alt="${user.name}"
-                                     class="rounded-full object-cover border border-gray-200 shrink-0"
-                                     style="width: 40px; height: 40px; min-width: 40px; max-width: 40px;">
-                                
+                                <img src="${user.profile_image}" class="rounded-full object-cover border border-gray-200 shrink-0" style="width: 40px; height: 40px;">
                                 <div class="min-w-0">
                                     <p class="font-bold text-sm text-gray-800 truncate">${user.name}</p>
                                     <p class="text-xs text-gray-500 truncate">@${user.username}</p>
                                 </div>
                             </div>
-                            <div class="shrink-0 ml-2">
-                                ${btnHtml}
-                            </div>
+                            <div class="shrink-0 ml-2">${btnHtml}</div>
                         </div>
                     `;
                     candidatesList.insertAdjacentHTML('beforeend', html);
@@ -429,10 +465,7 @@
             .catch(err => console.error(err));
     }
 
-    // send invite
     window.sendInvite = function(userId, btnElement) {
-        console.log("A enviar convite para user:", userId); // Debug --------------------------------------------
-        
         const originalText = btnElement.innerText;
         btnElement.innerText = 'Sent!';
         btnElement.disabled = true;
@@ -448,21 +481,15 @@
         })
         .then(res => res.json())
         .then(data => {
-            if (data.status === 'success') {
-                console.log("Convite enviado com sucesso!");
-            } else {
-                console.error("Erro no envio:", data);
+            if (data.status !== 'success') {
                 btnElement.innerText = 'Error';
                 btnElement.classList.replace('bg-green-600', 'bg-red-600');
             }
-        })
-        .catch(err => {
-            console.error("Erro Fetch:", err);
-            btnElement.innerText = 'Error';
-            btnElement.classList.replace('bg-green-600', 'bg-red-600');
         });
     }
-    // open
+
+    // members funcs
+    
     window.openMembersModal = function() {
         const modal = document.getElementById('members-modal');
         if(modal) {
@@ -471,13 +498,11 @@
         }
     }
 
-    // close
     window.closeMembersModal = function() {
         const modal = document.getElementById('members-modal');
         if(modal) modal.classList.add('hidden');
     }
 
-    // load API
     function loadMembers() {
         const list = document.getElementById('members-list');
         list.innerHTML = '<div class="text-center py-4 text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading members...</div>';
@@ -486,19 +511,10 @@
             .then(res => res.json())
             .then(members => {
                 list.innerHTML = '';
-
                 members.forEach(member => {
                     let actionHtml = '';
-
-                    // kick button
                     if (member.can_kick) {
-                        actionHtml = `
-                            <button onclick="kickMember(${member.id}, this)" 
-                                    class="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded transition shadow-sm cursor-pointer border border-transparent"
-                                    title="Remove User">
-                                <i class="fa-solid fa-user-xmark"></i> Remove
-                            </button>
-                        `;
+                        actionHtml = `<button onclick="kickMember(${member.id}, this)" class="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded transition shadow-sm cursor-pointer border border-transparent" title="Remove User"><i class="fa-solid fa-user-xmark"></i> Remove</button>`;
                     } else if (member.is_owner) {
                         actionHtml = `<span class="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-2 py-1 rounded">Owner</span>`;
                     }
@@ -506,32 +522,23 @@
                     const html = `
                         <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition group">
                             <div class="flex items-center gap-3">
-                                <img src="${member.profile_image}" 
-                                     class="rounded-full object-cover border border-gray-200 shrink-0"
-                                     style="width: 40px; height: 40px;">
-                                
+                                <img src="${member.profile_image}" class="rounded-full object-cover border border-gray-200 shrink-0" style="width: 40px; height: 40px;">
                                 <div class="min-w-0">
                                     <p class="font-bold text-sm text-gray-800 truncate">${member.name}</p>
                                     <p class="text-xs text-gray-500 truncate">@${member.username}</p>
                                 </div>
                             </div>
-                            <div class="shrink-0 ml-2">
-                                ${actionHtml}
-                            </div>
+                            <div class="shrink-0 ml-2">${actionHtml}</div>
                         </div>
                     `;
                     list.insertAdjacentHTML('beforeend', html);
                 });
-            })
-            .catch(err => console.error(err));
+            });
     }
 
-    // kick action
     window.kickMember = function(userId, btnElement) {
-        if(!confirm('Are you sure you want to remove this user from the group?')) return;
-
-        // visual feedback
-        const originalContent = btnElement.innerHTML;
+        if(!confirm('Are you sure you want to remove this user?')) return;
+        
         btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
         btnElement.disabled = true;
 
@@ -545,28 +552,14 @@
         .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                // removes from list
                 const row = btnElement.closest('.flex'); 
-                row.style.opacity = '0.5';
-                setTimeout(() => row.remove(), 300);
-                
-                // updates counter on page
+                row.remove();
                 const countEl = document.getElementById('member-count');
-                if(countEl) {
-                    let current = parseInt(countEl.innerText);
-                    countEl.innerText = Math.max(0, current - 1);
-                }
-
+                if(countEl) countEl.innerText = Math.max(0, parseInt(countEl.innerText) - 1);
             } else {
-                alert('Error removing user: ' + (data.message || 'Unknown error'));
-                btnElement.innerHTML = originalContent;
+                alert('Error removing user');
                 btnElement.disabled = false;
             }
-        })
-        .catch(err => {
-            console.error(err);
-            btnElement.innerHTML = originalContent;
-            btnElement.disabled = false;
         });
     }
 
@@ -575,5 +568,11 @@
 <style>
     .fade-in { animation: fadeIn 0.3s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* custom scroll */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(107, 114, 128, 0.8); }
 </style>
 @endpush

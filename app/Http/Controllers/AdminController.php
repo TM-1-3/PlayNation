@@ -144,7 +144,18 @@ class AdminController extends Controller
 
         VerifiedUser::create(['id_verified' => $user->id_user]);
 
-        return redirect()->back()->with('status', 'User verified successfully.');
+        return redirect()->back()->with('status', 'User verified successfully');
+    }
+
+    public function unverifyUser($id){
+
+        $user = User::findOrFail($id);
+    
+        if ($user->verifiedUser) {
+            $user->verifiedUser()->delete();
+        }
+
+        return back()->with('status', 'User unverified successfully');
     }
 
     public function deletePost($id)
