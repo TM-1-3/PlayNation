@@ -59,8 +59,9 @@
         </h3>
 
         @if($otherGroups->isEmpty())
-            <div class="bg-white rounded-lg shadow-sm p-8 text-center text-gray-500">
-                <p>No more groups to discover right now.</p>
+            <div id="no-results" class="text-center py-10 text-gray-400">
+                <i class="fa-solid fa-filter-circle-xmark text-4xl mb-2"></i>
+                <p>No groups found matching your filter.</p>
             </div>
         @else
             <div class="flex flex-wrap gap-2 justify-center" id="other-groups-grid">
