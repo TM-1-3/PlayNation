@@ -15,7 +15,7 @@ use App\Models\GroupMember;
 class GroupController extends Controller
 {
     // list all groups
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $myGroups = collect();
@@ -38,23 +38,94 @@ class GroupController extends Controller
             // merge both and remove duplicates
             $myGroupIds = array_unique(array_merge($memberGroupIds, $ownerGroupIds));
 
-            // get my groups details
-            $myGroups = Group::whereIn('id_group', $myGroupIds)->get();
+            // Build query for my groups
+            $myGroupsQuery = Group::whereIn('id_group', $myGroupIds);
+            $myGroupsQuery = $this->filterGroups($myGroupsQuery, $request);
+            $myGroups = $myGroupsQuery->get();
 
-            // other groups including public and private to ask for access
-            $otherGroups = Group::whereNotIn('id_group', $myGroupIds)
-                ->orderBy('is_public', 'desc') // public first private after
-                ->get();
+            // Build query for other groups
+            $otherGroupsQuery = Group::whereNotIn('id_group', $myGroupIds);
+            $otherGroupsQuery = $this->filterGroups($otherGroupsQuery, $request);
+            $otherGroups = $otherGroupsQuery->get();
 
         } else {
             // only public groups for visitors
-            $otherGroups = Group::where('is_public', true)->get();
+            $otherGroupsQuery = Group::where('is_public', true);
+            $otherGroupsQuery = $this->filterGroups($otherGroupsQuery, $request);
+            $otherGroups = $otherGroupsQuery->get();
         }
 
         return view('pages.groups.index', [
             'myGroups' => $myGroups,
             'otherGroups' => $otherGroups
         ]);
+    }
+
+    private function filterGroups($query, Request $request)
+    {
+        // Filter by group name using vectors
+        $groupName = $request->query('group_name');
+        if ($groupName) {
+            $input = $groupName . ':*';
+            $query->whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input]);
+        }
+
+        // Filter by owner name using vectors
+        $ownerName = $request->query('owner_name');
+        if ($ownerName) {
+            $input = $ownerName . ':*';
+            $query->whereHas('owner', function($q) use ($input) {
+                $q->whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input]);
+            });
+        }
+
+        // Filter: minimum number of members
+        $minMembers = $request->query('min_members');
+        if ($minMembers !== null && $minMembers > 0) {
+            $query->whereRaw(
+                '(SELECT COUNT(*) FROM group_membership WHERE group_membership.id_group = groups.id_group) >= ?',
+                [$minMembers]
+            );
+        }
+
+        // Filter: public groups only
+        if ($request->has('public_only')) {
+            $query->where('is_public', true);
+        }
+
+        // Filter: private groups only
+        if ($request->has('private_only')) {
+            $query->where('is_public', false);
+        }
+
+
+        // Apply sort option
+        $sort = $request->query('sort');
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('id_group', 'asc');
+                break;
+            case 'newest':
+                $query->orderBy('id_group', 'desc');
+                break;
+            case 'most_members':
+                $query->withCount('members')->orderByDesc('members_count');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            default:
+                // Default: maintain original ordering (public first)
+                if (!$request->has('my_groups')) {
+                    $query->orderBy('is_public', 'desc')->orderBy('id_group', 'desc');
+                }
+                break;
+        }
+
+        return $query;
     }
 
     

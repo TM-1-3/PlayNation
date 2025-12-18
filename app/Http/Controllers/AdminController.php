@@ -18,13 +18,9 @@ class AdminController extends Controller
 {
     public function showAdminPage(Request $request)
     {
-        $user = auth()->user(); // Get the currently logged-in user
+        $user = auth()->user();
 
-        $type = $request->query('type', 'user',  'groups');
-
-        if (!$type) {
-            $type = 'user';
-        }
+        $type = $request->query('type', 'user');
 
         if ($user->isAdmin() && $type == 'user') {
             $users = User::all();
@@ -195,7 +191,7 @@ class AdminController extends Controller
         return redirect()->back()->with('status', 'Group deleted successfully.');
     }
 
-    public function dismissReports($id)
+    public function dismissPostReports($id)
     {
         $post = Post::findOrFail($id);
         

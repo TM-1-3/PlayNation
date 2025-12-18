@@ -12,9 +12,7 @@
 </div>
 
 {{-- report modal include --}}
-@include('partials.report_modal', [
-    'modalId' => "report-modal-post-{$post->id_post}",
-    'action' => route('post.report', $post->id_post),
+@include('partials.report-modal', [
     'title' => 'Report Post',
     'target_type' => 'post',
     'target_id' => $post->id_post,
@@ -23,12 +21,12 @@
 <div class="bg-white border border-gray-200 rounded-lg mb-5 text-left flex flex-col" id="post-{{ $post->id_post }}">
 
     <div class="flex items-center p-3.5">
-        <a href="{{ route('profile.show', $post->user->id_user) }}" class="relative group mr-2.5" title="Click here to go to the author's profile page">
+        <a href="{{ route('profile.show', $post->user->id_user) }}" class="group mr-2.5" title="Click here to go to the author's profile page">
             <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" 
                 src="{{ $post->user->getProfileImage() }}" 
                 alt="avatar">
         </a>
-        <a href="{{ route('profile.show', $post->user->id_user) }}" class="relative group font-semibold text-sm text-gray-800 no-underline" title="Click here to go to the author's profile page">
+        <a href="{{ route('profile.show', $post->user->id_user) }}" class="group font-semibold text-sm text-gray-800 no-underline" title="Click here to go to the author's profile page">
             {{ $post->user->username }}
             @if($post->user->verifiedUser)
                 <i class="fa-solid fa-circle-check text-blue-500 text-[12px]"></i>
@@ -39,7 +37,7 @@
 
         @if($type == 'profile' && Auth::check() && Auth::id() == $post->id_creator)
             <div>
-                <a href="{{ route('post.edit', $post->id_post) }}" class="text-black py-1 px-1 text-sm no-underline" title="Edit your post">Edit</a>
+                <a href="{{ route('post.edit', $post->id_post) }}" class="text-black py-1 px-1 text-sm no-underline" title="Edit your post">⋮</a>
             </div>
         @else
             <div>
@@ -53,38 +51,18 @@
     @endif
     
     <div class="flex items-center gap-4 px-4 pt-2">
-        <div class="flex items-center gap-4 px-4 pt-2">
-            @php
-                $isLiked = isset($likedPostIds) && in_array($post->id_post, $likedPostIds);
-            @endphp
-            <button onclick="toggleLike({{ $post->id_post }})" 
-                    id="like-btn-{{ $post->id_post }}"
-                    class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-red-600" 
-                    title="Like">
-                <i class="{{ $isLiked ? 'fa-solid text-red-600' : 'fa-regular' }} fa-heart text-lg" id="like-icon-{{ $post->id_post }}"></i>
-                <span class="text-sm" id="like-count-{{ $post->id_post }}" onclick="event.stopPropagation(); toggleLikes({{ $post->id_post }})" style="cursor:pointer;">
-                    {{ $post->likes_count ?? $post->likes->count() }}
-                </span>
-            </button>
-            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
-                <i class="fa-regular fa-comment text-lg"></i>
-                <span class="text-sm">Comment</span>
-            </button>
-            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Share">
-                <i class="fa-regular fa-share-from-square text-lg"></i>
-                <span class="text-sm">Share</span>
-            </button>
-            <form action="{{ route('post.save', $post->id_post) }}" method="POST" class="ml-auto">
-                @csrf
-                @php
-                    $isSaved = isset($savedPostIds) && in_array($post->id_post, $savedPostIds);
-                @endphp
-                <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Save">
-                    <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-lg"></i>
-                    <span class="text-sm">Save</span>
-                </button>
-            </form>
-        </div>
+        @php
+            $isLiked = isset($likedPostIds) && in_array($post->id_post, $likedPostIds);
+        @endphp
+        <button onclick="toggleLike({{ $post->id_post }})" 
+                id="like-btn-{{ $post->id_post }}"
+                class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-red-600" 
+                title="Like">
+            <i class="{{ $isLiked ? 'fa-solid text-red-600' : 'fa-regular' }} fa-heart text-lg" id="like-icon-{{ $post->id_post }}"></i>
+            <span class="text-sm" id="like-count-{{ $post->id_post }}" onclick="event.stopPropagation(); toggleLikes({{ $post->id_post }})" style="cursor:pointer;">
+                {{ $post->likes_count ?? $post->likes->count() }}
+            </span>
+        </button>
         <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
             <i class="fa-regular fa-comment text-lg"></i>
             <span class="text-sm">Comment</span>

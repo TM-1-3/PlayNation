@@ -206,27 +206,6 @@ class PostController extends Controller
         ]);
     }
 
-    public function report(Request $request, $id)
-    {
-        $request->validate([
-            'reason' => 'required|string',
-            'details' => 'nullable|string|max:1000',
-        ]);
-
-        $description = $request->reason;
-        if ($request->filled('details')) {
-            $description .= ': ' . $request->details;
-        }
-
-        $report = Report::create([
-            'description' => $description
-        ]);
-
-        $report->posts()->attach($id);
-
-        return redirect()->back()->with('status', 'Post reported successfully. Admins will review it.');
-    }
-
     public function getLikes($id)
     {
         $post = Post::findOrFail($id);
