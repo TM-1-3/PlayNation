@@ -129,6 +129,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/post/{id}/report', [PostController::class, 'report'])->name('post.report');
     Route::post('/report', [ReportController::class, 'store'])->name('report.submit');
     Route::post('/post/{id}/save', [PostController::class, 'save'])->name('post.save');
+    Route::get('/post/{id}', [PostController::class, 'show'])->name('post.show');
 
 
     // File upload

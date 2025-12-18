@@ -80,6 +80,35 @@ class PostController extends Controller
         return redirect()->route('home')->with('status', 'Post created successfully');
     }
 
+   public function show($id)
+    {
+        // bet post w/ userdata associated
+        $post = Post::with('user')->findOrFail($id);
+
+        // initiate empty arrys for visitors
+        $likedPostIds = [];
+        $savedPostIds = [];
+
+        // logd user? fill the lists
+        if (Auth::check()) {
+            $user = Auth::user();
+            
+            // gets just the idds of liked posts
+            // use realtion likes of user model
+            $likedPostIds = $user->likes()->pluck('post.id_post')->toArray();
+            
+            // gets only saved posts ids
+            $savedPostIds = $user->savedPosts()->pluck('post.id_post')->toArray();
+        }
+
+        // return view w/ all data
+        return view('pages.show_post', [
+            'post' => $post,
+            'likedPostIds' => $likedPostIds, 
+            'savedPostIds' => $savedPostIds  
+        ]);
+    }
+
     public function edit($id)
     {
         $post = Post::findOrFail($id);

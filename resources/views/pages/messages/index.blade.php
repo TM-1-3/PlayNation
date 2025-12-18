@@ -202,44 +202,66 @@
             const isMe = msg.id_sender == currentUserId;
             const alignClass = isMe ? 'justify-end' : 'justify-start';
             const bgClass = isMe ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none';
-            
-            // date n id
             const time = new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             const msgId = `msg-${msg.id_message}`; 
 
-            // cleaning , hiding post tag [post:N123]
-            // if msg is "txt [post123]" just show "txt "
+            // clean tag [post:NUM]
             let displayText = msg.text.replace(/\[post:\d+\]/, '').trim();
 
-            // detection see if laravel sent post data
+            // detect posts data comes from 'msg.shared_post_data' or 'msg.message...'
             const post = msg.shared_post_data || (msg.message ? msg.message.shared_post_data : null);
 
             let contentHtml = '';
 
-            // draws post card
+            // draw card post partial style
             if (post) {
-                // if shared post has no msg we write by default: "Shared a post"
                 if (!displayText) displayText = "Shared a post";
 
+                // security placeholders
+                const username = post.user ? post.user.username : 'Unknown';
+                // users img or placeholder
+                const userImg = post.user && post.user.profile_image 
+                    ? post.user.profile_image 
+                    : 'https://ui-avatars.com/api/?name=' + username;
+                
+                const description = post.description || post.text_content || ''; 
+
                 contentHtml += `
-                    <div class="mb-2 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:opacity-90 transition" 
+                    <div class="mt-1 mb-2 bg-white rounded-lg border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow text-left"
                          onclick="window.location.href='/post/${post.id_post}'">
-                        ${post.image ? `<img src="/storage/${post.image}" class="w-full h-32 object-cover">` : ''} <div class="p-2">
-                            <div class="flex items-center gap-1 mb-1">
-                                <span class="text-xs font-bold text-gray-600 truncate">${post.user ? post.user.name : 'User'}</span>
+                        
+                        <div class="flex items-center p-3 border-b border-gray-100 bg-white">
+                            <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" 
+                                 src="${userImg}">
+                            <div class="font-semibold text-sm text-gray-800">
+                                ${username}
                             </div>
-                            <p class="text-sm font-semibold text-gray-800 line-clamp-2 text-left">${post.text_content || 'View Post'}</p>
+                        </div>
+
+                        ${post.image ? `
+                            <div class="w-full border-t border-gray-200 bg-gray-100">
+                                <img src="/posts/${post.image}" class="w-full h-auto object-cover max-h-[300px]">
+                            </div>
+                        ` : ''}
+                        
+                        <div class="flex items-center gap-4 px-4 py-2 border-b border-gray-50">
+                            <i class="fa-regular fa-heart text-gray-600 text-lg"></i>
+                            <i class="fa-regular fa-comment text-gray-600 text-lg"></i>
+                            <i class="fa-regular fa-share-from-square text-gray-600 text-lg"></i>
+                        </div>
+
+                        <div class="py-3 px-4 text-sm leading-relaxed text-gray-800 line-clamp-3">
+                            <span class="font-semibold mr-1">${username}</span>
+                            ${description}
                         </div>
                     </div>
                 `;
             }
             
-            // adds msgs text
             if (displayText) {
                 contentHtml += `<p>${displayText}</p>`;
             }
 
-            // msgs final baloon
             const html = `
                 <div id="${msgId}" class="flex ${alignClass} fade-in mb-4">
                     <div class="max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}">

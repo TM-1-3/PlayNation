@@ -73,6 +73,9 @@ class DirectMessageController extends Controller
                 return [
                     'id_message' => $pm->id_message,
                     'text' => $pm->message->text,
+
+                    'shared_post_data' => $pm->message->shared_post_data, // for shared posts
+
                     'date' => $pm->message->date,
                     'id_sender' => $pm->id_sender,
                     'sender_name' => $pm->sender->name,
@@ -114,7 +117,9 @@ class DirectMessageController extends Controller
             'message' => [
                 'id_message' => $messageData->id_message,
                 'text' => $messageData->text,
-                'date' => $messageData->date
+                'date' => $messageData->date,
+
+                'shared_post_data' => $messageData->shared_post_data
             ]
         ]);
     }
