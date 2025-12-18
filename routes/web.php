@@ -81,6 +81,9 @@ Route::get('/profile/{id}', [UserController::class, 'show'])->name('profile.show
 
 Route::middleware(['auth'])->group(function () {
 
+    Route::put('/comment/{id}', [PostController::class, 'updateComment'])->name('comment.update');
+    Route::delete('/comment/{id}', [PostController::class, 'deleteComment'])->name('comment.delete');
+
     Route::get('/post/{id}/comments', [PostController::class, 'getComments'])->name('post.comments');
     Route::post('/post/{id}/comment', [PostController::class, 'addComment'])->name('post.comment');
 
