@@ -186,10 +186,11 @@ class UserController extends Controller
         $search = $request->get('search');
         $currentUserId = Auth::id();
         
-        // Filter by username using ILIKE
+        // Filter by username using vectors
         $username = $request->query('username');
         if ($username) {
-            $query->where('username', 'ILIKE', '%' . $username . '%');
+            $input = $username . ':*';
+            $query->whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input]);
         }
         
         // Filter by verified users

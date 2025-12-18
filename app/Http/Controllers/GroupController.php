@@ -63,17 +63,19 @@ class GroupController extends Controller
 
     private function filterGroups($query, Request $request)
     {
-        // Filter by group name
+        // Filter by group name using vectors
         $groupName = $request->query('group_name');
         if ($groupName) {
-            $query->where('name', 'ILIKE', '%' . $groupName . '%');
+            $input = $groupName . ':*';
+            $query->whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input]);
         }
 
-        // Filter by owner name
+        // Filter by owner name using vectors
         $ownerName = $request->query('owner_name');
         if ($ownerName) {
-            $query->whereHas('owner', function($q) use ($ownerName) {
-                $q->where('name', 'ILIKE', '%' . $ownerName . '%');
+            $input = $ownerName . ':*';
+            $query->whereHas('owner', function($q) use ($input) {
+                $q->whereRaw("tsvectors @@ to_tsquery('portuguese', ?)", [$input]);
             });
         }
 
@@ -99,21 +101,28 @@ class GroupController extends Controller
 
         // Apply sort option
         $sort = $request->query('sort');
-        if ($sort === 'oldest') {
-            $query->orderBy('id_group', 'asc');
-        } elseif ($sort === 'newest') {
-            $query->orderBy('id_group', 'desc');
-        } elseif ($sort === 'most_members') {
-            $query->withCount('members')->orderByDesc('members_count');
-        } elseif ($sort === 'name_asc') {
-            $query->orderBy('name', 'asc');
-        } elseif ($sort === 'name_desc') {
-            $query->orderBy('name', 'desc');
-        } else {
-            // Default: maintain original ordering (public first)
-            if (!$request->has('my_groups')) {
-                $query->orderBy('is_public', 'desc')->orderBy('id_group', 'desc');
-            }
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('id_group', 'asc');
+                break;
+            case 'newest':
+                $query->orderBy('id_group', 'desc');
+                break;
+            case 'most_members':
+                $query->withCount('members')->orderByDesc('members_count');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            default:
+                // Default: maintain original ordering (public first)
+                if (!$request->has('my_groups')) {
+                    $query->orderBy('is_public', 'desc')->orderBy('id_group', 'desc');
+                }
+                break;
         }
 
         return $query;
