@@ -322,14 +322,68 @@
             // id and data
             const elementId = customId ? customId : `msg-${msg.id_message}`;
             const timeDisplay = isOptimistic ? 'Sending...' : new Date(msg.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            // clear tag [post:NUM]
+            let displayText = msg.text ? msg.text.replace(/\[post:\d+\]/, '').trim() : '';
 
-            // pfp for others not me
-            const avatarHtml = !isMe 
+            // get post data
+            const post = msg.shared_post_data || (msg.message ? msg.message.shared_post_data : null);
+
+            let contentHtml = '';
+
+            // draw post card like in feed
+            if (post) {
+                if (!displayText) displayText = "Shared a post";
+
+                // data pesets
+                const username = post.user ? post.user.username : 'Unknown';
+                const userImg = post.user && post.user.profile_image 
+                    ? post.user.profile_image 
+                    : 'https://ui-avatars.com/api/?name=' + username;
+                const description = post.description || post.text_content || ''; 
+
+                contentHtml += `
+                    <div class="mt-1 mb-2 bg-white rounded-lg border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow text-left group-post"
+                         onclick="window.location.href='/post/${post.id_post}'">
+                        
+                        <div class="flex items-center p-3 border-b border-gray-100 bg-white">
+                            <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" src="${userImg}">
+                            <div class="font-semibold text-sm text-gray-800">${username}</div>
+                        </div>
+
+                        ${post.image ? `
+                            <div class="w-full border-t border-gray-200 bg-gray-100">
+                                <img src="/posts/${post.image}" class="w-full h-auto object-cover max-h-[300px]">
+                            </div>
+                        ` : ''}
+                        
+                        <div class="flex items-center gap-4 px-4 py-2 border-b border-gray-50">
+                            <i class="fa-regular fa-heart text-gray-600 text-lg"></i>
+                            <i class="fa-regular fa-comment text-gray-600 text-lg"></i>
+                            <i class="fa-regular fa-share-from-square text-gray-600 text-lg"></i>
+                        </div>
+
+                        <div class="py-3 px-4 text-sm leading-relaxed text-gray-800 line-clamp-3">
+                            <span class="font-semibold mr-1">${username}</span>
+                            ${description}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // adds clean text
+            if (displayText) {
+                contentHtml += `<p>${displayText}</p>`;
+            }
+            // ----------------------------------------------
+
+            // pfp for other users
+            const avatarHtml = !isMe && msg.sender
                 ? `<img src="${msg.sender.profile_image}" alt="${msg.sender.name}" class="w-8 h-8 rounded-full object-cover mr-2 self-end mb-1 border border-gray-200 shadow-sm">` 
                 : '';
             
-            //name for others not me
-            const nameHtml = !isMe 
+            // name for other users
+            const nameHtml = !isMe && msg.sender
                 ? `<span class="text-xs text-gray-500 mb-1 ml-1">${msg.sender.name}</span>` 
                 : '';
 
@@ -338,8 +392,8 @@
                     ${avatarHtml}
                     <div class="max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}">
                         ${nameHtml}
-                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group text-sm leading-relaxed break-words">
-                            <p>${msg.text}</p>
+                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group text-sm leading-relaxed break-words overflow-hidden">
+                            ${contentHtml}
                         </div>
                         <span class="text-[10px] text-gray-400 mt-1 ml-1 block message-time">${timeDisplay}</span>
                     </div>

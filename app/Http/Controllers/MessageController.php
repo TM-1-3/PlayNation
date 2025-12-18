@@ -42,6 +42,7 @@ class MessageController extends Controller
                 'id_message' => $msgParent->id_message,
                 'text'       => $msgParent->text, 
                 'date'       => $msgParent->date,
+                'shared_post_data' => $msgParent->shared_post_data,
                 'id_sender'  => $user->id_user,
                 'sender'     => [
                     'name' => $user->name,
@@ -70,6 +71,7 @@ class MessageController extends Controller
                     'id_sender'  => $item->id_sender,
                     'text'       => $item->message->text,
                     'date'       => $item->message->date,
+                    'shared_post_data' => $item->message->shared_post_data,
                     'sender'     => [
                         'name' => $item->sender->name,
                         'profile_image' => $item->sender->getProfileImage() // <--- ADICIONA ISTO
