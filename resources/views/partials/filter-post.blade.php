@@ -7,8 +7,6 @@
 }
 </style>
 
-<div id="filter-overlay" class="hidden fixed inset-0 bg-black bg-opacity-40 z-40"></div>
-
 <aside id="filter-panel" class="fixed right-0 top-1/2 -translate-y-1/2 pr-6 h-auto content-center w-80 rounded-lg transform shadow-xl translate-x-full transition-transform duration-300 ease-in-out bg-white shadow-md z-50 p-4 overflow-auto" aria-hidden="true" role="dialog" aria-label="Filter posts">
     <div class="flex items-start justify-between mb-4">
         <h3 class="font-semibold text-lg">Filters</h3>
