@@ -81,8 +81,10 @@ Route::get('/profile/{id}', [UserController::class, 'show'])->name('profile.show
 
 Route::middleware(['auth'])->group(function () {
 
+    Route::get('/post/{id}/comments', [PostController::class, 'getComments'])->name('post.comments');
+    Route::post('/post/{id}/comment', [PostController::class, 'addComment'])->name('post.comment');
+
     Route::post('/post/{id}/like', [PostController::class, 'toggleLike'])->name('post.like');
-    
     Route::get('/post/{id}/likes', [PostController::class, 'getLikes'])->name('post.likes');
 
     Route::get('/profile/{id}/edit', [UserController::class, 'edit'])->name('profile.edit');

@@ -65,4 +65,11 @@ class Post extends Model
     {
         return $this->hasMany(PostLike::class, 'id_post', 'id_post');
     }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'id_post', 'id_post')
+                    ->with('user')
+                    ->orderBy('date', 'desc');
+    }
 }

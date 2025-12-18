@@ -1,5 +1,5 @@
 {{-- likes modal (hidden) --}}
-<div id="likes-modal-{{ $post->id_post }}" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="if(event.target === this) toggleLikes({{ $post->id_post }})">
+<div id="likes-modal-{{ $post->id_post }}" class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center backdrop-blur-sm" onclick="if(event.target === this) toggleLikes({{ $post->id_post }})">
     <div class="bg-white rounded-lg w-full max-w-md max-h-96 overflow-hidden">
         <div class="flex justify-between items-center p-4 border-b">
             <h4 class="font-semibold text-lg">Liked by</h4>
@@ -10,6 +10,12 @@
         </div>
     </div>
 </div>
+
+{{-- comments modal include --}}
+@include('partials.comments_modal', [
+    'modalId' => "comments-modal-post-{$post->id_post}",
+    'postId' => $post->id_post,
+])
 
 {{-- report modal include --}}
 @include('partials.report_modal', [
@@ -66,9 +72,9 @@
                     {{ $post->likes_count ?? $post->likes->count() }}
                 </span>
             </button>
-            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Comment">
+            <button onclick="toggleComments({{ $post->id_post }})" class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600" title="View comments">
                 <i class="fa-regular fa-comment text-lg"></i>
-                <span class="text-sm">Comment</span>
+                <span class="text-sm">{{ $post->comments_count ?? $post->comments->count() }}</span>
             </button>
             <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Share">
                 <i class="fa-regular fa-share-from-square text-lg"></i>
@@ -164,6 +170,93 @@ function toggleLike(postId) {
     })
     .catch(error => {
         console.error('Error toggling like:', error);
+    });
+}
+
+function toggleComments(postId) {
+    const modal = document.getElementById(`comments-modal-post-${postId}`);
+    const commentsList = document.getElementById(`comments-list-${postId}`);
+    
+    if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        
+        // Fetch comments
+        fetch(`/post/${postId}/comments`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.comments.length === 0) {
+                    commentsList.innerHTML = '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
+                } else {
+                    commentsList.innerHTML = data.comments.map(comment => `
+                        <div class="flex gap-3 mb-4 pb-4 border-b border-gray-100 last:border-0">
+                            <a href="/profile/${comment.user.id_user}" class="flex-shrink-0">
+                                <img src="${comment.user.profile_picture}" 
+                                     alt="${comment.user.username}" 
+                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
+                            </a>
+                            <div class="flex-1 min-w-0">
+                                <div class="bg-gray-50 rounded-lg px-3 py-2">
+                                    <a href="/profile/${comment.user.id_user}" 
+                                       class="font-semibold text-sm text-gray-900 no-underline hover:underline">
+                                        ${comment.user.username}
+                                    </a>
+                                    <p class="text-sm text-gray-700 mt-1 break-words">${comment.text}</p>
+                                </div>
+                                <span class="text-xs text-gray-400 ml-3 mt-1 inline-block">
+                                    ${comment.date}
+                                </span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            })
+            .catch(error => {
+                commentsList.innerHTML = '<div class="text-center text-red-500 py-4">Error loading comments</div>';
+                console.error('Error:', error);
+            });
+    } else {
+        modal.classList.add('hidden');
+    }
+}
+
+function addComment(event, postId) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const input = document.getElementById(`comment-input-${postId}`);
+    const commentText = input.value.trim();
+    
+    if (!commentText) return;
+    
+    fetch(`/post/${postId}/comment`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ comment_text: commentText })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Clear input
+            input.value = '';
+            
+            // Reload comments to show the new one
+            toggleComments(postId);
+            setTimeout(() => toggleComments(postId), 100);
+            
+            // Update comment count in the post
+            const countElement = document.querySelector(`#post-${postId} .fa-comment`).nextElementSibling;
+            if (countElement) {
+                const currentCount = parseInt(countElement.textContent) || 0;
+                countElement.textContent = currentCount + 1;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error adding comment:', error);
+        alert('Failed to add comment. Please try again.');
     });
 }
 </script>
