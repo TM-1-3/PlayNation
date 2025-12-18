@@ -329,6 +329,13 @@
                 .catch(err => console.error(err));
             });
         }
+        @if(isset($targetUser) && $targetUser)
+            const target = @json($targetUser);
+            
+            // Reutilizamos a função startNewChat que criámos para o Modal!
+            // Ela já sabe lidar com tudo: se o chat existe, abre-o. Se não, cria o temp.
+            startNewChat(target.id, target.name, target.image);
+        @endif
     });
 
     // new chat modal logic
@@ -406,6 +413,9 @@
         // clicks it to open
         existingItem.click();
     }
+
+    
+
 </script>
 
 <style>
