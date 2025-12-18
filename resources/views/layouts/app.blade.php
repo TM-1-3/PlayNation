@@ -12,6 +12,7 @@
     @stack('styles')
 
     <!-- Scripts -->
+    <script src="{{ asset('js/post.js') }}" defer></script>
     <script src="{{ asset('js/search.js') }}" defer></script>
     <script src="{{ asset('js/home.js') }}" defer></script>
     <script src="{{ asset('js/filter.js') }}" defer></script>
