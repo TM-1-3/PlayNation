@@ -13,7 +13,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/search.js') }}" defer></script>
-    <script src="{{ asset('js/home.js') }}" defer></script>
+    <script src="{{ asset('js/report.js') }}" defer></script>
     <script src="{{ asset('js/filter.js') }}" defer></script>
     @stack('scripts')
 </head>
