@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use \App\Models\Report;
 
 class ReportController extends Controller
 {
@@ -20,7 +21,7 @@ class ReportController extends Controller
             $description .= ': ' . $data['details'];
         }
 
-        $report = \App\Models\Report::create(['description' => $description]);
+        $report = Report::create(['description' => $description]);
 
         switch ($data['target_type']) {
             case 'post':

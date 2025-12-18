@@ -12,9 +12,7 @@
 </div>
 
 {{-- report modal include --}}
-@include('partials.report_modal', [
-    'modalId' => "report-modal-post-{$post->id_post}",
-    'action' => route('post.report', $post->id_post),
+@include('partials.report-modal', [
     'title' => 'Report Post',
     'target_type' => 'post',
     'target_id' => $post->id_post,
@@ -23,12 +21,12 @@
 <div class="bg-white border border-gray-200 rounded-lg mb-5 text-left flex flex-col" id="post-{{ $post->id_post }}">
 
     <div class="flex items-center p-3.5">
-        <a href="{{ route('profile.show', $post->user->id_user) }}" class="relative group mr-2.5" title="Click here to go to the author's profile page">
+        <a href="{{ route('profile.show', $post->user->id_user) }}" class="group mr-2.5" title="Click here to go to the author's profile page">
             <img class="w-8 h-8 rounded-full object-cover border border-gray-200 mr-2.5" 
                 src="{{ $post->user->getProfileImage() }}" 
                 alt="avatar">
         </a>
-        <a href="{{ route('profile.show', $post->user->id_user) }}" class="relative group font-semibold text-sm text-gray-800 no-underline" title="Click here to go to the author's profile page">
+        <a href="{{ route('profile.show', $post->user->id_user) }}" class="group font-semibold text-sm text-gray-800 no-underline" title="Click here to go to the author's profile page">
             {{ $post->user->username }}
             @if($post->user->verifiedUser)
                 <i class="fa-solid fa-circle-check text-blue-500 text-[12px]"></i>
@@ -39,7 +37,7 @@
 
         @if($type == 'profile' && Auth::check() && Auth::id() == $post->id_creator)
             <div>
-                <a href="{{ route('post.edit', $post->id_post) }}" class="text-black py-1 px-1 text-sm no-underline" title="Edit your post">Edit</a>
+                <a href="{{ route('post.edit', $post->id_post) }}" class="text-black py-1 px-1 text-sm no-underline" title="Edit your post">⋮</a>
             </div>
         @else
             <div>

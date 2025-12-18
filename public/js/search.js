@@ -352,7 +352,7 @@ function searchHandler(response, searchType) {
           otherGroupsGrid.style.display = 'none';
           if (noResultsDiv) noResultsDiv.classList.remove('hidden');
         } else {
-          otherGroupsGrid.style.display = 'grid';
+          otherGroupsGrid.style.display = 'flex';
           if (noResultsDiv) noResultsDiv.classList.add('hidden');
           response.otherGroups.forEach(group => {
             const groupCard = createGroupCard(group);
@@ -368,7 +368,8 @@ function searchHandler(response, searchType) {
 
 function createGroupCard(group) {
   const article = document.createElement('article');
-  article.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full';
+  article.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full w-[350px]';
+  article.title = 'Access the group';
   
   const groupPicture = group.picture;
   const isPublic = group.is_public;
@@ -378,7 +379,7 @@ function createGroupCard(group) {
     <div class="h-40 overflow-hidden relative">
       <img src="${groupPicture}" 
            alt="${group.name}" 
-           class="w-[400px] h-[200px] object-cover">
+           class="w-full h-full object-cover">
       
       <div class="absolute top-2 right-2">
         ${isPublic 
@@ -388,7 +389,7 @@ function createGroupCard(group) {
       </div>
     </div>
     
-    <div class="p-3 flex-1 flex flex-col">
+    <div class="p-3 pb-0 flex-1 flex flex-col h-[12vh]">
       <h3 class="text-xl font-bold mb-2 text-gray-800 truncate">${group.name}</h3>
       
       <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
