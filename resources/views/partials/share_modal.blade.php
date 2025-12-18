@@ -132,7 +132,7 @@
         // Decide a URL baseada no tipo (User vs Group)
         const url = type === 'user' 
             ? `/messages/${id}`            // Rota de DMs
-            : `/groups/${id}/message`;     // Rota de Grupos (verifica o nome da tua rota!)
+            : `/groups/${id}/messages`;     // Rota de Grupos (verifica o nome da tua rota!)
 
         fetch(url, {
             method: 'POST',
