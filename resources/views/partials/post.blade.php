@@ -70,7 +70,9 @@
                 <i class="fa-regular fa-comment text-lg"></i>
                 <span class="text-sm">Comment</span>
             </button>
-            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Share">
+            <button onclick="openShareModal({{ $post->id_post }})" 
+                    class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600 transition" 
+                    title="Share with friends">
                 <i class="fa-regular fa-share-from-square text-lg"></i>
                 <span class="text-sm">Share</span>
             </button>

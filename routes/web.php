@@ -93,6 +93,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/messages/friends', [DirectMessageController::class, 'getFriendsToChat'])->name('messages.friends');
     Route::get('/messages/{user}', [DirectMessageController::class, 'show'])->name('messages.show');
     Route::post('/messages/{user}', [DirectMessageController::class, 'store'])->name('messages.store');
+    Route::get('/api/share/targets', [DirectMessageController::class, 'getShareTargets'])->middleware('auth');
     
 
     Route::get('/notifications', function () {

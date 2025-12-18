@@ -18,4 +18,6 @@
     @include('partials.post', ['post' => $post, 'type' => 'home'])
 
 </div>
+@include('partials.share_modal')
+
 @endsection

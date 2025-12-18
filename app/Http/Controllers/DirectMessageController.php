@@ -139,4 +139,36 @@ class DirectMessageController extends Controller
 
         return response()->json($friends);
     }
+
+    public function getShareTargets()
+    {
+        $user = Auth::user();
+        
+        // friends
+        $friends = $user->friends->map(function($f) {
+            return [
+                'id' => $f->id_user,
+                'name' => $f->name,
+                'image' => asset($f->getProfileImage()),
+                'type' => 'user' // Importante para sabermos a URL de envio
+            ];
+        });
+
+        // 2. Grupos (onde sou membro ou dono)
+        // Junta os ownedGroups com os groups onde sou membro
+        $groups = $user->groups->merge($user->ownedGroups)->unique('id_group')->map(function($g) {
+            return [
+                'id' => $g->id_group,
+                'name' => $g->name,
+                'image' => $g->getGroupPicture(), // Confirma se tens este método ou usa asset()
+                'type' => 'group'
+            ];
+        });
+
+        return response()->json([
+            'friends' => $friends,
+            'groups' => $groups
+        ]);
+    }
+
 }
