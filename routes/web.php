@@ -119,9 +119,8 @@ Route::middleware(['auth'])->group(function () {
         return view('pages.placeholder', ['title' => 'My Groups']);
     })->name('mygroups.index');
 
-    Route::get('/about', function () {
-        return view('pages.placeholder', ['title' => 'About']);
-    })->name('about.index');
+
+    
 
     
 
@@ -153,9 +152,11 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/profile/{id}/friends', [FriendController::class, 'showFriendsPage'])->name('user.friends');
 
 
-// Group routes public
+// public routes 
 Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
 Route::get('/groups/{id}', [GroupController::class, 'show'])->name('groups.show');
+Route::view('/about', 'pages.about')->name('about');
+Route::view('/help', 'pages.help')->name('help');
 
 
 // Group routes authenticated

@@ -106,12 +106,15 @@
                         <i class="fa-solid fa-user-plus w-8 text-xl text-center mr-2.5"></i> 
                         Register
                     </a>
+
+                    
+
                 @endif
 
         </nav>
 
         <div class="border-t border-gray-400 text-xs text-gray-500 text-center mt-0 pt-2.5">
-            <a href="{{ route('about.index') }}" class="hover:shadow-xl transition-shadow duration-200 text-gray-500 no-underline mx-1 hover:underline" title="Learn about PlayNation">About</a> | <a href="#" class="text-gray-500 no-underline mx-1 hover:underline" title="Get help">Help</a>
+            <a href="{{ route('about') }}" class="hover:shadow-xl transition-shadow duration-200 text-gray-500 no-underline mx-1 hover:underline" title="Learn about PlayNation">About</a> | <a href="{{ route('help') }}" class="text-gray-500 no-underline mx-1 hover:underline" title="Get help">Help</a>
             <br>
             <p class="mt-2.5">&copy; {{ date('Y') }} PlayNation</p>
         </div>
