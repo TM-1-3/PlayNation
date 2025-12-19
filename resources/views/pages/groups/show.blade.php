@@ -356,8 +356,9 @@
 
                         ${post.image ? `
                             <div class="w-full border-t border-gray-200 bg-gray-100">
-                                <img src="/posts/${post.image}" class="w-full h-auto object-cover max-h-[300px]">
-                            </div>
+                                <img src="/posts/${post.image}" 
+                                     class="w-full h-auto object-cover max-h-[300px]"
+                                     onload="scrollToBottom()"> </div>
                         ` : ''}
                         
                         <div class="flex items-center gap-4 px-4 py-2 border-b border-gray-50">
@@ -395,7 +396,7 @@
                     ${avatarHtml}
                     <div class="max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}">
                         ${nameHtml}
-                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group text-sm leading-relaxed break-words overflow-hidden">
+                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative group text-sm leading-relaxed break-all overflow-hidden">
                             ${contentHtml}
                         </div>
                         <span class="text-[10px] text-gray-400 mt-1 ml-1 block message-time">${timeDisplay}</span>

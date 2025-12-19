@@ -240,8 +240,9 @@
 
                         ${post.image ? `
                             <div class="w-full border-t border-gray-200 bg-gray-100">
-                                <img src="/posts/${post.image}" class="w-full h-auto object-cover max-h-[300px]">
-                            </div>
+                                <img src="/posts/${post.image}" 
+                                     class="w-full h-auto object-cover max-h-[300px]"
+                                     onload="scrollToBottom()"> </div>
                         ` : ''}
                         
                         <div class="flex items-center gap-4 px-4 py-2 border-b border-gray-50">
@@ -264,8 +265,8 @@
 
             const html = `
                 <div id="${msgId}" class="flex ${alignClass} fade-in mb-4">
-                    <div class="max-w-[70%] flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative text-sm leading-relaxed break-words overflow-hidden">
+                    <div class="max-w-[70%] min-w-0 flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                        <div class="${bgClass} px-4 py-2 rounded-2xl shadow-sm relative text-sm leading-relaxed break-all overflow-hidden">
                             ${contentHtml}
                         </div>
                         <span class="text-[10px] text-gray-400 mt-1 px-1">${time}</span>
@@ -275,8 +276,11 @@
             container.insertAdjacentHTML('beforeend', html);
         }
 
-        function scrollToBottom() {
-            feed.scrollTo({ top: feed.scrollHeight, behavior: 'smooth' });
+        function scrollToBottom(smooth = true) {
+            feed.scrollTo({ 
+                top: feed.scrollHeight, 
+                behavior: smooth ? 'smooth' : 'auto' 
+            });
         }
 
         // send
@@ -297,6 +301,7 @@
                     date: new Date().toISOString()
                 }, feed);
                 scrollToBottom();
+
 
                 // update sidebar
                 const sidebarItem = document.getElementById(`convo-${activeFriendId}`);
@@ -332,8 +337,8 @@
         @if(isset($targetUser) && $targetUser)
             const target = @json($targetUser);
             
-            // Reutilizamos a função startNewChat que criámos para o Modal!
-            // Ela já sabe lidar com tudo: se o chat existe, abre-o. Se não, cria o temp.
+            // reuse startNewChat we use on model
+            // if chat exists opens it else creates it
             startNewChat(target.id, target.name, target.image);
         @endif
     });
