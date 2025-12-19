@@ -93,25 +93,21 @@
             <div class="flex flex-col items-center">
                 <img src="https://ui-avatars.com/api/?name=Carolina+Ferreira&background=random&size=150" class="w-16 h-16 md:w-20 md:h-20 rounded-full mb-3 shadow-md border-2 border-white">
                 <h4 class="font-bold text-gray-800 text-sm md:text-base">Carolina Ferreira</h4>
-                <p class="text-[10px] md:text-xs text-blue-600 font-semibold uppercase tracking-wide">Co-Founder & Developer</p>
             </div>
 
             <div class="flex flex-col items-center">
                 <img src="https://ui-avatars.com/api/?name=Gabriela+Mattos&background=random&size=150" class="w-16 h-16 md:w-20 md:h-20 rounded-full mb-3 shadow-md border-2 border-white">
                 <h4 class="font-bold text-gray-800 text-sm md:text-base">Gabriela de Mattos</h4>
-                <p class="text-[10px] md:text-xs text-blue-600 font-semibold uppercase tracking-wide">Co-Founder & Developer</p>
             </div>
 
             <div class="flex flex-col items-center">
                 <img src="https://ui-avatars.com/api/?name=Joao+Marques&background=random&size=150" class="w-16 h-16 md:w-20 md:h-20 rounded-full mb-3 shadow-md border-2 border-white">
                 <h4 class="font-bold text-gray-800 text-sm md:text-base">João Marques</h4>
-                <p class="text-[10px] md:text-xs text-blue-600 font-semibold uppercase tracking-wide">Co-Founder & Developer</p>
             </div>
 
             <div class="flex flex-col items-center">
                 <img src="https://ui-avatars.com/api/?name=Tomas+Morais&background=random&size=150" class="w-16 h-16 md:w-20 md:h-20 rounded-full mb-3 shadow-md border-2 border-white">
                 <h4 class="font-bold text-gray-800 text-sm md:text-base">Tomás Morais</h4>
-                <p class="text-[10px] md:text-xs text-blue-600 font-semibold uppercase tracking-wide">Editor & Lead Developer</p>
             </div>
         </div>
     </div>
