@@ -209,4 +209,22 @@ class AdminController extends Controller
 
         return redirect()->back()->with('status', 'Reports dismissed successfully.');
     }
+
+    public function deleteComment($id)
+    {
+        $comment = Comment::findOrFail($id);
+        
+        $comment->delete();
+
+        return redirect()->back()->with('status', 'Reported comment deleted successfully.');
+    }
+
+    public function dismissCommentReports($id)
+    {
+        $comment = Comment::findOrFail($id);
+        
+        $comment->reports()->detach();
+
+        return redirect()->back()->with('status', 'Reports dismissed successfully.');
+    }
 }

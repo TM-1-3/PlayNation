@@ -41,6 +41,11 @@ class ReportController extends Controller
                     'id_report' => $report->id_report,
                     'id_group' => $data['target_id']
                 ]);
+            case 'comment':
+                \DB::table('report_comment')->insert([
+                    'id_report' => $report->id_report,
+                    'id_comment' => $data['target_id']
+                ]);
                 break;
         }
 

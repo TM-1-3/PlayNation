@@ -35,6 +35,16 @@
                 <div>
                     <span class="bg-red-600 text-white text-xs py-1 px-2 rounded font-semibold">{{ $report->report_count }} {{ $report->report_count == 1 ? 'Report' : 'Reports' }}</span>
                 </div>
+            @elseif($type === 'comment')
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-red-600 text-white text-xs py-1 px-2 rounded font-semibold">
+                        {{ $report->report_count }} {{ $report->report_count == 1 ? 'Report' : 'Reports' }}
+                    </span>
+                    <span class="text-xs text-gray-500">Commented by</span>
+                    <a href="{{ route('profile.show', $report->user->id_user) }}" class="text-sm font-semibold text-gray-800 hover:underline" title="Click to go to the user's page">
+                        {{ $report->user->username }}
+                    </a>
+                </div>
             @endif
 
             {{-- Report reasons --}}
@@ -101,6 +111,24 @@
             </form>
             <a href="{{ route('groups.show', $report->id_group) }}" class="bg-blue-500 text-white text-sm py-1 px-3 rounded-lg hover:bg-blue-600 transition inline-block" title="Access the group's page">
                 View Group
+            </a>
+        @elseif($type === 'comment')
+            <form action="{{ route('admin.comment.delete', $report->id_post) }}" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="cursor-pointer bg-red-600 text-white text-sm py-1 px-3 rounded-lg hover:bg-red-700 transition" onclick="return confirm('Are you sure you want to delete this post?')" title="Delete the post">
+                    Delete Comment
+                </button>
+            </form>
+            <form action="{{ route('admin.comment.dismiss', $report->id_post) }}" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="cursor-pointer bg-gray-500 text-white text-sm py-1 px-3 rounded-lg hover:bg-gray-600 transition" title="Click to keep the content">
+                    Dismiss Reports
+                </button>
+            </form>
+            {{-- need to chande route --}}
+            <a href="{{ route('profile.show', $report->user->id_user) }}" class="bg-blue-500 text-white text-sm py-1 px-3 rounded-lg hover:bg-blue-600 transition inline-block" title="Click to view the post">
+                View Comment
             </a>
         @endif
     </div>
