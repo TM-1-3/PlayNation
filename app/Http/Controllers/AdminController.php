@@ -29,7 +29,7 @@ class AdminController extends Controller
 
         if ($user->isAdmin() && $type == 'content') {
             $reportedPosts = Post::whereHas('reports')
-                ->with(['user', 'labels', 'reports'])
+                ->with(['labels', 'reports'])
                 ->get()
                 ->map(function($post) {
                     $post->report_count = $post->reports->count();
@@ -39,7 +39,7 @@ class AdminController extends Controller
                 ->sortByDesc('report_count');
 
             $reportedUsers = User::whereHas('reports')
-                ->with(['user', 'reports'])
+                ->with(['reports'])
                 ->get()
                 ->map(function($user) {
                     $user->report_count = $user->reports->count();
@@ -59,7 +59,7 @@ class AdminController extends Controller
                 ->sortByDesc('report_count');
 
             $reportedComments = Comment::whereHas('reports')
-                ->with(['user', 'reports'])
+                ->with(['reports'])
                 ->get()
                 ->map(function($comment) {
                     $comment->report_count = $comment->reports->count();
