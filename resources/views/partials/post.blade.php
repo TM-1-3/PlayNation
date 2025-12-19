@@ -1,12 +1,6 @@
 {{-- likes modal include --}}
 @include('partials.likes_modal', ['modalId' => "likes-modal-{$post->id_post}",'postId' => $post->id_post])
 
-{{-- comments modal include --}}
-@include('partials.comments_modal', [
-    'modalId' => "comments-modal-post-{$post->id_post}",
-    'postId' => $post->id_post,
-])
-
 {{-- report modal include --}}
 @include('partials.report-modal', [
     'title' => 'Report Post',
