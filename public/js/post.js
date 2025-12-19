@@ -88,8 +88,8 @@ function toggleComments(postId) {
                                     </a>
                                     <p class="text-sm text-gray-700 mt-1 break-words" id="comment-text-${comment.id_comment}">${comment.text}</p>
                                     
-                                    ${comment.is_owner ? `
-                                        <div class="absolute top-2 right-2 flex gap-1">
+                                    <div class="absolute top-2 right-2 flex gap-1">
+                                        ${comment.is_owner ? `
                                             <button onclick="editComment(${comment.id_comment}, '${comment.text.replace(/'/g, "\\'")}', ${postId})" 
                                                     class="text-blue-600 hover:text-blue-800 bg-transparent border-none cursor-pointer p-1" 
                                                     title="Edit comment">
@@ -100,8 +100,14 @@ function toggleComments(postId) {
                                                     title="Delete comment">
                                                 <i class="fa-solid fa-trash text-xs"></i>
                                             </button>
-                                        </div>
-                                    ` : ''}
+                                        ` : `
+                                            <button onclick="toggleReport('comment', ${comment.id_comment})" 
+                                                    class="text-gray-600 hover:text-red-600 bg-transparent border-none cursor-pointer p-1" 
+                                                    title="Report comment">
+                                                <i class="fa-solid fa-flag text-xs"></i>
+                                            </button>
+                                        `}
+                                    </div>
                                 </div>
                                 <span class="text-xs text-gray-400 ml-3 mt-1 inline-block">
                                     ${comment.date}
