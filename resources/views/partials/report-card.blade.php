@@ -113,14 +113,14 @@
                 View Group
             </a>
         @elseif($type === 'comment')
-            <form action="{{ route('admin.comment.delete', $report->id_post) }}" method="POST" class="inline">
+            <form action="{{ route('admin.comment.delete', $report->id_comment) }}" method="POST" class="inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="cursor-pointer bg-red-600 text-white text-sm py-1 px-3 rounded-lg hover:bg-red-700 transition" onclick="return confirm('Are you sure you want to delete this post?')" title="Delete the post">
+                <button type="submit" class="cursor-pointer bg-red-600 text-white text-sm py-1 px-3 rounded-lg hover:bg-red-700 transition" onclick="return confirm('Are you sure you want to delete this comment?')" title="Delete the comment">
                     Delete Comment
                 </button>
             </form>
-            <form action="{{ route('admin.comment.dismiss', $report->id_post) }}" method="POST" class="inline">
+            <form action="{{ route('admin.comment.dismiss', $report->id_comment) }}" method="POST" class="inline">
                 @csrf
                 <button type="submit" class="cursor-pointer bg-gray-500 text-white text-sm py-1 px-3 rounded-lg hover:bg-gray-600 transition" title="Click to keep the content">
                     Dismiss Reports
