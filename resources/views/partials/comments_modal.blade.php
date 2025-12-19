@@ -12,7 +12,7 @@
             </button>
         </div>
 
-        <div class="flex justify-center mt-2">
+        <div class="flex justify-center my-2">
             <form id="search-comment" action="{{ route('search.comments') }}" method="GET" class="relative">
                 <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
