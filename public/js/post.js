@@ -65,6 +65,8 @@ function toggleComments(postId) {
     
     if (modal.classList.contains('hidden')) {
         modal.classList.remove('hidden');
+        document.documentElement.classList.add('overflow-hidden');
+        document.body.classList.add('overflow-hidden');
         
         // Fetch comments as rendered HTML from server (Blade partial)
         fetch(`/post/${postId}/comments?format=html`, {
@@ -87,6 +89,8 @@ function toggleComments(postId) {
             });
     } else {
         modal.classList.add('hidden');
+        document.documentElement.classList.remove('overflow-hidden');
+        document.body.classList.remove('overflow-hidden');
     }
 }
 
