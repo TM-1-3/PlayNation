@@ -19,7 +19,7 @@
 
     <div class="mb-16 md:mb-24">
         <div class="text-center mb-8 md:mb-10">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Built for Performance & Safety</h2>
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Engineered for Scale & Security</h2>
             <p class="text-gray-500 mt-2 text-sm md:text-base">Our commitment to technical excellence ensures a seamless experience.</p>
         </div>
 
