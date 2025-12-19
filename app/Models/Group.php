@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use \App\Http\Controllers\FileController;
 use Illuminate\Support\Facades\Storage;
 
+use \App\Models\Report;
+
 class Group extends Model
 {
     use HasFactory;
@@ -81,7 +83,7 @@ class Group extends Model
 
     public function reports(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Report::class, 'report_group', 'id_group', 'id_report');
+        return $this->belongsToMany(Report::class, 'report_group', 'id_group', 'id_report');
     }
 
 }

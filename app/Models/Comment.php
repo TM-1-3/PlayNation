@@ -21,4 +21,9 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
+
+    public function reports(): BelongsToMany
+    {
+        return $this->belongsToMany(Report::class, 'report_comment', 'id_comment', 'id_report');
+    }
 }
