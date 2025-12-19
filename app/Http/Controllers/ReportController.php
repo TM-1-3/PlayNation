@@ -10,7 +10,7 @@ class ReportController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'target_type' => 'required|string|in:post,user,group',
+            'target_type' => 'required|string|in:post,user,group,comment',
             'target_id' => 'required|integer',
             'reason' => 'required|string',
             'details' => 'nullable|string',
@@ -41,6 +41,7 @@ class ReportController extends Controller
                     'id_report' => $report->id_report,
                     'id_group' => $data['target_id']
                 ]);
+                break;
             case 'comment':
                 \DB::table('report_comment')->insert([
                     'id_report' => $report->id_report,

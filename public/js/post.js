@@ -66,56 +66,17 @@ function toggleComments(postId) {
     if (modal.classList.contains('hidden')) {
         modal.classList.remove('hidden');
         
-        // Fetch comments
-        fetch(`/post/${postId}/comments`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.comments.length === 0) {
-                    commentsList.innerHTML = '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
-                } else {
-                    commentsList.innerHTML = data.comments.map(comment => `
-                        <div class="flex gap-3 mb-4 pb-4 border-b border-gray-100 last:border-0" id="comment-${comment.id_comment}">
-                            <a href="/profile/${comment.user.id_user}" class="flex-shrink-0">
-                                <img src="${comment.user.profile_picture}" 
-                                     alt="${comment.user.username}" 
-                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
-                            </a>
-                            <div class="flex-1 min-w-0">
-                                <div class="bg-gray-50 rounded-lg px-3 py-2 relative">
-                                    <a href="/profile/${comment.user.id_user}" 
-                                       class="font-semibold text-sm text-gray-900 no-underline hover:underline">
-                                        ${comment.user.username}
-                                    </a>
-                                    <p class="text-sm text-gray-700 mt-1 break-words" id="comment-text-${comment.id_comment}">${comment.text}</p>
-                                    
-                                    <div class="absolute top-2 right-2 flex gap-1">
-                                        ${comment.is_owner ? `
-                                            <button onclick="editComment(${comment.id_comment}, '${comment.text.replace(/'/g, "\\'")}', ${postId})" 
-                                                    class="text-blue-600 hover:text-blue-800 bg-transparent border-none cursor-pointer p-1" 
-                                                    title="Edit comment">
-                                                <i class="fa-solid fa-pen text-xs"></i>
-                                            </button>
-                                            <button onclick="deleteComment(${comment.id_comment}, ${postId})" 
-                                                    class="text-red-600 hover:text-red-800 bg-transparent border-none cursor-pointer p-1" 
-                                                    title="Delete comment">
-                                                <i class="fa-solid fa-trash text-xs"></i>
-                                            </button>
-                                        ` : `
-                                            <button onclick="toggleReport('comment', ${comment.id_comment})" 
-                                                    class="text-gray-600 hover:text-red-600 bg-transparent border-none cursor-pointer p-1" 
-                                                    title="Report comment">
-                                                <i class="fa-solid fa-flag text-xs"></i>
-                                            </button>
-                                        `}
-                                    </div>
-                                </div>
-                                <span class="text-xs text-gray-400 ml-3 mt-1 inline-block">
-                                    ${comment.date}
-                                </span>
-                            </div>
-                        </div>
-                    `).join('');
-                }
+        // Fetch comments as rendered HTML from server (Blade partial)
+        fetch(`/post/${postId}/comments?format=html`, {
+            headers: {
+                'Accept': 'text/html'
+            }
+        })
+            .then(response => response.text())
+            .then(html => {
+                commentsList.innerHTML = html && html.trim().length > 0
+                    ? html
+                    : '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
             })
             .catch(error => {
                 commentsList.innerHTML = '<div class="text-center text-red-500 py-4">Error loading comments</div>';

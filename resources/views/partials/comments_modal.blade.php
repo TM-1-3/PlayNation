@@ -1,4 +1,4 @@
-@props(['modalId' => 'comments-modal', 'postId' => null])
+@props(['modalId' => 'comments-modal', 'postId' => null, 'comments' => null])
 
 <div id="{{ $modalId }}" class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center backdrop-blur-sm">
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 mx-4 relative z-[10000]">
@@ -12,7 +12,11 @@
         </div>
 
         <div id="comments-list-{{ $postId }}" class="p-4 max-h-96 overflow-y-auto">
-            <div class="text-center text-gray-500">Loading comments...</div>
+            @if(!is_null($comments))
+                @include('partials.comments_list', ['comments' => $comments, 'postId' => $postId])
+            @else
+                <div class="text-center text-gray-500">Loading comments...</div>
+            @endif
         </div>
 
         {{-- Add comment form --}}

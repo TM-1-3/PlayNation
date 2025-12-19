@@ -293,30 +293,41 @@ class PostController extends Controller
         ]);
     }
 
-    public function getComments($id)
+    public function getComments(Request $request, $id)
     {
         try {
             $post = Post::findOrFail($id);
             $currentUserId = Auth::id();
-            
-            $comments = $post->comments()
+
+            // Eloquent models loaded for HTML rendering
+            $commentModels = $post->comments()
                 ->with('user')
                 ->orderBy('date', 'desc')
-                ->get()
-                ->map(function($comment) use ($currentUserId) {
-                    return [
-                        'id_comment' => $comment->id_comment,
-                        'text' => $comment->text,
-                        'date' => \Carbon\Carbon::parse($comment->date)->diffForHumans(),
-                        'is_owner' => $currentUserId === $comment->id_user,
-                        'user' => [
-                            'id_user' => $comment->user->id_user,
-                            'username' => $comment->user->username,
-                            'name' => $comment->user->name,
-                            'profile_picture' => $comment->user->getProfileImage(),
-                        ]
-                    ];
-                });
+                ->get();
+
+            // If HTML requested, render Blade partial and return HTML
+            if ($request->query('format') === 'html') {
+                return response()->view('partials.comments_list', [
+                    'comments' => $commentModels,
+                    'postId' => $id,
+                ]);
+            }
+
+            // Default JSON response (existing behavior)
+            $comments = $commentModels->map(function ($comment) use ($currentUserId) {
+                return [
+                    'id_comment' => $comment->id_comment,
+                    'text' => $comment->text,
+                    'date' => \Carbon\Carbon::parse($comment->date)->diffForHumans(),
+                    'is_owner' => $currentUserId === $comment->id_user,
+                    'user' => [
+                        'id_user' => $comment->user->id_user,
+                        'username' => $comment->user->username,
+                        'name' => $comment->user->name,
+                        'profile_picture' => $comment->user->getProfileImage(),
+                    ],
+                ];
+            });
 
             return response()->json(['comments' => $comments]);
         } catch (\Exception $e) {
