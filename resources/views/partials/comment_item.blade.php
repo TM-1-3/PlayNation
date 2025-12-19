@@ -15,7 +15,7 @@
             <p class="text-sm text-gray-700 mt-1 break-words" id="comment-text-{{ $comment->id_comment }}">{{ $comment->text }}</p>
             
             <div class="absolute top-2 right-2 flex gap-1">
-                @if(auth()->check() && auth()->id() === $comment->id_creator)
+                @if(auth()->check() && auth()->id() == $comment->id_user)
                     <button onclick="editComment({{ $comment->id_comment }}, '{{ addslashes($comment->text) }}', {{ $postId }})" 
                             class="text-blue-600 hover:text-blue-800 bg-transparent border-none cursor-pointer p-1" 
                             title="Edit comment">
