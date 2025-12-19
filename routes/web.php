@@ -13,6 +13,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\AdminController; 
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FriendController; 
 use App\Http\Controllers\GroupController;
@@ -54,15 +55,18 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/admin/user', 'searchUser')->name('admin.user');
     Route::get('/admin/create', 'showCreateUserForm')->name('admin.create');
     Route::post('/admin/create', 'createUser')->name('admin.create.action');
-    Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
     Route::get('/admin/edit/{id}', 'showEditUserForm')->name('admin.edit');
     Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
     Route::delete('/admin/users/{id}/unverify','unverifyUser')->name('admin.unverify');
-    Route::delete('/admin/post/{id}', 'deletePost')->name('admin.post.delete');
     Route::post('/admin/post/{id}/dismiss', 'dismissPostReports')->name('admin.post.dismiss');
     Route::post('/admin/user/{id}/dismiss', 'dismissUserReports')->name('admin.user.dismiss');
     Route::post('/admin/group/{id}/dismiss', 'dismissGroupReports')->name('admin.group.dismiss');
+    Route::post('/admin/comment/{id}/dismiss', 'dismissCommentReports')->name('admin.comment.dismiss');
+    Route::delete('/admin/user/{id}', 'deleteUser')->name('admin.delete');
+    Route::delete('/admin/post/{id}', 'deletePost')->name('admin.post.delete');
     Route::delete('/admin/group/{id}', 'deleteGroup')->name('admin.group.delete');
+    Route::delete('/admin/comment/{id}', 'deleteComment')->name('admin.comment.delete');
+
 });
 Route::get('/admin/group', [GroupController::class, 'searchGroup'])->name('admin.group');
 
@@ -71,6 +75,7 @@ Route::get('/home', [TimelineController::class, 'index'])->name('home');
 Route::get('/api/post', [TimelineController::class, 'searchPost'])->name('search.posts');
 Route::get('/api/user', [UserController::class, 'searchUser'])->name('search.users');
 Route::get('/api/group', [GroupController::class, 'searchGroup'])->name('search.groups');
+Route::get('/api/comment/{id}', [PostController::class, 'searchComments'])->name('search.comments');
 
 // Profile
 Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
@@ -118,11 +123,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mygroups', function () {
         return view('pages.placeholder', ['title' => 'My Groups']);
     })->name('mygroups.index');
-
-
-    
-
-    
 
 
     // Post

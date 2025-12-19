@@ -293,30 +293,46 @@ class PostController extends Controller
         ]);
     }
 
-    public function getComments($id)
+    public function getComments(Request $request, $id)
     {
         try {
             $post = Post::findOrFail($id);
             $currentUserId = Auth::id();
+
+            // Eloquent models loaded for HTML rendering
+            $query = $post->comments()->with('user');
             
-            $comments = $post->comments()
-                ->with('user')
-                ->orderBy('date', 'desc')
-                ->get()
-                ->map(function($comment) use ($currentUserId) {
-                    return [
-                        'id_comment' => $comment->id_comment,
-                        'text' => $comment->text,
-                        'date' => \Carbon\Carbon::parse($comment->date)->diffForHumans(),
-                        'is_owner' => $currentUserId === $comment->id_user,
-                        'user' => [
-                            'id_user' => $comment->user->id_user,
-                            'username' => $comment->user->username,
-                            'name' => $comment->user->name,
-                            'profile_picture' => $comment->user->getProfileImage(),
-                        ]
-                    ];
-                });
+            // Add search filter if provided
+            if ($request->has('search') && !empty($request->search)) {
+                $searchTerm = $request->search;
+                $query->where('text', 'ILIKE', '%' . $searchTerm . '%');
+            }
+            
+            $commentModels = $query->orderBy('date', 'desc')->get();
+
+            // If HTML requested, render Blade partial and return HTML
+            if ($request->query('format') === 'html') {
+                return response()->view('partials.comments_list', [
+                    'comments' => $commentModels,
+                    'postId' => $id,
+                ]);
+            }
+
+            // Default JSON response (existing behavior)
+            $comments = $commentModels->map(function ($comment) use ($currentUserId) {
+                return [
+                    'id_comment' => $comment->id_comment,
+                    'text' => $comment->text,
+                    'date' => \Carbon\Carbon::parse($comment->date)->diffForHumans(),
+                    'is_owner' => $currentUserId === $comment->id_user,
+                    'user' => [
+                        'id_user' => $comment->user->id_user,
+                        'username' => $comment->user->username,
+                        'name' => $comment->user->name,
+                        'profile_picture' => $comment->user->getProfileImage(),
+                    ],
+                ];
+            });
 
             return response()->json(['comments' => $comments]);
         } catch (\Exception $e) {
@@ -416,6 +432,40 @@ class PostController extends Controller
             ]);
         } catch (\Exception $e) {
             \Log::error('Error deleting comment: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function searchComments(Request $request, $id)
+    {
+        try {
+            $post = Post::findOrFail($id);
+            $searchTerm = $request->query('search', '');
+            
+            $query = $post->comments()->with('user');
+            
+            if (!empty($searchTerm)) {
+                $query->where('text', 'ILIKE', '%' . $searchTerm . '%');
+            }
+            
+            $comments = $query->orderBy('date', 'desc')->get();
+            
+            // Return HTML for AJAX update
+            if ($request->expectsJson() || $request->ajax()) {
+                $html = view('partials.comments_list', [
+                    'comments' => $comments,
+                    'postId' => $id,
+                ])->render();
+                
+                return response()->json([
+                    'html' => $html,
+                    'count' => $comments->count()
+                ]);
+            }
+            
+            return response()->json(['comments' => $comments]);
+        } catch (\Exception $e) {
+            \Log::error('Error searching comments: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

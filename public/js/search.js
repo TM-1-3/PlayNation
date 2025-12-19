@@ -26,6 +26,25 @@ if (searchGroupForm) {
   }
 }
 
+// Comment search forms are dynamically created, use event delegation
+document.addEventListener('input', function(event) {
+  if (event.target.matches('[id^="search-input-comment-"]')) {
+    const form = event.target.closest('form');
+    if (form && form.id.startsWith('search-comment-')) {
+      searchRequest.call(form, event);
+    }
+  }
+});
+
+// Prevent form submission for comment search forms
+document.addEventListener('submit', function(event) {
+  if (event.target.id && event.target.id.startsWith('search-comment-')) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  }
+});
+
 /**
  * Encode a data object into URL-encoded form data.
  * Example: {a: 1, b: 2} → "a=1&b=2"
@@ -96,7 +115,7 @@ function searchRequest(event) {
   if (event.preventDefault) event.preventDefault();
   if (event.stopPropagation) event.stopPropagation();
   
-  let str, baseUrl, searchType;
+  let str, baseUrl, searchType, postId;
   
   if (this.tagName === 'INPUT') {
     // Direct input element (like group-search)
@@ -115,6 +134,12 @@ function searchRequest(event) {
     str = this.querySelector('input[name=search]').value.trim();
     baseUrl = this.action;
     searchType = this.id;
+    
+    // Extract postId for comment search forms
+    if (searchType && searchType.startsWith('search-comment-')) {
+      postId = searchType.replace('search-comment-', '');
+      searchType = 'search-comment';
+    }
   }
   
   let url = str ? `${baseUrl}?search=${encodeURIComponent(str)}` : baseUrl;
@@ -126,12 +151,12 @@ function searchRequest(event) {
     url += (url.includes('?') ? '&' : '?') + 'type=group-admin';
   }
 
-  sendAjaxRequest('GET', url, null, (response) => searchHandler(response, searchType));
+  sendAjaxRequest('GET', url, null, (response) => searchHandler(response, searchType, postId));
   
   return false;
 }
 
-function searchHandler(response, searchType) {
+function searchHandler(response, searchType, postId) {
   if (searchType === 'search-user-admin') {
     // Handle admin user search
     const tableBody = document.getElementById('admin-users-body');
@@ -359,6 +384,15 @@ function searchHandler(response, searchType) {
             otherGroupsGrid.appendChild(groupCard);
           });
         }
+      }
+    }
+  } else if (searchType === 'search-comment') {
+    // Handle comment search
+    const commentsItems = document.getElementById(`comments-items-${postId}`);
+    if (commentsItems && response.html) {
+      commentsItems.innerHTML = response.html;
+      if (response.count === 0) {
+        commentsItems.innerHTML = '<div class="text-center text-gray-500 py-4">No comments found</div>';
       }
     }
   }

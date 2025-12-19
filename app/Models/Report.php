@@ -22,11 +22,16 @@ class Report extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\User::class, 'report_user', 'id_report', 'id_user');
+        return $this->belongsToMany(User::class, 'report_user', 'id_report', 'id_user');
     }
 
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Group::class, 'report_group', 'id_report', 'id_group');
+        return $this->belongsToMany(Group::class, 'report_group', 'id_report', 'id_group');
+    }
+
+    public function comments(): BelongsToMany
+    {
+        return $this->belongsToMany(Comment::class, 'report_comment', 'id_report', 'id_comment');
     }
 }

@@ -5,6 +5,7 @@
 @include('partials.comments_modal', [
     'modalId' => "comments-modal-post-{$post->id_post}",
     'postId' => $post->id_post,
+    'comments' => $post->comments ?? collect()
 ])
 
 {{-- report modal include --}}
@@ -37,7 +38,9 @@
             </div>
         @else
             <div>
-                <button onclick="toggleReport('post', {{ $post->id_post }})" class="text-black py-1 px-1 text-xl no-underline bg-transparent border-none cursor-pointer" title="Report the post">⋮</button>
+                <button onclick="toggleReport('post', {{ $post->id_post }})" class="text-gray-600 hover:text-red-600 bg-transparent border-none cursor-pointer p-1" title="Report comment">
+                    <i class="fa-solid fa-flag text-xs"></i>
+                </button>
             </div>
         @endif
     </div>

@@ -127,6 +127,6 @@ class User extends Authenticatable
 
     public function reports(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Report::class, 'report_user', 'id_user', 'id_report');
+        return $this->belongsToMany(Report::class, 'report_user', 'id_user', 'id_report');
     }
 }

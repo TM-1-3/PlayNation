@@ -48,4 +48,20 @@
         @endif
     </div>
 
+    {{-- Reported Comments --}}
+    <div>
+        <h4 class="text-lg font-semibold mb-3">Reported Comments</h4>
+        @if(isset($reportedComments) && $reportedComments->count() > 0)
+            <div class="space-y-4">
+                @foreach($reportedComments as $comment)
+                    @include('partials.report-card', ['report' => $comment, 'type' => 'comment'])
+                @endforeach
+            </div>
+        @else
+            <div class="flex justify-center mt-2 p-4 bg-gray-50 rounded-lg">
+                <p class="text-gray-500">No reported comments at this time.</p>
+            </div>
+        @endif
+    </div>
+
 </div>

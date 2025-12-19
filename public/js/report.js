@@ -1,6 +1,6 @@
 function toggleReport(type, id) {
   const modalId = `report-modal-${type}-${id}`;
-  const modal = document.getElementById(modalId);
+  let modal = document.getElementById(modalId);
 
   if (modal) {
     const isHidden = modal.classList.contains('hidden');

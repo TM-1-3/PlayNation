@@ -6,13 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use App\Models\VerifiedUser;
+use Illuminate\Support\Facades\DB;
 
+use App\Models\VerifiedUser;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Post;
-use Illuminate\Support\Facades\DB;
-
+use App\Models\Comment;
 
 class AdminController extends Controller
 {
@@ -29,7 +29,7 @@ class AdminController extends Controller
 
         if ($user->isAdmin() && $type == 'content') {
             $reportedPosts = Post::whereHas('reports')
-                ->with(['user.verifiedUser', 'labels', 'reports'])
+                ->with(['labels', 'reports'])
                 ->get()
                 ->map(function($post) {
                     $post->report_count = $post->reports->count();
@@ -39,7 +39,7 @@ class AdminController extends Controller
                 ->sortByDesc('report_count');
 
             $reportedUsers = User::whereHas('reports')
-                ->with(['verifiedUser', 'reports'])
+                ->with(['reports'])
                 ->get()
                 ->map(function($user) {
                     $user->report_count = $user->reports->count();
@@ -58,7 +58,17 @@ class AdminController extends Controller
                 })
                 ->sortByDesc('report_count');
 
-            return view('pages.admin', ['reportedPosts' => $reportedPosts, 'reportedUsers' => $reportedUsers, 'reportedGroups' => $reportedGroups, 'type' => $type]);
+            $reportedComments = Comment::whereHas('reports')
+                ->with(['reports'])
+                ->get()
+                ->map(function($comment) {
+                    $comment->report_count = $comment->reports->count();
+                    $comment->report_descriptions = $comment->reports->pluck('description')->toArray();
+                    return $comment;
+                })
+                ->sortByDesc('report_count');
+
+            return view('pages.admin', ['reportedPosts' => $reportedPosts, 'reportedUsers' => $reportedUsers, 'reportedGroups' => $reportedGroups, 'reportedComments' => $reportedComments, 'type' => $type]);
         }
 
         if ($user->isAdmin() && $type == 'group') {
@@ -196,6 +206,24 @@ class AdminController extends Controller
         $post = Post::findOrFail($id);
         
         $post->reports()->detach();
+
+        return redirect()->back()->with('status', 'Reports dismissed successfully.');
+    }
+
+    public function deleteComment($id)
+    {
+        $comment = Comment::findOrFail($id);
+        
+        $comment->delete();
+
+        return redirect()->back()->with('status', 'Reported comment deleted successfully.');
+    }
+
+    public function dismissCommentReports($id)
+    {
+        $comment = Comment::findOrFail($id);
+        
+        $comment->reports()->detach();
 
         return redirect()->back()->with('status', 'Reports dismissed successfully.');
     }

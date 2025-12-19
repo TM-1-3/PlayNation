@@ -61,62 +61,42 @@ function toggleLike(postId) {
 
 function toggleComments(postId) {
     const modal = document.getElementById(`comments-modal-post-${postId}`);
-    const commentsList = document.getElementById(`comments-list-${postId}`);
+    const commentsItems = document.getElementById(`comments-items-${postId}`);
     
     if (modal.classList.contains('hidden')) {
         modal.classList.remove('hidden');
+        document.documentElement.classList.add('overflow-hidden');
+        document.body.classList.add('overflow-hidden');
         
-        // Fetch comments
-        fetch(`/post/${postId}/comments`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.comments.length === 0) {
-                    commentsList.innerHTML = '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
-                } else {
-                    commentsList.innerHTML = data.comments.map(comment => `
-                        <div class="flex gap-3 mb-4 pb-4 border-b border-gray-100 last:border-0" id="comment-${comment.id_comment}">
-                            <a href="/profile/${comment.user.id_user}" class="flex-shrink-0">
-                                <img src="${comment.user.profile_picture}" 
-                                     alt="${comment.user.username}" 
-                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
-                            </a>
-                            <div class="flex-1 min-w-0">
-                                <div class="bg-gray-50 rounded-lg px-3 py-2 relative">
-                                    <a href="/profile/${comment.user.id_user}" 
-                                       class="font-semibold text-sm text-gray-900 no-underline hover:underline">
-                                        ${comment.user.username}
-                                    </a>
-                                    <p class="text-sm text-gray-700 mt-1 break-words" id="comment-text-${comment.id_comment}">${comment.text}</p>
-                                    
-                                    ${comment.is_owner ? `
-                                        <div class="absolute top-2 right-2 flex gap-1">
-                                            <button onclick="editComment(${comment.id_comment}, '${comment.text.replace(/'/g, "\\'")}', ${postId})" 
-                                                    class="text-blue-600 hover:text-blue-800 bg-transparent border-none cursor-pointer p-1" 
-                                                    title="Edit comment">
-                                                <i class="fa-solid fa-pen text-xs"></i>
-                                            </button>
-                                            <button onclick="deleteComment(${comment.id_comment}, ${postId})" 
-                                                    class="text-red-600 hover:text-red-800 bg-transparent border-none cursor-pointer p-1" 
-                                                    title="Delete comment">
-                                                <i class="fa-solid fa-trash text-xs"></i>
-                                            </button>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                                <span class="text-xs text-gray-400 ml-3 mt-1 inline-block">
-                                    ${comment.date}
-                                </span>
-                            </div>
-                        </div>
-                    `).join('');
-                }
+        // Fetch comments as rendered HTML from server (Blade partial)
+        fetch(`/post/${postId}/comments?format=html`, {
+            headers: {
+                'Accept': 'text/html'
+            }
+        })
+            .then(response => response.text())
+            .then(html => {
+                if (!commentsItems) return;
+                commentsItems.innerHTML = html && html.trim().length > 0
+                    ? html
+                    : '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
             })
             .catch(error => {
-                commentsList.innerHTML = '<div class="text-center text-red-500 py-4">Error loading comments</div>';
+                if (commentsItems) {
+                    commentsItems.innerHTML = '<div class="text-center text-red-500 py-4">Error loading comments</div>';
+                }
                 console.error('Error:', error);
             });
     } else {
         modal.classList.add('hidden');
+        document.documentElement.classList.remove('overflow-hidden');
+        document.body.classList.remove('overflow-hidden');
+        
+        // Clear search input when closing modal
+        const searchInput = document.getElementById(`search-input-comment-${postId}`);
+        if (searchInput) {
+            searchInput.value = '';
+        }
     }
 }
 
@@ -171,13 +151,13 @@ function editComment(commentId, currentText, postId) {
             <input type="text" 
                    id="edit-input-${commentId}" 
                    value="${currentText}" 
-                   class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                   class="h-[2em] block w-full px-3 py-3 border border-white rounded-lg shadow-md text-gray-900 focus:border-blue-500 bg-white outline-none">
             <button onclick="saveCommentEdit(${commentId}, ${postId})" 
-                    class="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-700">
+                    class="h-[2em] bg-blue-500 text-white border-none py-1 px-3 rounded-lg text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600 text-sm">
                 Save
             </button>
             <button onclick="cancelCommentEdit(${commentId}, '${currentText.replace(/'/g, "\\'")}', ${postId})" 
-                    class="bg-gray-400 text-white px-3 py-1 text-sm rounded hover:bg-gray-500">
+                    class="h-[2em] bg-gray-400 text-white border-none py-1 px-3 rounded-lg text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-gray-500 text-sm">
                 Cancel
             </button>
         </div>
@@ -249,9 +229,11 @@ function deleteComment(commentId, postId) {
             }
             
             // If no comments left, show empty state
-            const commentsList = document.getElementById(`comments-list-${postId}`);
+            const commentsItems = document.getElementById(`comments-items-${postId}`);
             if (data.comment_count === 0) {
-                commentsList.innerHTML = '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
+                if (commentsItems) {
+                    commentsItems.innerHTML = '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
+                }
             }
         }
     })
