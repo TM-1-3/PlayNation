@@ -13,11 +13,11 @@
         </div>
 
         <div class="flex justify-center my-2">
-            <form id="search-comment" action="{{ route('search.comments') }}" method="GET" class="relative">
+            <form id="search-comment-{{ $postId }}" action="{{ route('search.comments', $postId) }}" method="GET" class="relative" data-post-id="{{ $postId }}">
                 <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                 </div>
-                <input id="search-input-comment" type="text" name="search" placeholder="Search comments..." 
+                <input id="search-input-comment-{{ $postId }}" type="text" name="search" placeholder="Search comments..." 
                     class="h-[2em] block w-full mx-3 pl-8 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">
                 
             </form>

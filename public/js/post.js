@@ -91,6 +91,12 @@ function toggleComments(postId) {
         modal.classList.add('hidden');
         document.documentElement.classList.remove('overflow-hidden');
         document.body.classList.remove('overflow-hidden');
+        
+        // Clear search input when closing modal
+        const searchInput = document.getElementById(`search-input-comment-${postId}`);
+        if (searchInput) {
+            searchInput.value = '';
+        }
     }
 }
 
@@ -145,13 +151,13 @@ function editComment(commentId, currentText, postId) {
             <input type="text" 
                    id="edit-input-${commentId}" 
                    value="${currentText}" 
-                   class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                   class="h-[2em] block w-full px-3 py-3 border border-white rounded-lg shadow-md text-gray-900 focus:border-blue-500 bg-white outline-none">
             <button onclick="saveCommentEdit(${commentId}, ${postId})" 
-                    class="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-700">
+                    class="h-[2em] bg-blue-500 text-white border-none py-1 px-3 rounded-lg text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600 text-sm">
                 Save
             </button>
             <button onclick="cancelCommentEdit(${commentId}, '${currentText.replace(/'/g, "\\'")}', ${postId})" 
-                    class="bg-gray-400 text-white px-3 py-1 text-sm rounded hover:bg-gray-500">
+                    class="h-[2em] bg-gray-400 text-white border-none py-1 px-3 rounded-lg text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-gray-500 text-sm">
                 Cancel
             </button>
         </div>

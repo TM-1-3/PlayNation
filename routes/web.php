@@ -75,7 +75,7 @@ Route::get('/home', [TimelineController::class, 'index'])->name('home');
 Route::get('/api/post', [TimelineController::class, 'searchPost'])->name('search.posts');
 Route::get('/api/user', [UserController::class, 'searchUser'])->name('search.users');
 Route::get('/api/group', [GroupController::class, 'searchGroup'])->name('search.groups');
-Route::get('/api/comment', [CommentController::class, 'searchComment'])->name('search.comments');
+Route::get('/api/comment/{id}', [PostController::class, 'searchComments'])->name('search.comments');
 
 // Profile
 Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');
