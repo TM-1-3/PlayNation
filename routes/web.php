@@ -13,6 +13,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\AdminController; 
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FriendController; 
 use App\Http\Controllers\GroupController;
@@ -74,6 +75,7 @@ Route::get('/home', [TimelineController::class, 'index'])->name('home');
 Route::get('/api/post', [TimelineController::class, 'searchPost'])->name('search.posts');
 Route::get('/api/user', [UserController::class, 'searchUser'])->name('search.users');
 Route::get('/api/group', [GroupController::class, 'searchGroup'])->name('search.groups');
+Route::get('/api/comment', [CommentController::class, 'searchComment'])->name('search.comments');
 
 // Profile
 Route::get('/profile/setup', [SetupController::class, 'show'])->name('profile.setup');

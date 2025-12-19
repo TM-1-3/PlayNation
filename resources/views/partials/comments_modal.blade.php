@@ -11,12 +11,25 @@
             </button>
         </div>
 
+        <div class="flex justify-center mt-2">
+            <form id="search-comment" action="{{ route('search.comments') }}" method="GET" class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                </div>
+                <input id="search-input-comment" type="text" name="search" placeholder="Search comments..." 
+                    class="h-[2em] block w-90 mx-3 pl-10 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">
+                
+            </form>
+        </div>
+
         <div id="comments-list-{{ $postId }}" class="p-4 max-h-96 overflow-y-auto">
-            @if(!is_null($comments))
-                @include('partials.comments_list', ['comments' => $comments, 'postId' => $postId])
-            @else
-                <div class="text-center text-gray-500">Loading comments...</div>
-            @endif
+            <div id="comments-items-{{ $postId }}">
+                @if(!is_null($comments))
+                    @include('partials.comments_list', ['comments' => $comments, 'postId' => $postId])
+                @else
+                    <div class="text-center text-gray-500">Loading comments...</div>
+                @endif
+            </div>
         </div>
 
         {{-- Add comment form --}}

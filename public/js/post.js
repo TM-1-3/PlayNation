@@ -61,7 +61,7 @@ function toggleLike(postId) {
 
 function toggleComments(postId) {
     const modal = document.getElementById(`comments-modal-post-${postId}`);
-    const commentsList = document.getElementById(`comments-list-${postId}`);
+    const commentsItems = document.getElementById(`comments-items-${postId}`);
     
     if (modal.classList.contains('hidden')) {
         modal.classList.remove('hidden');
@@ -74,12 +74,15 @@ function toggleComments(postId) {
         })
             .then(response => response.text())
             .then(html => {
-                commentsList.innerHTML = html && html.trim().length > 0
+                if (!commentsItems) return;
+                commentsItems.innerHTML = html && html.trim().length > 0
                     ? html
                     : '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
             })
             .catch(error => {
-                commentsList.innerHTML = '<div class="text-center text-red-500 py-4">Error loading comments</div>';
+                if (commentsItems) {
+                    commentsItems.innerHTML = '<div class="text-center text-red-500 py-4">Error loading comments</div>';
+                }
                 console.error('Error:', error);
             });
     } else {
@@ -216,9 +219,11 @@ function deleteComment(commentId, postId) {
             }
             
             // If no comments left, show empty state
-            const commentsList = document.getElementById(`comments-list-${postId}`);
+            const commentsItems = document.getElementById(`comments-items-${postId}`);
             if (data.comment_count === 0) {
-                commentsList.innerHTML = '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
+                if (commentsItems) {
+                    commentsItems.innerHTML = '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
+                }
             }
         }
     })
