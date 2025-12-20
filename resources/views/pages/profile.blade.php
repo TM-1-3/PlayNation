@@ -7,6 +7,22 @@
 {{-- profile principal block --}}
 <div class="max-w-6xl mx-auto pt-10 pr-10 pb-5">
 
+@if($user->isBanned())
+    {{-- Banned Account Warning --}}
+    <div class="bg-white border border-gray-200 rounded-xl ml-5 px-6 py-5 mb-8 shadow-md">
+        <div class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-10 h-10 bg-red-50 rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-base font-semibold text-gray-900">Account Suspended</h3>
+                <p class="text-sm text-gray-500 mt-0.5">This account has been restricted from platform activities.</p>
+            </div>
+        </div>
+    </div>
+@endif
 
 <div class="flex flex-wrap gap-8">
     {{-- left column photo and data --}}
