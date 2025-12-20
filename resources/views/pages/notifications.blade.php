@@ -173,6 +173,9 @@
                         </form>
                     @elseif($notification->privateMessageNotification)
                         <div class="flex gap-2">
+                            <a href="{{ route('messages.index', ['start_chat' => $notification->emitter->id_user]) }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors" title="View chat">
+                                View Chat
+                            </a>
                             <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
