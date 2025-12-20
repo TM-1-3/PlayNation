@@ -39,7 +39,19 @@ function toggleLike(postId) {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.status === 403) {
+            return response.json().then(data => {
+                if (typeof showErrorModal === 'function') {
+                    showErrorModal(data.error || 'You cannot perform this action.');
+                } else {
+                    alert(data.error || 'You cannot perform this action.');
+                }
+                throw new Error('Forbidden');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         const icon = document.getElementById(`like-icon-${postId}`);
         const count = document.getElementById(`like-count-${postId}`);
@@ -55,7 +67,9 @@ function toggleLike(postId) {
         count.textContent = data.like_count;
     })
     .catch(error => {
-        console.error('Error toggling like:', error);
+        if (error.message !== 'Forbidden') {
+            console.error('Error toggling like:', error);
+        }
     });
 }
 
@@ -117,7 +131,19 @@ function addComment(event, postId) {
         },
         body: JSON.stringify({ comment_text: commentText })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.status === 403) {
+            return response.json().then(data => {
+                if (typeof showErrorModal === 'function') {
+                    showErrorModal(data.error || 'You cannot perform this action.');
+                } else {
+                    alert(data.error || 'You cannot perform this action.');
+                }
+                throw new Error('Forbidden');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             // Clear input
@@ -136,8 +162,10 @@ function addComment(event, postId) {
         }
     })
     .catch(error => {
-        console.error('Error adding comment:', error);
-        alert('Failed to add comment. Please try again.');
+        if (error.message !== 'Forbidden') {
+            console.error('Error adding comment:', error);
+            alert('Failed to add comment. Please try again.');
+        }
     });
 }
 
@@ -183,7 +211,19 @@ function saveCommentEdit(commentId, postId) {
         },
         body: JSON.stringify({ text: newText })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.status === 403) {
+            return response.json().then(data => {
+                if (typeof showErrorModal === 'function') {
+                    showErrorModal(data.error || 'You cannot perform this action.');
+                } else {
+                    alert(data.error || 'You cannot perform this action.');
+                }
+                throw new Error('Forbidden');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             // Reload comments to show updated text
@@ -192,8 +232,10 @@ function saveCommentEdit(commentId, postId) {
         }
     })
     .catch(error => {
-        console.error('Error updating comment:', error);
-        alert('Failed to update comment. Please try again.');
+        if (error.message !== 'Forbidden') {
+            console.error('Error updating comment:', error);
+            alert('Failed to update comment. Please try again.');
+        }
     });
 }
 
@@ -216,7 +258,19 @@ function deleteComment(commentId, postId) {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.status === 403) {
+            return response.json().then(data => {
+                if (typeof showErrorModal === 'function') {
+                    showErrorModal(data.error || 'You cannot perform this action.');
+                } else {
+                    alert(data.error || 'You cannot perform this action.');
+                }
+                throw new Error('Forbidden');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             // Remove comment from DOM
@@ -238,7 +292,9 @@ function deleteComment(commentId, postId) {
         }
     })
     .catch(error => {
-        console.error('Error deleting comment:', error);
-        alert('Failed to delete comment. Please try again.');
+        if (error.message !== 'Forbidden') {
+            console.error('Error deleting comment:', error);
+            alert('Failed to delete comment. Please try again.');
+        }
     });
 }

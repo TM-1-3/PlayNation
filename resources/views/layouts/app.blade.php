@@ -171,6 +171,10 @@
             @yield('content')
         </section>
     </div>
+
+    {{-- for banned users --}}
+    @include('partials.error-modal')
+
     </main>
 
 </body>

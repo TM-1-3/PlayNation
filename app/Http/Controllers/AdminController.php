@@ -227,4 +227,47 @@ class AdminController extends Controller
 
         return redirect()->back()->with('status', 'Reports dismissed successfully.');
     }
+
+    public function banUser($id)
+    {
+        $admin = auth()->user();
+        $user = User::findOrFail($id);
+
+        // Verify the logged-in user is actually in the administrator table
+        if (!$admin->isAdmin()) {
+            return redirect()->back()->with('error', 'You do not have permission to ban users.');
+        }
+
+        if ($user->isBanned()) {
+            return redirect()->back()->with('error', 'User is already banned.');
+        }
+
+        // Add the ban record using the admin_ban 
+        DB::table('admin_ban')->insert([
+            'id_admin' => $admin->id_user,
+            'id_user' => $user->id_user
+        ]);
+
+        return redirect()->back()->with('status', 'User banned successfully.');
+    }
+
+    public function unbanUser($id)
+    {
+        $admin = auth()->user();
+        $user = User::findOrFail($id);
+
+        // Verify the logged-in user is actually an admin
+        if (!$admin->isAdmin()) {
+            return redirect()->back()->with('error', 'You do not have permission to unban users.');
+        }
+
+        if (!$user->isBanned()) {
+            return redirect()->back()->with('error', 'User is not banned.');
+        }
+
+        // Remove all ban records for this user 
+        DB::table('admin_ban')->where('id_user', $user->id_user)->delete();
+
+        return redirect()->back()->with('status', 'User unbanned successfully.');
+    }
 }

@@ -167,6 +167,11 @@ class GroupController extends Controller
     // strore in bd
     public function store(Request $request)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return back()->withErrors(['form' => 'You cannot create groups because your account has been banned.'])->withInput();
+        }
+
         $user = Auth::user();
 
         
@@ -289,6 +294,11 @@ class GroupController extends Controller
 
     public function join($id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return redirect()->back()->withErrors(['error' => 'You cannot join groups because your account has been banned.']);
+        }
+
         $group = Group::findOrFail($id);
         $user = Auth::user();
 
@@ -337,6 +347,11 @@ class GroupController extends Controller
 
     public function leave($id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return redirect()->back()->withErrors(['error' => 'You cannot leave groups because your account has been banned.']);
+        }
+
         $group = Group::findOrFail($id);
         $user = Auth::user();
 

@@ -25,6 +25,11 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return back()->withErrors(['form' => 'You cannot create posts because your account has been banned.'])->withInput();
+        }
+
         $request->validate([
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|max:2048',
@@ -125,6 +130,11 @@ class PostController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return redirect()->back()->withErrors(['form' => 'You cannot edit posts because your account has been banned.']);
+        }
+
         $post = Post::findOrFail($id);
 
         if (Auth::id() != $post->id_creator) {
@@ -187,6 +197,11 @@ class PostController extends Controller
 
     public function destroy($id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return redirect()->back()->withErrors(['form' => 'You cannot delete posts because your account has been banned.']);
+        }
+
         $post = Post::findOrFail($id);
         if (Auth::id() != $post->id_creator) {
             return redirect()->back()->withErrors(['form' => 'Unauthorized']);
@@ -201,6 +216,11 @@ class PostController extends Controller
 
     public function save($id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return redirect()->back()->withErrors(['form' => 'You cannot save posts because your account has been banned.']);
+        }
+
         $post = Post::findOrFail($id);
         $user = Auth::user();
 
@@ -259,6 +279,11 @@ class PostController extends Controller
 
     public function toggleLike($id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return response()->json(['error' => 'You cannot like posts because your account has been banned.'], 403);
+        }
+
         $post = Post::findOrFail($id);
         $user = Auth::user();
 
@@ -343,6 +368,11 @@ class PostController extends Controller
 
     public function addComment(Request $request, $id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return response()->json(['error' => 'You cannot comment because your account has been banned.'], 403);
+        }
+
         try {
             $request->validate([
                 'comment_text' => 'required|string|max:1000',
@@ -381,6 +411,11 @@ class PostController extends Controller
 
     public function updateComment(Request $request, $id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return response()->json(['error' => 'You cannot edit comments because your account has been banned.'], 403);
+        }
+
         try {
             $comment = Comment::findOrFail($id);
             
@@ -412,6 +447,11 @@ class PostController extends Controller
 
     public function deleteComment($id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return response()->json(['error' => 'You cannot delete comments because your account has been banned.'], 403);
+        }
+
         try {
             $comment = Comment::findOrFail($id);
             

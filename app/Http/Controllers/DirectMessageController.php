@@ -103,6 +103,11 @@ class DirectMessageController extends Controller
 
     public function store(Request $request, $id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return response()->json(['error' => 'You cannot send messages because your account has been banned.'], 403);
+        }
+
         $request->validate(['text' => 'required|string|max:1000']);
         
         $myId = Auth::id();

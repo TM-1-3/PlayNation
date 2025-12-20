@@ -4,11 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Models\Report;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
     public function store(Request $request)
     {
+        // Check if user is banned
+        if (Auth::check() && Auth::user()->isBanned()) {
+            return back()->withErrors(['form' => 'You cannot submit reports because your account has been banned.']);
+        }
+
         $data = $request->validate([
             'target_type' => 'required|string|in:post,user,group,comment',
             'target_id' => 'required|integer',

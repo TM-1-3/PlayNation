@@ -58,6 +58,8 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/admin/edit/{id}', 'showEditUserForm')->name('admin.edit');
     Route::post('/admin/user/{id}/verify', 'verifyUser')->name('admin.verify');
     Route::delete('/admin/users/{id}/unverify','unverifyUser')->name('admin.unverify');
+    Route::post('/admin/user/{id}/ban', 'banUser')->name('admin.ban');
+    Route::post('/admin/user/{id}/unban', 'unbanUser')->name('admin.unban');
     Route::post('/admin/post/{id}/dismiss', 'dismissPostReports')->name('admin.post.dismiss');
     Route::post('/admin/user/{id}/dismiss', 'dismissUserReports')->name('admin.user.dismiss');
     Route::post('/admin/group/{id}/dismiss', 'dismissGroupReports')->name('admin.group.dismiss');

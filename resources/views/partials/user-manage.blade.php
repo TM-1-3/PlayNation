@@ -63,6 +63,21 @@
                                             </button>
                                         </form>
                                     @endif
+                                    @if(!$user->isBanned())
+                                        <form action="{{ route('admin.ban', $user->id_user) }}" method="POST" class="m-0">
+                                            @csrf
+                                            <button type="submit" class="bg-none text-orange-600 text-sm font-medium cursor-pointer border-none pb-1 hover:text-orange-700" title="Ban this user" onclick="return confirm('Are you sure you want to ban this user? They will not be able to perform any actions.')">
+                                                Ban
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('admin.unban', $user->id_user) }}" method="POST" class="m-0">
+                                            @csrf
+                                            <button type="submit" class="bg-none text-gray-600 text-sm font-medium cursor-pointer border-none pb-1 hover:text-gray-700" title="Unban this user">
+                                                Unban
+                                            </button>
+                                        </form>
+                                    @endif
                                     <form action="{{ route('admin.delete', $user->id_user) }}" method="POST" class="m-0">
                                         @csrf
                                         @method('DELETE')

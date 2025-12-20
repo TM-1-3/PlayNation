@@ -129,4 +129,22 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Report::class, 'report_user', 'id_user', 'id_report');
     }
+
+    /**
+     * Get the admin who banned this user (if any).
+     */
+    public function bannedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(Admin::class, 'admin_ban', 'id_user', 'id_admin');
+    }
+
+    /**
+     * Check if the user is banned.
+     *
+     * @return bool
+     */
+    public function isBanned(): bool
+    {
+        return $this->bannedBy()->exists();
+    }
 }
