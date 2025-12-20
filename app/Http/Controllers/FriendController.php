@@ -19,6 +19,10 @@ class FriendController extends Controller
     }
 
     public function sendFriendRequest($id) {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return back()->withErrors(['msg' => 'You cannot send friend requests because your account has been banned.']);
+        }
 
         $targetUser = User::findOrFail($id);
         $authId = Auth::id();

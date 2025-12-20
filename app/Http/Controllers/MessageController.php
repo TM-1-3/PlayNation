@@ -15,6 +15,11 @@ class MessageController extends Controller
     // send group message
     public function sendGroupMessage(Request $request, $id)
     {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return response()->json(['error' => 'You cannot send messages because your account has been banned.'], 403);
+        }
+
         // 1input validation
         $request->validate(['text' => 'required|string|max:1000']);
         

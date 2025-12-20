@@ -90,6 +90,11 @@ class UserController extends Controller
         $currentUser = Auth::user();
         $isAdmin = $currentUser && $currentUser->isAdmin();
 
+        // Check if user is banned (only for non-admin updates)
+        if (!$isAdmin && $currentUser->isBanned()) {
+            return redirect()->route('profile.show', $id)->withErrors(['form' => 'You cannot edit your profile because your account has been banned.']);
+        }
+
         // only profile owner or admin can update
         if (Auth::id() !== $user->id_user && !$isAdmin) {
             return redirect()->route('profile.show', $id)->with('status', 'Unauthorized action.');
