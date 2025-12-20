@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Message;
 use App\Models\PrivateMessage;
 use App\Models\User;
+use App\Models\Notification;
+use App\Models\PrivateMessageNotification;
 
 class DirectMessageController extends Controller
 {
@@ -120,6 +122,20 @@ class DirectMessageController extends Controller
                 'id_message' => $msg->id_message,
                 'id_sender'  => $myId,
                 'id_receiver' => $friendId
+            ]);
+
+            // create notification for the receiver
+            $sender = Auth::user();
+            $notificationId = DB::table('notification')->insertGetId([
+                'id_receiver' => $friendId,
+                'id_emitter' => $myId,
+                'text' => $sender->username . ' sent you a message',
+                'date' => now()
+            ], 'id_notification');
+
+            DB::table('private_message_notification')->insert([
+                'id_notification' => $notificationId,
+                'id_message' => $msg->id_message
             ]);
 
             return $msg;

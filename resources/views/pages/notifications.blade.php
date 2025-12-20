@@ -81,6 +81,11 @@
                                 <span class="text-gray-600">
                                     has been accepted!
                                 </span>
+                            @elseif($notification->privateMessageNotification)
+                                @if($notification->emitter->verifiedUser)
+                                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
+                                @endif
+                                <span class="text-gray-600"> sent you a message</span>
                             @endif
                         </p>
                         
@@ -158,6 +163,15 @@
                                 <i class="fa-solid fa-check"></i>
                             </button>
                         </form>
+                    @elseif($notification->privateMessageNotification)
+                        <div class="flex gap-2">
+                            <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            </form>
+                        </div>
                     @endif
                 </div>
             </div>

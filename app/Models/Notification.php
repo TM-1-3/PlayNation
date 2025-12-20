@@ -56,6 +56,11 @@ class Notification extends Model
         return $this->hasOne(JoinGroupRequestResultNotification::class, 'id_notification', 'id_notification');
     }
 
+    public function privateMessageNotification()
+    {
+        return $this->hasOne(PrivateMessageNotification::class, 'id_notification', 'id_notification');
+    }
+
     public function scopeFriendRequestResults($query, $userId) {
         return $query->where('id_receiver', $userId)
                      ->with('emitter'); 
