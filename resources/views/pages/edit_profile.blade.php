@@ -46,7 +46,7 @@
                 <input type="file" id="profile_picture" name="profile_picture" class="w-full p-2 border border-gray-300 rounded focus:border-blue-600 focus:outline-none">
                 @error('profile_picture') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
             </div>
-            <label class="block mb-3 font-medium text-gray-700">Your Interests</label>
+            <label class="block mb-3 font-medium text-gray-700">Select your Interests</label>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
 
     
@@ -55,7 +55,6 @@
                     <input type="checkbox" name="labels[]" value="{{ $label->id_label }}" class="hidden peer">
                     
                     <div class="bg-white border-2 border-gray-300 rounded-lg p-4 text-center transition-all hover:border-blue-500 hover:shadow-md peer-checked:border-blue-600 peer-checked:bg-blue-50">
-                        <img src="{{ asset($label->image) }}" alt="icon" class="w-16 h-16 mx-auto mb-2 object-contain">
                         <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-600">{{ $label->designation }}</span>
                     </div>
                 </label>

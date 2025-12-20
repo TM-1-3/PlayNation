@@ -45,7 +45,6 @@
                     <input type="checkbox" name="labels[]" value="{{ $label->id_label }}" class="hidden peer">
                     
                     <div class="bg-white border-2 border-gray-300 rounded-lg p-4 text-center transition-all hover:border-blue-500 hover:shadow-md peer-checked:border-blue-600 peer-checked:bg-blue-50" title="Click here to select it as a topic of interest">
-                        <img src="{{ asset($label->image) }}" alt="icon" class="w-16 h-16 mx-auto mb-2 object-contain">
                         <span class="text-sm font-medium text-gray-700 peer-checked:text-blue-600">{{ $label->designation }}</span>
                     </div>
                 </label>
