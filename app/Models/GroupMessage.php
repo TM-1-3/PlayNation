@@ -23,4 +23,14 @@ class GroupMessage extends Model
     {
         return $this->belongsTo(User::class, 'id_sender', 'id_user');
     }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class, 'id_group', 'id_group');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(GroupMessageNotification::class, 'id_message', 'id_message');
+    }
 }
