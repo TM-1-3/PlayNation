@@ -20,17 +20,18 @@
                     </form>
                 </div>
 
-                <table class="w-full border-collapse mt-4">
-                    <thead class="bg-gray-50 border-b-2 border-gray-200">
-                        <tr>
-                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Name</th>
-                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Username</th>
-                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Email</th>
-                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Status</th>
-                            <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-users-body">
+                <div class="overflow-auto max-h-[70vh] rounded-lg mt-4">
+                    <table class="w-full border-collapse">
+                        <thead class="bg-gray-50 border-b-2 border-gray-200 sticky top-0 z-10">
+                            <tr>
+                                <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider bg-gray-50">Name</th>
+                                <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider bg-gray-50">Username</th>
+                                <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider bg-gray-50">Email</th>
+                                <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider bg-gray-50">Status</th>
+                                <th class="p-4 text-left font-semibold text-sm uppercase tracking-wider bg-gray-50">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-body">
                         @forelse($users as $user)
                         <tr class="border-b border-gray-200 transition-colors hover:bg-gray-50">
                             <td class="p-4 text-gray-800 text-sm font-medium"><a href="{{ route('profile.show',$user->id_user) }}" class="no-underline text-gray-800 hover:text-blue-600" text="Click to acess the user's page">{{ $user->name }}</a></td>
@@ -77,6 +78,7 @@
                             <td colspan="5" class="text-center p-8 text-gray-500 italic">No users found</td>
                         </tr>
                         @endforelse
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
 </div>
