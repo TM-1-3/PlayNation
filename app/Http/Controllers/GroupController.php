@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Notification;
 use App\Models\JoinGroupRequestNotification;
+use App\Models\JoinGroupRequestResultNotification;
 use App\Models\GroupMember;
 
 class GroupController extends Controller
@@ -470,6 +471,20 @@ class GroupController extends Controller
             ->where('notification.id_emitter', $userId)
             ->where('notification.id_receiver', Auth::id())
             ->update(['accepted' => true]);
+
+        // create acceptance notification for the user
+        $owner = Auth::user();
+        $resultNotificationId = DB::table('notification')->insertGetId([
+            'id_receiver' => $userId,
+            'id_emitter' => $owner->id_user,
+            'text' => 'Your request to join ' . $group->name . ' has been accepted!',
+            'date' => now()
+        ], 'id_notification');
+
+        DB::table('join_group_request_result_notification')->insert([
+            'id_notification' => $resultNotificationId,
+            'id_group' => $groupId
+        ]);
 
         return redirect()->back()->with('status', 'User accepted into the group!');
     }

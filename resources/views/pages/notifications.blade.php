@@ -71,6 +71,16 @@
                                         has denied your friend request
                                     @endif
                                 </span>
+                            @elseif($notification->joinGroupRequestResultNotification)
+                                <span class="text-gray-600">
+                                    Your request to join 
+                                </span>
+                                <a href="{{ route('groups.show', $notification->joinGroupRequestResultNotification->group->id_group) }}" class="font-bold text-blue-600 hover:underline">
+                                    {{ $notification->joinGroupRequestResultNotification->group->name }}
+                                </a>
+                                <span class="text-gray-600">
+                                    has been accepted!
+                                </span>
                             @endif
                         </p>
                         
@@ -138,7 +148,14 @@
                         <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
                             @csrf
                             <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
-                                Mark as Read
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                        </form>
+                    @elseif($notification->joinGroupRequestResultNotification)
+                        <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
+                                <i class="fa-solid fa-check"></i>
                             </button>
                         </form>
                     @endif
