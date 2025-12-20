@@ -669,7 +669,8 @@ class GroupController extends Controller
                 'profile_image' => asset($member->getProfileImage()), 
                 'is_owner' => $member->id_user === $group->id_owner,
                 // only show kick if its not me
-                'can_kick' => ($user->id_user === $group->id_owner) && ($member->id_user !== $user->id_user)
+                'can_kick' => ($user->id_user === $group->id_owner) && ($member->id_user !== $user->id_user),
+                'is_admin' => $user->isAdmin()
             ];
         });
 

@@ -573,10 +573,10 @@
                 list.innerHTML = '';
                 members.forEach(member => {
                     let actionHtml = '';
-                    if (member.can_kick) {
-                        actionHtml = `<button onclick="kickMember(${member.id}, this)" class="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded transition shadow-sm cursor-pointer border border-transparent" title="Remove User"><i class="fa-solid fa-user-xmark"></i> Remove</button>`;
-                    } else if (member.is_owner) {
+                    if (member.is_owner) {
                         actionHtml = `<span class="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-2 py-1 rounded">Owner</span>`;
+                    } else if (member.can_kick || member.is_admin) {
+                        actionHtml = `<button onclick="kickMember(${member.id}, this)" class="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded transition shadow-sm cursor-pointer border border-transparent" title="Remove User"><i class="fa-solid fa-user-xmark"></i> Remove</button>`;
                     }
 
                     const html = `
