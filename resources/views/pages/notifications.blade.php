@@ -71,6 +71,29 @@
                                         has denied your friend request
                                     @endif
                                 </span>
+                            @elseif($notification->joinGroupRequestResultNotification)
+                                <span class="text-gray-600">
+                                    Your request to join 
+                                </span>
+                                <a href="{{ route('groups.show', $notification->joinGroupRequestResultNotification->group->id_group) }}" class="font-bold text-blue-600 hover:underline">
+                                    {{ $notification->joinGroupRequestResultNotification->group->name }}
+                                </a>
+                                <span class="text-gray-600">
+                                    has been accepted!
+                                </span>
+                            @elseif($notification->privateMessageNotification)
+                                @if($notification->emitter->verifiedUser)
+                                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
+                                @endif
+                                <span class="text-gray-600"> sent you a message</span>
+                            @elseif($notification->groupMessageNotification)
+                                @if($notification->emitter->verifiedUser)
+                                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
+                                @endif
+                                <span class="text-gray-600"> sent a message in </span>
+                                <a href="{{ route('groups.show', $notification->groupMessageNotification->groupMessage->group->id_group) }}" class="font-bold text-blue-600 hover:underline">
+                                    {{ $notification->groupMessageNotification->groupMessage->group->name }}
+                                </a>
                             @endif
                         </p>
                         
@@ -138,9 +161,40 @@
                         <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
                             @csrf
                             <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
-                                Mark as Read
+                                <i class="fa-solid fa-check"></i>
                             </button>
                         </form>
+                    @elseif($notification->joinGroupRequestResultNotification)
+                        <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                        </form>
+                    @elseif($notification->privateMessageNotification)
+                        <div class="flex gap-2">
+                            <a href="{{ route('messages.index', ['start_chat' => $notification->emitter->id_user]) }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors" title="View chat">
+                                View Chat
+                            </a>
+                            <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            </form>
+                        </div>
+                    @elseif($notification->groupMessageNotification)
+                        <div class="flex gap-2">
+                            <a href="{{ route('groups.show', $notification->groupMessageNotification->groupMessage->group->id_group) }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors" title="View group">
+                                View Group
+                            </a>
+                            <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            </form>
+                        </div>
                     @endif
                 </div>
             </div>
