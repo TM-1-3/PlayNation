@@ -15,10 +15,26 @@ class TimelineController extends Controller {
         /** @var User|null $user */
         $user = Auth::user();
 
+
+        $blockedUserIds = DB::table('user_block')
+            ->where('id_user', $user->id_user) // Quem eu bloqueei
+            ->pluck('id_blocked')
+            ->merge(
+                DB::table('user_block')
+                    ->where('id_blocked', $user->id_user) // Quem me bloqueou
+                    ->pluck('id_user')
+            )->toArray();
+
+
         $timelineType = $request->query('timeline', 'public');
 
         $query = Post::with(['user.verifiedUser', 'labels', 'comments.user'])
                      ->withCount(['likes', 'comments']);
+
+        //applies block filter
+        if (!empty($blockedUserIds)) {
+            $query->whereNotIn('id_creator', $blockedUserIds);
+        }             
 
         if ($user && $timelineType === 'following') {
             // avoid ambiguity between registered_user.id_user and user_friend.id_user
@@ -164,6 +180,16 @@ class TimelineController extends Controller {
     {
         $search = $request->get('search');
         $user = Auth::user();
+
+        $blockedUserIds = DB::table('user_block')
+            ->where('id_user', $user->id_user) // Quem eu bloqueei
+            ->pluck('id_blocked')
+            ->merge(
+                DB::table('user_block')
+                    ->where('id_blocked', $user->id_user) // Quem me bloqueou
+                    ->pluck('id_user')
+            )->toArray();
+
         
         if ($search) {
             $input = $search . ':*';
@@ -188,6 +214,11 @@ class TimelineController extends Controller {
                          $query = Post::with(['user', 'labels', 'comments.user'])
                          ->withCount(['likes', 'comments'])
                          ->whereIn('id_post', $postIds);
+
+            //applies block filter
+            if (!empty($blockedUserIds)) {
+                $query->whereNotIn('id_creator', $blockedUserIds);
+            }
     
             if ($user) {
                 $query->where(function($q) use ($user) {
@@ -204,8 +235,15 @@ class TimelineController extends Controller {
             }
     
             $posts = $query->get();
+
         } else {
-            $posts = Post::with(['user', 'labels'])->get();
+            $posts = Post::with(['user', 'labels']);
+
+            if (!empty($blockedUserIds)) {
+                $query->whereNotIn('id_creator', $blockedUserIds);
+            }
+            $posts = $query->get();
+
         }
 
         if ($request->ajax()) {

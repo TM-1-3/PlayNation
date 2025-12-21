@@ -20,6 +20,14 @@ class UserController extends Controller
         // If error, use findOrFail($id) that sends 404 if not found
         $user = User::findOrFail($id);
 
+        //block check
+        if (Auth::check()) {
+            $currentUser = Auth::user();
+            if ($currentUser->hasBlocked($user->id_user) || $user->hasBlocked($currentUser->id_user)) {
+                abort(404); // profile not found
+            }
+        }
+
         $authId = Auth::id();
 
         $isFriend = false;
@@ -246,6 +254,36 @@ class UserController extends Controller
         }
         
         return $query;
+    }
+
+    public function block($id)
+    {
+        $userToBlock = User::findOrFail($id);
+        $currentUser = Auth::user();
+
+        if ($currentUser->id_user === $userToBlock->id_user) {
+            return back()->with('error', 'You cannot block yourself.');
+        }
+
+        // if blocked, unblock; else block
+        if ($currentUser->hasBlocked($userToBlock->id_user)) {
+            $currentUser->blockedUsers()->detach($userToBlock->id_user);
+            $message = 'User unblocked successfully.';
+        } else {
+            $currentUser->blockedUsers()->attach($userToBlock->id_user);
+            
+            // remove friend connection both ways
+            DB::table('user_friend')->where('id_user', $currentUser->id_user)->where('id_friend', $userToBlock->id_user)->delete();
+            DB::table('user_friend')->where('id_user', $userToBlock->id_user)->where('id_friend', $currentUser->id_user)->delete();
+            
+            // remove pending friend requests both ways
+            DB::table('user_friend_request')->where('id_requester', $currentUser->id_user)->where('id_user', $userToBlock->id_user)->delete();
+            DB::table('user_friend_request')->where('id_requester', $userToBlock->id_user)->where('id_user', $currentUser->id_user)->delete();
+
+            $message = 'User blocked. Content hidden.';
+        }
+
+        return redirect()->route('home')->with('status', $message);
     }
 
 }

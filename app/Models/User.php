@@ -130,21 +130,33 @@ class User extends Authenticatable
         return $this->belongsToMany(Report::class, 'report_user', 'id_user', 'id_report');
     }
 
-    /**
-     * Get the admin who banned this user (if any).
-     */
     public function bannedBy(): BelongsToMany
     {
         return $this->belongsToMany(Admin::class, 'admin_ban', 'id_user', 'id_admin');
     }
 
-    /**
-     * Check if the user is banned.
-     *
-     * @return bool
-     */
     public function isBanned(): bool
     {
         return $this->bannedBy()->exists();
+    }
+    //users I blocked
+    public function blockedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_block', 'id_user', 'id_blocked');
+    }
+    //users that blocked me
+    public function blockedByUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_block', 'id_blocked', 'id_user');
+    }
+    //check if I blocked a user
+    public function hasBlocked($userId): bool
+    {
+        return $this->blockedUsers()->where('id_blocked', $userId)->exists();
+    }
+    //check if a user has blocked me
+    public function isBlockedBy($userId): bool
+    {
+        return $this->blockedByUsers()->where('id_user', $userId)->exists();
     }
 }

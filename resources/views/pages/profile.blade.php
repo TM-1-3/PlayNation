@@ -101,7 +101,47 @@
                     @if((!$user->is_public && Auth::id() !== $user->id_user && $isFriend) || ($user->is_public))
                         <a href="{{ route('messages.index', ['start_chat' => $user->id_user]) }}" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white" title="Send a message to the user">💬 Message</a>
                     @endif
-                    <button onclick="toggleReport('user', {{ $user->id_user }})" class="bg-transparent text-red-600 border border-red-200 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-red-50 ml-2" title="Report the user">🚩 Report</button>
+                    @if(Auth::check() && Auth::id() !== $user->id_user)
+    
+                        <div class="inline-flex items-center gap-2 ml-2">
+                            
+                            {{-- report btn--}}
+                            <button onclick="toggleReport('user', {{ $user->id_user }})" 
+                                    class="bg-white text-gray-600 border border-gray-300 py-2 px-4 rounded-lg inline-flex items-center justify-center cursor-pointer transition-colors hover:bg-red-50 hover:text-red-600 hover:border-red-200" 
+                                    title="Report this user">
+                                <i class="fa-solid fa-flag mr-2"></i> Report
+                            </button>
+
+                            @include('partials.report-modal', [
+                                'title' => 'Report User',
+                                'target_type' => 'user',
+                                'target_id' => $user->id_user,
+                            ])
+
+                            {{-- block btn --}}
+                            <form action="{{ route('user.block', $user->id_user) }}" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to block this user? You will not see their content anymore.');">
+                                @csrf
+                                
+                                @if(Auth::user()->hasBlocked($user->id_user))
+                                    {{-- unblock state --}}
+                                    <button type="submit" 
+                                            class="bg-gray-100 text-gray-600 border border-gray-300 py-2 px-4 rounded-lg inline-flex items-center justify-center cursor-pointer transition-colors hover:bg-gray-200" 
+                                            title="Unblock this user">
+                                        <i class="fa-solid fa-unlock mr-2"></i> Unblock
+                                    </button>
+                                @else
+                                    {{-- normal state --}}
+                                    <button type="submit" 
+                                            class="bg-white text-gray-600 border border-gray-300 py-2 px-4 rounded-lg inline-flex items-center justify-center cursor-pointer transition-colors hover:bg-gray-800 hover:text-white hover:border-gray-800" 
+                                            title="Block this user">
+                                        <i class="fa-solid fa-ban mr-2"></i> Block
+                                    </button>
+                                @endif
+                            </form>
+
+                        </div>
+
+                    @endif
 
                     @include('partials.report-modal', [
                         'title' => 'Report User',
