@@ -16,49 +16,73 @@ class UserController extends Controller
 {
     public function show($id)
     {
-        // getting user so thet name appears in the title
-        // If error, use findOrFail($id) that sends 404 if not found
         $user = User::findOrFail($id);
+        $currentUser = Auth::user();
 
-        //block check
-        if (Auth::check()) {
-            $currentUser = Auth::user();
-            if ($currentUser->hasBlocked($user->id_user) || $user->hasBlocked($currentUser->id_user)) {
-                abort(404); // profile not found
-            }
+        // check block status
+        $isBlockedByMe = false;
+        $amIBlocked = false;
+
+        if ($currentUser) {
+            $isBlockedByMe = $currentUser->hasBlocked($user->id_user);
+            $amIBlocked = $user->hasBlocked($currentUser->id_user);
         }
 
-        $authId = Auth::id();
+        // if he blocked me, show 404 
+        if ($amIBlocked) {
+            return view('pages.profile', [
+                'user' => $user,
+                'userUnavailable' => true, // flag to view
+                'isBlockedByMe' => false,
+                'posts' => collect(), // empty lists
+                'isFriend' => false,
+                'requestSent' => false,
+                'savedPostIds' => [],
+                'likedPostIds' => []
+            ]);
+        }
 
+        // if i blocked him, show limited profile
+        if ($isBlockedByMe) {
+            // dont load posts or friendship status
+            return view('pages.profile', [
+                'user' => $user,
+                'isBlockedByMe' => true, // flag to view
+                'userUnavailable' => false,
+                'posts' => collect(),
+                'isFriend' => false,
+                'requestSent' => false,
+                'savedPostIds' => [],
+                'likedPostIds' => []
+            ]);
+        }
+        
+        // load counts n labels
+        $user = User::withCount(['posts', 'followers', 'following'])->with('labels')->findOrFail($id);
+
+        // verify friendship status
         $isFriend = false;
-
         $requestSent = false;
 
-        if ($authId) {
+        if ($currentUser) {
             $isFriend = DB::table('user_friend')
-                ->where('id_user', $authId)->where('id_friend', $user->id_user)
+                ->where('id_user', $currentUser->id_user)->where('id_friend', $user->id_user)
                 ->exists();
 
             $requestSent = DB::table('user_friend_request')
-                ->where('id_requester', $authId)->where('id_user', $user->id_user)
+                ->where('id_requester', $currentUser->id_user)->where('id_user', $user->id_user)
                 ->exists();
         }
 
-        $user = User::withCount(['posts', 'followers', 'following'])->with('labels')->findOrFail($id);
-
+        // load posts
         $posts = $user->posts()
                       ->with(['comments.user'])
                       ->withCount(['likes', 'comments'])
                       ->orderBy('date', 'desc')
                       ->get();
 
-        $currentUser = Auth::user();
         $savedPostIds = $currentUser ? $currentUser->savedPosts()->pluck('post.id_post')->toArray() : [];
-
-        $likedPostIds = $currentUser ? DB::table('post_like')
-            ->where('id_user', $currentUser->id_user)
-            ->pluck('id_post')
-            ->toArray() : [];
+        $likedPostIds = $currentUser ? DB::table('post_like')->where('id_user', $currentUser->id_user)->pluck('id_post')->toArray() : [];
 
         return view('pages.profile', [
             'user' => $user,
@@ -66,7 +90,9 @@ class UserController extends Controller
             'isFriend' => $isFriend,
             'requestSent' => $requestSent,
             'savedPostIds' => $savedPostIds,
-            'likedPostIds' => $likedPostIds
+            'likedPostIds' => $likedPostIds,
+            'isBlockedByMe' => false, // not blocked, show full content
+            'userUnavailable' => false // user is available
         ]);
     }
     
