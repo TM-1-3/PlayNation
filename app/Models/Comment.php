@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Comment extends Model
 {
@@ -26,5 +27,10 @@ class Comment extends Model
     public function reports(): BelongsToMany
     {
         return $this->belongsToMany(Report::class, 'report_comment', 'id_comment', 'id_report');
+    }
+
+    public function likes(): HasMany
+    {
+        return $this->hasMany(CommentLike::class, 'id_comment', 'id_comment');
     }
 }

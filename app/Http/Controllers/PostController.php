@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\Comment;
+use App\Models\CommentLike;
 
 
 class PostController extends Controller
@@ -325,7 +326,7 @@ class PostController extends Controller
             $currentUserId = Auth::id();
 
             // Eloquent models loaded for HTML rendering
-            $query = $post->comments()->with('user');
+            $query = $post->comments()->with('user')->withCount('likes'); // ADD withCount('likes')
             
             // Add search filter if provided
             if ($request->has('search') && !empty($request->search)) {
@@ -335,21 +336,33 @@ class PostController extends Controller
             
             $commentModels = $query->orderBy('date', 'desc')->get();
 
+            // Get liked comment IDs for current user
+            $likedCommentIds = [];
+            if ($currentUserId) {
+                $likedCommentIds = DB::table('comment_like')
+                    ->where('id_user', $currentUserId)
+                    ->pluck('id_comment')
+                    ->toArray();
+            }
+
             // If HTML requested, render Blade partial and return HTML
             if ($request->query('format') === 'html') {
                 return response()->view('partials.comments_list', [
                     'comments' => $commentModels,
                     'postId' => $id,
+                    'likedCommentIds' => $likedCommentIds,
                 ]);
             }
 
             // Default JSON response (existing behavior)
-            $comments = $commentModels->map(function ($comment) use ($currentUserId) {
+            $comments = $commentModels->map(function ($comment) use ($currentUserId, $likedCommentIds) {
                 return [
                     'id_comment' => $comment->id_comment,
                     'text' => $comment->text,
                     'date' => \Carbon\Carbon::parse($comment->date)->diffForHumans(),
                     'is_owner' => $currentUserId === $comment->id_user,
+                    'likes_count' => $comment->likes_count ?? 0,
+                    'is_liked' => in_array($comment->id_comment, $likedCommentIds),
                     'user' => [
                         'id_user' => $comment->user->id_user,
                         'username' => $comment->user->username,
@@ -362,6 +375,53 @@ class PostController extends Controller
             return response()->json(['comments' => $comments]);
         } catch (\Exception $e) {
             \Log::error('Error fetching comments: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function toggleCommentLike($id)
+    {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return response()->json(['error' => 'You cannot like comments because your account has been banned.'], 403);
+        }
+
+        try {
+            $comment = Comment::findOrFail($id);
+            $user = Auth::user();
+
+            // Check if user already liked the comment
+            $existingLike = DB::table('comment_like')
+                ->where('id_comment', $id)
+                ->where('id_user', $user->id_user)
+                ->exists();
+
+            if ($existingLike) {
+                // Unlike
+                DB::table('comment_like')
+                    ->where('id_comment', $id)
+                    ->where('id_user', $user->id_user)
+                    ->delete();
+                $liked = false;
+            } else {
+                // Like
+                DB::table('comment_like')->insert([
+                    'id_comment' => $id,
+                    'id_user' => $user->id_user
+                ]);
+                $liked = true;
+            }
+
+            // Get updated like count
+            $likeCount = DB::table('comment_like')->where('id_comment', $id)->count();
+
+            return response()->json([
+                'success' => true,
+                'liked' => $liked,
+                'like_count' => $likeCount
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error toggling comment like: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -481,20 +541,31 @@ class PostController extends Controller
         try {
             $post = Post::findOrFail($id);
             $searchTerm = $request->query('search', '');
+            $currentUserId = Auth::id();
             
-            $query = $post->comments()->with('user');
+            $query = $post->comments()->with('user')->withCount('likes'); // ADD withCount('likes')
             
             if (!empty($searchTerm)) {
                 $query->where('text', 'ILIKE', '%' . $searchTerm . '%');
             }
             
             $comments = $query->orderBy('date', 'desc')->get();
+
+            // Get liked comment IDs
+            $likedCommentIds = [];
+            if ($currentUserId) {
+                $likedCommentIds = DB::table('comment_like')
+                    ->where('id_user', $currentUserId)
+                    ->pluck('id_comment')
+                    ->toArray();
+            }
             
             // Return HTML for AJAX update
             if ($request->expectsJson() || $request->ajax()) {
                 $html = view('partials.comments_list', [
                     'comments' => $comments,
                     'postId' => $id,
+                    'likedCommentIds' => $likedCommentIds,
                 ])->render();
                 
                 return response()->json([

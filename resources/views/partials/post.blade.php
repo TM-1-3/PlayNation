@@ -50,40 +50,38 @@
     @endif
     
     <div class="flex items-center gap-4 px-4 pt-2">
-        <div class="flex items-center gap-4 px-4 pt-2">
+        @php
+            $isLiked = isset($likedPostIds) && in_array($post->id_post, $likedPostIds);
+        @endphp
+        <button onclick="toggleLike({{ $post->id_post }})" 
+                id="like-btn-{{ $post->id_post }}"
+                class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-red-600" 
+                title="Like">
+            <i class="{{ $isLiked ? 'fa-solid text-red-600' : 'fa-regular' }} fa-heart text-lg" id="like-icon-{{ $post->id_post }}"></i>
+            <span class="text-sm" id="like-count-{{ $post->id_post }}" onclick="event.stopPropagation(); toggleLikes({{ $post->id_post }})" style="cursor:pointer;">
+                {{ $post->likes_count ?? $post->likes->count() }}
+            </span>
+        </button>
+        <button onclick="toggleComments({{ $post->id_post }})" class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600" title="View comments">
+            <i class="fa-regular fa-comment text-lg"></i>
+            <span class="text-sm">{{ $post->comments_count ?? $post->comments->count() }}</span>
+        </button>
+        <button onclick="openShareModal({{ $post->id_post }})" 
+                class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600 transition" 
+                title="Share with friends">
+            <i class="fa-regular fa-share-from-square text-lg"></i>
+            <span class="text-sm">Share</span>
+        </button>
+        <form action="{{ route('post.save', $post->id_post) }}" method="POST" class="ml-auto">
+            @csrf
             @php
-                $isLiked = isset($likedPostIds) && in_array($post->id_post, $likedPostIds);
+                $isSaved = isset($savedPostIds) && in_array($post->id_post, $savedPostIds);
             @endphp
-            <button onclick="toggleLike({{ $post->id_post }})" 
-                    id="like-btn-{{ $post->id_post }}"
-                    class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-red-600" 
-                    title="Like">
-                <i class="{{ $isLiked ? 'fa-solid text-red-600' : 'fa-regular' }} fa-heart text-lg" id="like-icon-{{ $post->id_post }}"></i>
-                <span class="text-sm" id="like-count-{{ $post->id_post }}" onclick="event.stopPropagation(); toggleLikes({{ $post->id_post }})" style="cursor:pointer;">
-                    {{ $post->likes_count ?? $post->likes->count() }}
-                </span>
+            <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Save">
+                <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-lg"></i>
+                <span class="text-sm">{{ $isSaved ? 'Saved' : 'Save' }}</span>
             </button>
-            <button onclick="toggleComments({{ $post->id_post }})" class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600" title="View comments">
-                <i class="fa-regular fa-comment text-lg"></i>
-                <span class="text-sm">{{ $post->comments_count ?? $post->comments->count() }}</span>
-            </button>
-            <button onclick="openShareModal({{ $post->id_post }})" 
-                    class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600 transition" 
-                    title="Share with friends">
-                <i class="fa-regular fa-share-from-square text-lg"></i>
-                <span class="text-sm">Share</span>
-            </button>
-            <form action="{{ route('post.save', $post->id_post) }}" method="POST" class="ml-auto">
-                @csrf
-                @php
-                    $isSaved = isset($savedPostIds) && in_array($post->id_post, $savedPostIds);
-                @endphp
-                <button class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer" title="Save">
-                    <i class="{{ $isSaved ? 'fa-solid' : 'fa-regular' }} fa-bookmark text-lg"></i>
-                    <span class="text-sm">{{ $isSaved ? 'Saved' : 'Save' }}</span>
-                </button>
-            </form>
-        </div>
+        </form>
     </div>
     
     <div class="py-3 px-4 text-sm leading-relaxed">

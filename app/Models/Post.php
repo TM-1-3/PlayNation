@@ -70,6 +70,7 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class, 'id_post', 'id_post')
                     ->with('user')
+                    ->withCount('likes')
                     ->orderBy('date', 'desc');
     }
 }
