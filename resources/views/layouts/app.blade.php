@@ -57,7 +57,7 @@
                     </a>
 
                     <a href="{{ route('messages.index') }}" class="hover:shadow-xl transition-shadow duration-200 flex items-center p-3 text-gray-800 no-underline text-base rounded-lg transition-colors hover:bg-gray-100 {{ request()->routeIs('messages.index') ? 'font-bold text-blue-600' : '' }}" title="Go to your private messages">
-                        <i class="fa-regular fa-comments w-8 text-xl text-center mr-2.5"></i> 
+                        <i class="fa-solid fa-comments w-8 text-xl text-center mr-2.5"></i> 
                         Messages
                     </a>
 
