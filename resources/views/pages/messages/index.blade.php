@@ -24,6 +24,7 @@
                              id="convo-{{ $convo['user_id'] }}"
                              data-name="{{ $convo['name'] }}"
                              data-img="{{ $convo['avatar'] }}"
+                             data-url="{{ route('profile.show', $convo['user_id']) }}"
                              class="conversation-item flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-gray-100 transition group">
                             
                             <img src="{{ $convo['avatar'] }}" alt="{{ $convo['name'] }}" class="w-12 h-12 rounded-full object-cover border border-gray-200 shrink-0">
@@ -63,14 +64,15 @@
 
             <div id="active-chat-container" class="hidden flex flex-col h-full w-full">
                 
-                <div class="p-4 border-b border-gray-100 flex items-center gap-3 bg-white shadow-sm shrink-0 z-10">
-                    <img id="chat-header-img" src="" class="w-10 h-10 rounded-full object-cover border border-gray-200">
-                    <div>
-                        <h3 id="chat-header-name" class="font-bold text-gray-900 leading-tight"></h3>
-                        <span class="text-xs text-green-500 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Online 
-                        </span>
-                    </div>
+                <div class="p-4 border-b border-gray-100 bg-white shadow-sm shrink-0 z-10">
+                    <a id="chat-header-link" href="#" class="flex items-center gap-3 hover:bg-gray-50 p-2 -m-2 rounded-lg transition-colors group no-underline">
+                        <img id="chat-header-img" src="" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                        <div>
+                            <h3 id="chat-header-name" class="font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors"></h3>
+                            {{-- Removi o "Online" fixo porque não temos realtime real, fica mais limpo só o nome --}}
+                            <span class="text-xs text-gray-400">View Profile</span>
+                        </div>
+                    </a>
                 </div>
 
                 <div id="messages-feed" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 custom-scrollbar scroll-smooth">
@@ -128,6 +130,7 @@
         const feed = document.getElementById('messages-feed');
         const form = document.getElementById('dm-form');
         const input = document.getElementById('dm-input');
+        const headerLink = document.getElementById('chat-header-link');
         const headerName = document.getElementById('chat-header-name');
         const headerImg = document.getElementById('chat-header-img');
         const emptyState = document.getElementById('empty-state');
@@ -148,6 +151,13 @@
                 // load header
                 headerName.innerText = element.dataset.name;
                 headerImg.src = element.dataset.img;
+
+                if (element.dataset.url) {
+                    headerLink.href = element.dataset.url;
+                } else {
+                    // build default profile link after creation
+                    headerLink.href = '/profile/' + friendId; 
+        }
             }
 
             // show chat
