@@ -15,7 +15,7 @@ class TimelineController extends Controller {
         /** @var User|null $user */
         $user = Auth::user();
 
-
+        if ($user) {
         $blockedUserIds = DB::table('user_block')
             ->where('id_user', $user->id_user) // Quem eu bloqueei
             ->pluck('id_blocked')
@@ -24,6 +24,7 @@ class TimelineController extends Controller {
                     ->where('id_blocked', $user->id_user) // Quem me bloqueou
                     ->pluck('id_user')
             )->toArray();
+        }
 
 
         $timelineType = $request->query('timeline', 'public');
