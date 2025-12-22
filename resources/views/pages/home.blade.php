@@ -32,11 +32,7 @@
             </div>
         </div>
     </div>
-    @if(Auth::check())
-        <div id="timeline" class="w-full pb-12 pt-35">
-    @else
-        <div id="timeline" class="w-full pb-12 pt-20">
-    @endif
+    <div id="timeline" class="w-full pb-12 {{ Auth::check() ? 'pt-35' : 'pt-20' }}">
             @if(isset($posts) && $posts->isEmpty())
                 <div class="text-center py-10 text-gray-500">
                     <p>No posts found.</p>
@@ -54,8 +50,4 @@
 
     @include('partials.filter-post')
     @include('partials.share_modal')
-
-    
-
-</div>
 @endsection
