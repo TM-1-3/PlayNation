@@ -10,18 +10,42 @@
         ])
 
         <div class="flex gap-3 mb-4 pb-4 border-b border-gray-100 last:border-0" id="comment-{{ $comment->id_comment }}">
-            <a href="{{ route('profile.show', $comment->user->id_user) }}" class="flex-shrink-0">
-                <img src="{{ $comment->user->getProfileImage() }}" 
-                     alt="{{ $comment->user->username }}" 
+            @if($comment->user && !$comment->user->isDeleted())
+                <a href="{{ route('profile.show', $comment->user->id_user) }}" class="flex-shrink-0">
+                    <img src="{{ $comment->user->getProfileImage() }}" 
+                         alt="{{ $comment->user->username }}" 
+                         class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
+                </a>
+            @else
+                <img src="/profile/img/users/default.png" 
+                     alt="Deleted User" 
                      class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
-            </a>
+            @endif
             <div class="flex-1 min-w-0">
                 <div class="bg-gray-50 rounded-lg px-3 py-2 relative">
-                    <a href="{{ route('profile.show', $comment->user->id_user) }}" 
-                       class="font-semibold text-sm text-gray-900 no-underline hover:underline">
-                        {{ $comment->user->username }}
-                    </a>
-                    <p class="text-sm text-gray-700 mt-1 break-words" id="comment-text-{{ $comment->id_comment }}">{{ $comment->text }}</p>
+                    @if($comment->user && !$comment->user->isDeleted())
+                        <a href="{{ route('profile.show', $comment->user->id_user) }}" 
+                           class="font-semibold text-sm text-gray-900 no-underline hover:underline">
+                            {{ $comment->user->username }}
+                        </a>
+                    @else
+                        <span class="font-semibold text-sm text-gray-500">Deleted User</span>
+                    @endif
+                    
+                    @php
+                        // Convert @username mentions to clickable links
+                        $commentText = $comment->text;
+                        $commentText = preg_replace_callback('/@(\w+)/', function($matches) {
+                            $username = $matches[1];
+                            $user = \App\Models\User::where('username', $username)->first();
+                            if ($user) {
+                                return '<a href="' . route('profile.show', $user->id_user) . '" class="text-blue-600 hover:underline font-semibold">@' . $username . '</a>';
+                            }
+                            return '@' . $username;
+                        }, $commentText);
+                    @endphp
+                    
+                    <p class="text-sm text-gray-700 mt-1 break-words" id="comment-text-{{ $comment->id_comment }}">{!! $commentText !!}</p>
                     
                     @if(Auth::check() && Auth::id() === $comment->id_user)
                         <div class="absolute top-2 right-2 flex gap-1">

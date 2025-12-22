@@ -94,6 +94,15 @@ function toggleComments(postId) {
                 commentsItems.innerHTML = html && html.trim().length > 0
                     ? html
                     : '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
+                
+                // Initialize tagging AFTER comments are loaded
+                setTimeout(() => {
+                    const commentInput = document.getElementById(`comment-input-${postId}`);
+                    if (commentInput && typeof initializeCommentTagging === 'function') {
+                        console.log('Initializing tagging on modal open'); // Debug log
+                        initializeCommentTagging(`comment-input-${postId}`, postId);
+                    }
+                }, 150);
             })
             .catch(error => {
                 if (commentsItems) {
@@ -153,13 +162,23 @@ function addComment(event, postId) {
     
     if (!commentText) return;
     
+    // Use FormData instead of JSON
+    const formData = new FormData();
+    formData.append('comment_text', commentText);
+    
+    // Show loading state
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Posting...';
+    
     fetch(`/post/${postId}/comment`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
         },
-        body: JSON.stringify({ comment_text: commentText })
+        body: formData
     })
     .then(response => {
         if (response.status === 403) {
@@ -172,29 +191,106 @@ function addComment(event, postId) {
                 throw new Error('Forbidden');
             });
         }
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         return response.json();
     })
     .then(data => {
         if (data.success) {
-            // Clear input
+            console.log('Comment posted successfully:', data);
+            
+            // Clear input immediately
             input.value = '';
             
-            // Reload comments to show the new one
-            toggleComments(postId);
-            setTimeout(() => toggleComments(postId), 100);
+            // Re-enable button
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
             
-            // Update comment count in the post
-            const countElement = document.querySelector(`#post-${postId} .fa-comment`).nextElementSibling;
-            if (countElement) {
-                const currentCount = parseInt(countElement.textContent) || 0;
-                countElement.textContent = currentCount + 1;
+            // Update comment count IMMEDIATELY in the post card
+            const commentCountElement = document.querySelector(`#post-${postId} .fa-comment`).nextElementSibling;
+            if (commentCountElement) {
+                const currentCount = parseInt(commentCountElement.textContent) || 0;
+                commentCountElement.textContent = currentCount + 1;
             }
+            
+            // Add a small delay before reloading to ensure database write is complete
+            setTimeout(() => {
+                const commentsItems = document.getElementById(`comments-items-${postId}`);
+                
+                fetch(`/post/${postId}/comments?format=html`, {
+                    headers: {
+                        'Accept': 'text/html'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch comments');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    console.log('Comments reloaded successfully');
+                    if (commentsItems) {
+                        commentsItems.innerHTML = html;
+                    }
+                    
+                    // Reinitialize tagging after reload
+                    setTimeout(() => {
+                        const commentInput = document.getElementById(`comment-input-${postId}`);
+                        if (commentInput && typeof initializeCommentTagging === 'function') {
+                            console.log('Reinitializing tagging after comment post');
+                            initializeCommentTagging(`comment-input-${postId}`, postId);
+                        }
+                    }, 100);
+                })
+                .catch(error => {
+                    console.error('Error reloading comments:', error);
+                    // Don't show error alert since comment was posted successfully
+                    // Just log it and the user will see it on page refresh
+                    console.log('Comment was posted but failed to reload list. Refresh the page to see it.');
+                });
+            }, 300); // Wait 300ms for database write to complete
+        } else {
+            throw new Error('Failed to post comment');
         }
     })
     .catch(error => {
+        // Re-enable button on error
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+        
         if (error.message !== 'Forbidden') {
             console.error('Error adding comment:', error);
-            alert('Failed to add comment. Please try again.');
+            // Check if comment was actually posted by trying to reload
+            setTimeout(() => {
+                const commentsItems = document.getElementById(`comments-items-${postId}`);
+                fetch(`/post/${postId}/comments?format=html`, {
+                    headers: {
+                        'Accept': 'text/html'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    if (commentsItems) {
+                        commentsItems.innerHTML = html;
+                    }
+                    // Clear input since comment might have been posted
+                    input.value = '';
+                    
+                    // Reinitialize tagging
+                    setTimeout(() => {
+                        const commentInput = document.getElementById(`comment-input-${postId}`);
+                        if (commentInput && typeof initializeCommentTagging === 'function') {
+                            initializeCommentTagging(`comment-input-${postId}`, postId);
+                        }
+                    }, 100);
+                })
+                .catch(err => {
+                    console.error('Failed to reload comments:', err);
+                    alert('Failed to add comment. Please try again.');
+                });
+            }, 500);
         }
     });
 }
