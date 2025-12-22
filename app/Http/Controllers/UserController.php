@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 
 class UserController extends Controller
@@ -310,6 +311,44 @@ class UserController extends Controller
         }
 
         return redirect()->route('home')->with('status', $message);
+    }
+
+    public function destroy($id) {
+        $user = User::findOrFail($id);
+        $currentUser = Auth::user();
+
+        if ($currentUser->id_user !== $user->id_user) {
+            return back()->with('error', 'Unauthorized action');
+        }
+
+        if ($user->profile_picture && $user->profile_picture !== 'img/default_avatar.png') {
+            if (file_exists(public_path($user->profile_picture))) {
+               unlink(public_path($user->profile_picture));
+            }
+        }
+
+        $timestamp = time(); 
+    
+        $user->name = 'Deleted User';
+    
+        $user->username = 'deleted_' . $user->id_user . '_' . $timestamp;
+    
+        $user->email = 'deleted_' . $user->id_user . '_' . $timestamp . '@void.com';
+    
+        $user->password = Hash::make(Str::random(60));
+    
+        $user->biography = 'This user has deleted their account.';
+        $user->profile_picture = 'img/default_avatar.png'; 
+    
+    
+        $user->save();
+
+        if ($currentUser->id_user === $user->id_user) {
+            Auth::logout();
+            return redirect()->route('login')->with('status', 'Your account has been deleted successfully');
+        } else {
+        return redirect()->route('admin')->with('status', 'User account anonymized successfully.');
+        }
     }
 
 }

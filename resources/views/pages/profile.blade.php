@@ -138,7 +138,16 @@
                             {{-- right placeholder button --}} <!-- eddit later but i like a setting ideia -->
                             <button class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white" title="Go to the settings">
                                 ⚙️ Settings
-                            </button>                    
+                            </button>
+                            
+                            <form action="{{ route('profile.destroy', $user->id_user) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account?');">
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit" class="bg-red-50 text-red-600 border border-red-200 py-2 px-4 rounded font-semibold hover:bg-red-600 hover:text-white transition-colors">
+                                    🗑️ Delete My Account
+                                </button>
+                             </form>
                             
                         @elseif(Auth::check())
                             {{-- others profile --}}
