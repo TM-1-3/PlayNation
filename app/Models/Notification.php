@@ -70,4 +70,14 @@ class Notification extends Model
         return $query->where('id_receiver', $userId)
                      ->with('emitter'); 
     }
+
+    public function commentNotification()
+    {
+        return $this->hasOne(CommentNotification::class, 'id_notification', 'id_notification');
+    }
+
+    public function likeCommentNotification()
+    {
+        return $this->hasOne(LikeCommentNotification::class, 'id_notification', 'id_notification');
+    }
 }

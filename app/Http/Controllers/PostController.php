@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\Comment;
+use App\Models\CommentLike;
+use App\Models\Notification;
+use App\Models\CommentNotification;
 
 
 class PostController extends Controller
@@ -325,7 +328,7 @@ class PostController extends Controller
             $currentUserId = Auth::id();
 
             // Eloquent models loaded for HTML rendering
-            $query = $post->comments()->with('user');
+            $query = $post->comments()->with('user')->withCount('likes'); // ADD withCount('likes')
             
             // Add search filter if provided
             if ($request->has('search') && !empty($request->search)) {
@@ -335,21 +338,33 @@ class PostController extends Controller
             
             $commentModels = $query->orderBy('date', 'desc')->get();
 
+            // Get liked comment IDs for current user
+            $likedCommentIds = [];
+            if ($currentUserId) {
+                $likedCommentIds = DB::table('comment_like')
+                    ->where('id_user', $currentUserId)
+                    ->pluck('id_comment')
+                    ->toArray();
+            }
+
             // If HTML requested, render Blade partial and return HTML
             if ($request->query('format') === 'html') {
                 return response()->view('partials.comments_list', [
                     'comments' => $commentModels,
                     'postId' => $id,
+                    'likedCommentIds' => $likedCommentIds,
                 ]);
             }
 
             // Default JSON response (existing behavior)
-            $comments = $commentModels->map(function ($comment) use ($currentUserId) {
+            $comments = $commentModels->map(function ($comment) use ($currentUserId, $likedCommentIds) {
                 return [
                     'id_comment' => $comment->id_comment,
                     'text' => $comment->text,
                     'date' => \Carbon\Carbon::parse($comment->date)->diffForHumans(),
                     'is_owner' => $currentUserId === $comment->id_user,
+                    'likes_count' => $comment->likes_count ?? 0,
+                    'is_liked' => in_array($comment->id_comment, $likedCommentIds),
                     'user' => [
                         'id_user' => $comment->user->id_user,
                         'username' => $comment->user->username,
@@ -362,6 +377,95 @@ class PostController extends Controller
             return response()->json(['comments' => $comments]);
         } catch (\Exception $e) {
             \Log::error('Error fetching comments: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function toggleCommentLike($id)
+    {
+        // Check if user is banned
+        if (Auth::user()->isBanned()) {
+            return response()->json(['error' => 'You cannot like comments because your account has been banned.'], 403);
+        }
+
+        try {
+            $comment = Comment::findOrFail($id);
+            $user = Auth::user();
+
+            // Check if user already liked the comment
+            $existingLike = DB::table('comment_like')
+                ->where('id_comment', $id)
+                ->where('id_user', $user->id_user)
+                ->exists();
+
+            if ($existingLike) {
+                // Unlike
+                DB::table('comment_like')
+                    ->where('id_comment', $id)
+                    ->where('id_user', $user->id_user)
+                    ->delete();
+                $liked = false;
+
+                // Remove notification when unliking
+                $notification = DB::table('notification')
+                    ->join('like_comment_notification', 'notification.id_notification', '=', 'like_comment_notification.id_notification')
+                    ->where('notification.id_receiver', $comment->id_user)
+                    ->where('notification.id_emitter', $user->id_user)
+                    ->where('like_comment_notification.id_comment', $id)
+                    ->first();
+
+                if ($notification) {
+                    DB::table('like_comment_notification')
+                        ->where('id_notification', $notification->id_notification)
+                        ->delete();
+                    DB::table('notification')
+                        ->where('id_notification', $notification->id_notification)
+                        ->delete();
+                }
+            } else {
+                // Like
+                DB::table('comment_like')->insert([
+                    'id_comment' => $id,
+                    'id_user' => $user->id_user
+                ]);
+                $liked = true;
+
+                // Create notification for comment owner (if not liking own comment)
+                if ($comment->id_user !== $user->id_user) {
+                    // Check if notification already exists to avoid duplicates
+                    $existingNotification = DB::table('notification')
+                        ->join('like_comment_notification', 'notification.id_notification', '=', 'like_comment_notification.id_notification')
+                        ->where('notification.id_receiver', $comment->id_user)
+                        ->where('notification.id_emitter', $user->id_user)
+                        ->where('like_comment_notification.id_comment', $id)
+                        ->exists();
+
+                    if (!$existingNotification) {
+                        $notificationId = DB::table('notification')->insertGetId([
+                            'id_receiver' => $comment->id_user,
+                            'id_emitter' => $user->id_user,
+                            'text' => $user->name . ' liked your comment.',
+                            'date' => now()
+                        ], 'id_notification');
+
+                        DB::table('like_comment_notification')->insert([
+                            'id_notification' => $notificationId,
+                            'id_comment' => $id
+                        ]);
+                    }
+                }
+            }
+
+            // Get updated like count
+            $likeCount = DB::table('comment_like')->where('id_comment', $id)->count();
+
+            return response()->json([
+                'success' => true,
+                'liked' => $liked,
+                'like_count' => $likeCount
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error toggling comment like: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -387,6 +491,31 @@ class PostController extends Controller
                 'text' => $request->comment_text,
                 'date' => now(),
             ]);
+
+            // Create notification for post creator (if not commenting on own post)
+            if ($post->id_creator !== $user->id_user) {
+                // Check if notification already exists to avoid duplicates
+                $existingNotification = DB::table('notification')
+                    ->join('comment_notification', 'notification.id_notification', '=', 'comment_notification.id_notification')
+                    ->where('notification.id_receiver', $post->id_creator)
+                    ->where('notification.id_emitter', $user->id_user)
+                    ->where('comment_notification.id_comment', $comment->id_comment)
+                    ->exists();
+
+                if (!$existingNotification) {
+                    $notificationId = DB::table('notification')->insertGetId([
+                        'id_receiver' => $post->id_creator,
+                        'id_emitter' => $user->id_user,
+                        'text' => $user->name . ' commented on your post.',
+                        'date' => now()
+                    ], 'id_notification');
+
+                    DB::table('comment_notification')->insert([
+                        'id_notification' => $notificationId,
+                        'id_comment' => $comment->id_comment
+                    ]);
+                }
+            }
 
             // Return the new comment with user data
             return response()->json([
@@ -481,20 +610,31 @@ class PostController extends Controller
         try {
             $post = Post::findOrFail($id);
             $searchTerm = $request->query('search', '');
+            $currentUserId = Auth::id();
             
-            $query = $post->comments()->with('user');
+            $query = $post->comments()->with('user')->withCount('likes'); // ADD withCount('likes')
             
             if (!empty($searchTerm)) {
                 $query->where('text', 'ILIKE', '%' . $searchTerm . '%');
             }
             
             $comments = $query->orderBy('date', 'desc')->get();
+
+            // Get liked comment IDs
+            $likedCommentIds = [];
+            if ($currentUserId) {
+                $likedCommentIds = DB::table('comment_like')
+                    ->where('id_user', $currentUserId)
+                    ->pluck('id_comment')
+                    ->toArray();
+            }
             
             // Return HTML for AJAX update
             if ($request->expectsJson() || $request->ajax()) {
                 $html = view('partials.comments_list', [
                     'comments' => $comments,
                     'postId' => $id,
+                    'likedCommentIds' => $likedCommentIds,
                 ])->render();
                 
                 return response()->json([

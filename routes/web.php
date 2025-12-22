@@ -88,6 +88,8 @@ Route::get('/profile/{id}', [UserController::class, 'show'])->name('profile.show
 
 Route::middleware(['auth'])->group(function () {
 
+    Route::post('/comment/{id}/like', [PostController::class, 'toggleCommentLike'])->name('comment.like');
+
     Route::put('/comment/{id}', [PostController::class, 'updateComment'])->name('comment.update');
     Route::delete('/comment/{id}', [PostController::class, 'deleteComment'])->name('comment.delete');
 

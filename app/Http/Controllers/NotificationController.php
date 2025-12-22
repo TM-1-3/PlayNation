@@ -13,7 +13,18 @@ class NotificationController extends Controller {
         $userId = Auth::id();
 
         $notifications = Notification::where('id_receiver', $userId)
-            ->with(['emitter', 'friendRequestNotification', 'joinGroupRequestNotification','friendRequestResultNotification', 'joinGroupRequestResultNotification.group', 'privateMessageNotification', 'groupMessageNotification.groupMessage.group']) 
+            ->with([
+                'emitter',
+                'friendRequestNotification',
+                'joinGroupRequestNotification',
+                'friendRequestResultNotification',
+                'joinGroupRequestResultNotification.group',
+                'privateMessageNotification',
+                'groupMessageNotification.groupMessage.group',
+                'commentNotification.comment.post',
+                'likeCommentNotification.comment.post'
+
+            ]) 
             ->orderByDesc('date')
             ->get();
         
@@ -36,6 +47,12 @@ class NotificationController extends Controller {
                 return true;
             }
             if ($notification->groupMessageNotification) {
+                return true;
+            }
+            if ($notification->commentNotification) {
+                return true;
+            }
+            if ($notification->likeCommentNotification) {
                 return true;
             }
            

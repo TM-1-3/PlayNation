@@ -7,7 +7,7 @@
                 <i class="fa-regular fa-comment text-lg"></i> Comments
             </h3>
 
-            <button onclick="toggleComments({{ $post->id_post }})" class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600" title="View comments">
+            <button onclick="toggleComments({{ $postId }})" class="flex items-center gap-1 text-gray-600 bg-transparent border-none cursor-pointer hover:text-blue-600" title="Close comments">
                 <i class="fa-solid fa-times text-lg"></i>
             </button>
         </div>
@@ -19,7 +19,6 @@
                 </div>
                 <input id="search-input-comment-{{ $postId }}" type="text" name="search" placeholder="Search comments..." 
                     class="h-[2em] block w-full mx-3 pl-8 pr-24 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">
-                
             </form>
         </div>
 

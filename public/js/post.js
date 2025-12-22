@@ -114,6 +114,36 @@ function toggleComments(postId) {
     }
 }
 
+function toggleCommentLike(commentId, postId) {
+    fetch(`/comment/${commentId}/like`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const icon = document.getElementById(`comment-like-icon-${commentId}`);
+            const count = document.getElementById(`comment-like-count-${commentId}`);
+            
+            if (data.liked) {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid', 'text-red-600');
+            } else {
+                icon.classList.remove('fa-solid', 'text-red-600');
+                icon.classList.add('fa-regular');
+            }
+            
+            count.textContent = data.like_count;
+        }
+    })
+    .catch(error => {
+        console.error('Error toggling comment like:', error);
+    });
+}
+
 function addComment(event, postId) {
     event.preventDefault();
     
