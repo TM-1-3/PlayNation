@@ -41,6 +41,7 @@ DROP TABLE IF EXISTS registered_user CASCADE;
 DROP TABLE IF EXISTS user_block CASCADE;
 DROP TABLE IF EXISTS user_ban CASCADE;
 DROP TABLE IF EXISTS user_tag CASCADE;
+DROP TABLE IF EXISTS comment_tag CASCADE;
 DROP TABLE IF EXISTS message CASCADE;
 DROP TABLE IF EXISTS admin_block CASCADE;
 DROP TABLE IF EXISTS admin_ban CASCADE;
@@ -285,6 +286,12 @@ CREATE TABLE user_tag(
     id_post INTEGER NOT NULL REFERENCES post (id_post) ON DELETE CASCADE,
     id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
     PRIMARY KEY (id_post, id_user)
+);
+
+CREATE TABLE comment_tag(
+    id_comment INTEGER NOT NULL REFERENCES comments (id_comment) ON DELETE CASCADE,
+    id_user INTEGER NOT NULL REFERENCES registered_user (id_user) ON DELETE CASCADE,
+    PRIMARY KEY (id_comment, id_user)
 );
 
 CREATE TABLE admin_block(

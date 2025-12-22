@@ -98,7 +98,13 @@
                                 @if($notification->emitter->verifiedUser)
                                     <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
                                 @endif
-                                <span class="text-gray-600"> commented on your post</span>
+                                <span class="text-gray-600">
+                                    @if(str_contains($notification->text, 'tagged you'))
+                                        tagged you in a comment
+                                    @else
+                                        commented on your post
+                                    @endif
+                                </span>
                             @elseif($notification->likeCommentNotification)
                                 @if($notification->emitter->verifiedUser)
                                     <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
