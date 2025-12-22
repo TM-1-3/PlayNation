@@ -171,14 +171,20 @@
                                 {{-- Add Friend Form --}}
                                 <form action="{{ route('user.sendFriendRequest', $user->id_user) }}" method="POST" class="m-0">
                                     @csrf
-                                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded inline-flex items-center justify-center cursor-pointer border border-blue-700 transition-colors hover:bg-blue-700" title="Send a friend request to this user">
-                                        + Add Friend
+                                    <button type="submit" 
+                                            class="bg-blue-600 text-white border border-blue-700 py-2 px-4 rounded-lg inline-flex items-center justify-center cursor-pointer transition-colors hover:bg-blue-700 shadow-sm font-medium" 
+                                            title="Send a friend request">
+                                        <i class="fa-solid fa-user-plus mr-2"></i> Add Friend
                                     </button>
                                 </form>
                             @endif
                             {{-- msg button --}}
                             @if((!$user->is_public && Auth::id() !== $user->id_user && $isFriend) || ($user->is_public))
-                                <a href="{{ route('messages.index', ['start_chat' => $user->id_user]) }}" class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white" title="Send a message to the user">💬 Message</a>
+                                <a href="{{ route('messages.index', ['start_chat' => $user->id_user]) }}" 
+                                   class="bg-white text-blue-600 border border-blue-600 py-2 px-4 rounded-lg inline-flex items-center justify-center transition-colors hover:bg-blue-50 shadow-sm font-medium no-underline" 
+                                   title="Send a message to the user">
+                                    <i class="fa-regular fa-comment-dots mr-2"></i> Message
+                                </a>
                             @endif
                             @if(Auth::check() && Auth::id() !== $user->id_user)
             
