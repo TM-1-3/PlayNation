@@ -21,7 +21,9 @@ class NotificationController extends Controller {
                 'joinGroupRequestResultNotification.group',
                 'privateMessageNotification',
                 'groupMessageNotification.groupMessage.group',
-                'commentNotification.comment.post'
+                'commentNotification.comment.post',
+                'likeCommentNotification.comment.post'
+
             ]) 
             ->orderByDesc('date')
             ->get();
@@ -48,6 +50,9 @@ class NotificationController extends Controller {
                 return true;
             }
             if ($notification->commentNotification) {
+                return true;
+            }
+            if ($notification->likeCommentNotification) {
                 return true;
             }
            

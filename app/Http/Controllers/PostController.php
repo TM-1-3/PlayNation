@@ -405,6 +405,23 @@ class PostController extends Controller
                     ->where('id_user', $user->id_user)
                     ->delete();
                 $liked = false;
+
+                // Remove notification when unliking
+                $notification = DB::table('notification')
+                    ->join('like_comment_notification', 'notification.id_notification', '=', 'like_comment_notification.id_notification')
+                    ->where('notification.id_receiver', $comment->id_user)
+                    ->where('notification.id_emitter', $user->id_user)
+                    ->where('like_comment_notification.id_comment', $id)
+                    ->first();
+
+                if ($notification) {
+                    DB::table('like_comment_notification')
+                        ->where('id_notification', $notification->id_notification)
+                        ->delete();
+                    DB::table('notification')
+                        ->where('id_notification', $notification->id_notification)
+                        ->delete();
+                }
             } else {
                 // Like
                 DB::table('comment_like')->insert([
@@ -412,6 +429,31 @@ class PostController extends Controller
                     'id_user' => $user->id_user
                 ]);
                 $liked = true;
+
+                // Create notification for comment owner (if not liking own comment)
+                if ($comment->id_user !== $user->id_user) {
+                    // Check if notification already exists to avoid duplicates
+                    $existingNotification = DB::table('notification')
+                        ->join('like_comment_notification', 'notification.id_notification', '=', 'like_comment_notification.id_notification')
+                        ->where('notification.id_receiver', $comment->id_user)
+                        ->where('notification.id_emitter', $user->id_user)
+                        ->where('like_comment_notification.id_comment', $id)
+                        ->exists();
+
+                    if (!$existingNotification) {
+                        $notificationId = DB::table('notification')->insertGetId([
+                            'id_receiver' => $comment->id_user,
+                            'id_emitter' => $user->id_user,
+                            'text' => $user->name . ' liked your comment.',
+                            'date' => now()
+                        ], 'id_notification');
+
+                        DB::table('like_comment_notification')->insert([
+                            'id_notification' => $notificationId,
+                            'id_comment' => $id
+                        ]);
+                    }
+                }
             }
 
             // Get updated like count
