@@ -1,11 +1,20 @@
 ## lbaw2551 - PlayNation
 
 ## Project theme
+
 PlayNation is a web-based social network exclusively dedicated to sports enthusiasts.
 This platform is designed to provide users with a personalized space where they can share their fitness lifestyle, follow their favourite modalities, interact with like-minded individuals and actively participate in a vibrant sports community. Additionally, this system might serve as a rich source of fitness knowledge, enabling users to share, discover, learn and explore a wide range of sports-related content while promoting interaction among athletes, fans, teams, coaches and fitness practitioners.
 Its main features support this goal by allowing users to post photos, videos, and statements; interact with other users' content through likes, comments, saves, and shares; engage in private chats; and search for specific accounts and content using filters for sports or athletes.
 Users are organized into groups with distinct permissions. These groups include Guests who can only view public content; Basic users, the core registered users who can interact, post, and follow; Verified accounts for official updates regarding athletes and teams; and Administrators who manage all users and content to ensure platform integrity.
 The platform will be responsive to the different devices used and easy to manage, ensuring a pleasant user experience.
+
+## Product 
+
+### Credentials 
+
+**Regular User:** username: hvegan; password: password
+
+**Admin:** username: admin; password: password
 
 ## Authors
 
