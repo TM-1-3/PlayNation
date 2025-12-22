@@ -234,10 +234,29 @@ COMMIT;
 
 
 -- Delete Account
-
--- the majority will be done via ON DELETE CASCADE
 BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
+-- Update posts to point to deleted user placeholder
+UPDATE post
+SET id_creator = "deleted" . $id_user
+WHERE id_creator = $id_user;
+
+-- Update comments to point to deleted user placeholder
+UPDATE comments
+SET id_user = "deleted" . $id_user
+WHERE id_user = $id_user;
+
+-- Update group messages to point to deleted user placeholder
+UPDATE group_message
+SET id_sender = "deleted" . $id_user
+WHERE id_sender = $id_user;
+
+-- Update private messages to point to deleted user placeholder
+UPDATE private_message
+SET id_sender = "deleted" . $id_userv
+WHERE id_sender = $id_user;
+
+-- Delete the user (all other relations will cascade or set null)
 DELETE FROM registered_user
 WHERE id_user = $id_user;
 
