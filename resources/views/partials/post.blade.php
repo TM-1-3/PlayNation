@@ -34,7 +34,9 @@
 
         @if($type == 'profile' && Auth::check() && Auth::id() == $post->id_creator)
             <div>
-                <a href="{{ route('post.edit', $post->id_post) }}" class="text-black py-1 px-1 text-sm no-underline" title="Edit your post">⋮</a>
+                <a href="{{ route('post.edit', $post->id_post) }}" class="text-black py-1 px-1 text-sm no-underline" title="Edit your post">
+                    <i class="fa-solid fa-pen text-sm"></i>
+                </a>
             </div>
         @else
             <div>
