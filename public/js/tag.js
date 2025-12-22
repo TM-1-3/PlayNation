@@ -1,3 +1,5 @@
+const activeTaggingInstances = new Map();
+
 function initializeCommentTagging(inputId, postId) {
     const input = document.getElementById(inputId);
     if (!input) {
@@ -5,18 +7,27 @@ function initializeCommentTagging(inputId, postId) {
         return;
     }
 
-    console.log('Initializing tagging for:', inputId); // Debug log
+    // Clean up any existing instance for this input
+    if (activeTaggingInstances.has(inputId)) {
+        const existingInstance = activeTaggingInstances.get(inputId);
+        existingInstance.cleanup();
+    }
+
+    console.log('Initializing tagging for:', inputId);
 
     let autocompleteDiv = null;
     let currentQuery = '';
     let selectedIndex = -1;
     let currentAtIndex = -1;
+    let inputListener = null;
+    let keydownListener = null;
+    let clickListener = null;
 
-    input.addEventListener('input', function(e) {
+    // Input event listener
+    inputListener = function(e) {
         const text = e.target.value;
         const cursorPos = e.target.selectionStart;
         
-        // Find @ symbol before cursor
         const textBeforeCursor = text.substring(0, cursorPos);
         const lastAtIndex = textBeforeCursor.lastIndexOf('@');
         
@@ -25,10 +36,8 @@ function initializeCommentTagging(inputId, postId) {
             return;
         }
         
-        // Get text after @ symbol
         const queryText = textBeforeCursor.substring(lastAtIndex + 1);
         
-        // Check if there's a space after @
         if (queryText.includes(' ')) {
             hideAutocomplete();
             return;
@@ -37,16 +46,17 @@ function initializeCommentTagging(inputId, postId) {
         currentQuery = queryText;
         currentAtIndex = lastAtIndex;
         
-        console.log('Query:', queryText); // Debug log
+        console.log('Query:', queryText);
         
         if (queryText.length >= 1) {
             fetchUsers(queryText);
         } else {
             hideAutocomplete();
         }
-    });
+    };
 
-    input.addEventListener('keydown', function(e) {
+    // Keydown event listener
+    keydownListener = function(e) {
         if (!autocompleteDiv || autocompleteDiv.classList.contains('hidden')) return;
         
         const items = autocompleteDiv.querySelectorAll('.autocomplete-item');
@@ -65,14 +75,25 @@ function initializeCommentTagging(inputId, postId) {
         } else if (e.key === 'Escape') {
             hideAutocomplete();
         }
-    });
+    };
+
+    // Click outside listener
+    clickListener = function(e) {
+        if (autocompleteDiv && !input.contains(e.target) && !autocompleteDiv.contains(e.target)) {
+            hideAutocomplete();
+        }
+    };
+
+    input.addEventListener('input', inputListener);
+    input.addEventListener('keydown', keydownListener);
+    document.addEventListener('click', clickListener);
 
     function fetchUsers(query) {
-        console.log('Fetching users for:', query); // Debug log
+        console.log('Fetching users for:', query);
         fetch(`/users/autocomplete?query=${encodeURIComponent(query)}`)
             .then(response => response.json())
             .then(users => {
-                console.log('Users received:', users); // Debug log
+                console.log('Users received:', users);
                 if (users.length > 0) {
                     showAutocomplete(users);
                 } else {
@@ -83,13 +104,22 @@ function initializeCommentTagging(inputId, postId) {
     }
 
     function showAutocomplete(users) {
-        if (!autocompleteDiv) {
-            autocompleteDiv = document.createElement('div');
-            autocompleteDiv.className = 'absolute bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto z-[10001]';
-            autocompleteDiv.style.width = input.offsetWidth + 'px';
-            input.parentElement.style.position = 'relative';
-            input.parentElement.appendChild(autocompleteDiv);
+        // Remove existing autocomplete if present
+        if (autocompleteDiv) {
+            autocompleteDiv.remove();
         }
+
+        // Create new autocomplete
+        autocompleteDiv = document.createElement('div');
+        autocompleteDiv.className = 'absolute bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto z-[10001]';
+        autocompleteDiv.style.width = input.offsetWidth + 'px';
+        
+        // Ensure parent has position relative
+        if (!input.parentElement.style.position || input.parentElement.style.position === 'static') {
+            input.parentElement.style.position = 'relative';
+        }
+        
+        input.parentElement.appendChild(autocompleteDiv);
 
         autocompleteDiv.innerHTML = users.map((user, index) => `
             <div class="autocomplete-item flex items-center gap-2 p-2 hover:bg-gray-100 cursor-pointer" data-username="${user.username}" data-index="${index}">
@@ -104,7 +134,7 @@ function initializeCommentTagging(inputId, postId) {
         selectedIndex = -1;
         autocompleteDiv.classList.remove('hidden');
         
-        // Position above input (since input is at bottom of modal)
+        // Position above input
         autocompleteDiv.style.bottom = (input.offsetHeight + 5) + 'px';
         autocompleteDiv.style.top = 'auto';
 
@@ -135,7 +165,6 @@ function initializeCommentTagging(inputId, postId) {
         input.value = beforeAt + '@' + username + ' ' + afterQuery;
         input.focus();
         
-        // Set cursor position after inserted username
         const newCursorPos = currentAtIndex + username.length + 2;
         input.setSelectionRange(newCursorPos, newCursorPos);
         
@@ -149,10 +178,23 @@ function initializeCommentTagging(inputId, postId) {
         }
     }
 
-    // Hide autocomplete when clicking outside
-    document.addEventListener('click', function(e) {
-        if (autocompleteDiv && !input.contains(e.target) && !autocompleteDiv.contains(e.target)) {
-            hideAutocomplete();
+    // Cleanup function
+    function cleanup() {
+        if (inputListener) {
+            input.removeEventListener('input', inputListener);
         }
-    });
+        if (keydownListener) {
+            input.removeEventListener('keydown', keydownListener);
+        }
+        if (clickListener) {
+            document.removeEventListener('click', clickListener);
+        }
+        if (autocompleteDiv && autocompleteDiv.parentElement) {
+            autocompleteDiv.remove();
+        }
+        console.log('Cleaned up tagging for:', inputId);
+    }
+
+    // Store instance for later cleanup
+    activeTaggingInstances.set(inputId, { cleanup });
 }
