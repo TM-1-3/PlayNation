@@ -131,22 +131,25 @@
                             {{-- My profile --}}
 
                             {{-- left edit profile button --}}
-                            <a href="{{ route('profile.edit', $user->id_user) }}" class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700" title="Edit your profile">
-                                ✏️ Edit Profile
+                            <a href="{{ route('profile.edit', $user->id_user) }}" 
+                               class="bg-blue-600 text-white py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center border border-blue-700 transition-colors hover:bg-blue-700 shadow-sm" 
+                               title="Edit your profile">
+                                <i class="fa-solid fa-pen-to-square mr-2"></i> Edit Profile
                             </a>
 
                             {{-- right placeholder button --}} <!-- eddit later but i like a setting ideia -->
-                            <button class="bg-transparent text-blue-600 border border-blue-600 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-blue-600 hover:text-white" title="Go to the settings">
-                                ⚙️ Settings
+                            <button class="bg-white text-gray-700 border border-gray-300 py-2 px-4 rounded no-underline inline-flex items-center justify-center cursor-pointer text-center transition-colors hover:bg-gray-50 hover:text-gray-900 shadow-sm" 
+                                    title="Go to settings">
+                                <i class="fa-solid fa-gear mr-2"></i> Settings
                             </button>
                             
-                            <form action="{{ route('profile.destroy', $user->id_user) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account?');">
+                            <form action="{{ route('profile.destroy', $user->id_user) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');" class="m-0">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="bg-red-50 text-red-600 border border-red-200 py-2 px-4 rounded font-semibold hover:bg-red-600 hover:text-white transition-colors">
-                                    🗑️ Delete Account
+                                <button type="submit" class="bg-white text-red-600 border border-red-200 py-2 px-4 rounded font-semibold inline-flex items-center justify-center hover:bg-red-50 transition-colors shadow-sm">
+                                    <i class="fa-solid fa-trash mr-2"></i> Delete Account
                                 </button>
-                             </form>
+                            </form>
                             
                         @elseif(Auth::check())
                             {{-- others profile --}}
