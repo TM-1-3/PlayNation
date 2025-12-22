@@ -33,4 +33,9 @@ class Comment extends Model
     {
         return $this->hasMany(CommentLike::class, 'id_comment', 'id_comment');
     }
+
+    public function taggedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_tag', 'id_comment', 'id_user');
+    }
 }

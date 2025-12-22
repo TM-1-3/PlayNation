@@ -34,14 +34,14 @@
 
         {{-- Add comment form --}}
         @auth
-        <div class="p-4 border-t border-gray-300  bg-gray-50">
-            <form id="add-comment-form-{{ $postId }}" onsubmit="addComment(event, {{ $postId }})" class="flex gap-2">
+        <div class="p-4 border-t border-gray-300 bg-gray-50">
+            <form id="add-comment-form-{{ $postId }}" onsubmit="addComment(event, {{ $postId }})" class="flex gap-2 relative">
                 @csrf
                 <input type="text" 
                        name="comment_text" 
                        id="comment-input-{{ $postId }}"
-                       placeholder="Write a comment..." 
-                       class="h-[2em] block w-full mx-3 pl-3 py-3 border-none rounded-lg shadow-md text-gray-900  bg-white outline-none">
+                       placeholder="Write a comment... (use @ to tag)" 
+                       class="h-[2em] block w-full mx-3 pl-3 py-3 border-none rounded-lg shadow-md text-gray-900 bg-white outline-none">
                 <button type="submit" 
                          class="h-[2em] bg-blue-500 text-white border-none py-1 px-3 rounded-lg text-base cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-600 font-medium">
                     Post

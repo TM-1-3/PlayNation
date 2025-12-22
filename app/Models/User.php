@@ -159,4 +159,9 @@ class User extends Authenticatable
     {
         return $this->blockedByUsers()->where('id_user', $userId)->exists();
     }
+
+    public function isDeleted()
+    {
+        return $this->username && str_starts_with($this->username, 'deleted_');
+    }
 }

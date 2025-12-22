@@ -94,6 +94,15 @@ function toggleComments(postId) {
                 commentsItems.innerHTML = html && html.trim().length > 0
                     ? html
                     : '<div class="text-center text-gray-500 py-4">No comments yet. Be the first to comment!</div>';
+                
+                // Initialize tagging AFTER comments are loaded
+                setTimeout(() => {
+                    const commentInput = document.getElementById(`comment-input-${postId}`);
+                    if (commentInput && typeof initializeCommentTagging === 'function') {
+                        console.log('Initializing tagging on modal open'); // Debug log
+                        initializeCommentTagging(`comment-input-${postId}`, postId);
+                    }
+                }, 150);
             })
             .catch(error => {
                 if (commentsItems) {
@@ -176,12 +185,41 @@ function addComment(event, postId) {
     })
     .then(data => {
         if (data.success) {
-            // Clear input
+            // Clear input FIRST
             input.value = '';
             
-            // Reload comments to show the new one
-            toggleComments(postId);
-            setTimeout(() => toggleComments(postId), 100);
+            // Reload comments without closing modal
+            const commentsItems = document.getElementById(`comments-items-${postId}`);
+            
+            fetch(`/post/${postId}/comments?format=html`, {
+                headers: {
+                    'Accept': 'text/html'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                if (commentsItems) {
+                    commentsItems.innerHTML = html;
+                }
+                
+                // IMPORTANT: Reinitialize tagging after comments are reloaded
+                // Use a longer timeout to ensure DOM is fully updated
+                setTimeout(() => {
+                    const commentInput = document.getElementById(`comment-input-${postId}`);
+                    if (commentInput && typeof initializeCommentTagging === 'function') {
+                        console.log('Reinitializing tagging after comment post'); // Debug log
+                        initializeCommentTagging(`comment-input-${postId}`, postId);
+                    } else {
+                        console.error('Cannot reinitialize tagging:', {
+                            inputExists: !!commentInput,
+                            functionExists: typeof initializeCommentTagging === 'function'
+                        });
+                    }
+                }, 200); // Increased timeout
+            })
+            .catch(error => {
+                console.error('Error reloading comments:', error);
+            });
             
             // Update comment count in the post
             const countElement = document.querySelector(`#post-${postId} .fa-comment`).nextElementSibling;

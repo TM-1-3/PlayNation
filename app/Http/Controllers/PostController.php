@@ -15,6 +15,8 @@ use App\Models\Comment;
 use App\Models\CommentLike;
 use App\Models\Notification;
 use App\Models\CommentNotification;
+use App\Models\LikeCommentNotification;
+use App\Models\CommentTag;
 
 
 class PostController extends Controller
@@ -534,9 +536,26 @@ class PostController extends Controller
                 'date' => now(),
             ]);
 
+            // Extract tagged users from comment text (@username)
+            preg_match_all('/@(\w+)/', $request->comment_text, $matches);
+            $taggedUsernames = array_unique($matches[1]);
+            
+            $taggedUserIds = [];
+            foreach ($taggedUsernames as $username) {
+                $taggedUser = User::where('username', $username)->first();
+                if ($taggedUser) {
+                    // Save tag
+                    DB::table('user_tag')->insert([
+                        'id_comment' => $comment->id_comment,
+                        'id_user' => $taggedUser->id_user
+                    ]);
+                    
+                    $taggedUserIds[] = $taggedUser->id_user;
+                }
+            }
+
             // Create notification for post creator (if not commenting on own post)
             if ($post->id_creator !== $user->id_user) {
-                // Check if notification already exists to avoid duplicates
                 $existingNotification = DB::table('notification')
                     ->join('comment_notification', 'notification.id_notification', '=', 'comment_notification.id_notification')
                     ->where('notification.id_receiver', $post->id_creator)
