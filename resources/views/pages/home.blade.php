@@ -49,5 +49,5 @@
     </div>
 
     @include('partials.filter-post')
-    @include('partials.share_modal')
+    
 @endsection

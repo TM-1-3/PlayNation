@@ -176,6 +176,9 @@
     {{-- for banned users --}}
     @include('partials.error-modal')
 
+    {{-- global share model --}}
+    @include('partials.share_modal')
+
     </main>
 
 </body>
