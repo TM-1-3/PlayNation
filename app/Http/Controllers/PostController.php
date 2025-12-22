@@ -13,6 +13,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\Comment;
 use App\Models\CommentLike;
+use App\Models\Notification;
+use App\Models\CommentNotification;
 
 
 class PostController extends Controller
@@ -447,6 +449,31 @@ class PostController extends Controller
                 'text' => $request->comment_text,
                 'date' => now(),
             ]);
+
+            // Create notification for post creator (if not commenting on own post)
+            if ($post->id_creator !== $user->id_user) {
+                // Check if notification already exists to avoid duplicates
+                $existingNotification = DB::table('notification')
+                    ->join('comment_notification', 'notification.id_notification', '=', 'comment_notification.id_notification')
+                    ->where('notification.id_receiver', $post->id_creator)
+                    ->where('notification.id_emitter', $user->id_user)
+                    ->where('comment_notification.id_comment', $comment->id_comment)
+                    ->exists();
+
+                if (!$existingNotification) {
+                    $notificationId = DB::table('notification')->insertGetId([
+                        'id_receiver' => $post->id_creator,
+                        'id_emitter' => $user->id_user,
+                        'text' => $user->name . ' commented on your post.',
+                        'date' => now()
+                    ], 'id_notification');
+
+                    DB::table('comment_notification')->insert([
+                        'id_notification' => $notificationId,
+                        'id_comment' => $comment->id_comment
+                    ]);
+                }
+            }
 
             // Return the new comment with user data
             return response()->json([
