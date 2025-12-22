@@ -144,7 +144,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="bg-red-50 text-red-600 border border-red-200 py-2 px-4 rounded font-semibold hover:bg-red-600 hover:text-white transition-colors">
-                                    🗑️ Delete My Account
+                                    🗑️ Delete Account
                                 </button>
                              </form>
                             
