@@ -351,5 +351,28 @@ class UserController extends Controller
         }
     }
 
+    public function autocomplete(Request $request)
+    {
+        $query = $request->get('query', '');
+        
+        if (strlen($query) < 1) {
+            return response()->json([]);
+        }
+        
+        $users = User::where('username', 'ILIKE', $query . '%')
+            ->limit(10)
+            ->get(['id_user', 'username', 'name', 'profile_picture'])
+            ->map(function($user) {
+                return [
+                    'id' => $user->id_user,
+                    'username' => $user->username,
+                    'name' => $user->name,
+                    'profile_picture' => $user->getProfileImage()
+                ];
+            });
+        
+        return response()->json($users);
+    }
+
 }
 

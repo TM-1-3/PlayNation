@@ -15,6 +15,8 @@ use App\Models\Comment;
 use App\Models\CommentLike;
 use App\Models\Notification;
 use App\Models\CommentNotification;
+use App\Models\LikeCommentNotification;
+use App\Models\CommentTag;
 
 
 class PostController extends Controller
@@ -527,39 +529,62 @@ class PostController extends Controller
             $post = Post::findOrFail($id);
             $user = Auth::user();
 
+            $commentText = $request->input('comment_text');
+
+            // Create comment
             $comment = Comment::create([
                 'id_post' => $id,
                 'id_user' => $user->id_user,
-                'text' => $request->comment_text,
+                'text' => $commentText,
                 'date' => now(),
             ]);
 
-            // Create notification for post creator (if not commenting on own post)
-            if ($post->id_creator !== $user->id_user) {
-                // Check if notification already exists to avoid duplicates
-                $existingNotification = DB::table('notification')
-                    ->join('comment_notification', 'notification.id_notification', '=', 'comment_notification.id_notification')
-                    ->where('notification.id_receiver', $post->id_creator)
-                    ->where('notification.id_emitter', $user->id_user)
-                    ->where('comment_notification.id_comment', $comment->id_comment)
-                    ->exists();
-
-                if (!$existingNotification) {
-                    $notificationId = DB::table('notification')->insertGetId([
-                        'id_receiver' => $post->id_creator,
-                        'id_emitter' => $user->id_user,
-                        'text' => $user->name . ' commented on your post.',
-                        'date' => now()
-                    ], 'id_notification');
-
-                    DB::table('comment_notification')->insert([
-                        'id_notification' => $notificationId,
-                        'id_comment' => $comment->id_comment
+            // Extract tagged users from comment text (@username)
+            preg_match_all('/@(\w+)/', $commentText, $matches);
+            $taggedUsernames = array_unique($matches[1]);
+            
+            foreach ($taggedUsernames as $username) {
+                $taggedUser = User::where('username', $username)->first();
+                if ($taggedUser) {
+                    // Save tag
+                    DB::table('user_tag')->insert([
+                        'id_comment' => $comment->id_comment,
+                        'id_user' => $taggedUser->id_user
                     ]);
+                    
+                    // Create notification for tagged user (if not tagging self)
+                    if ($taggedUser->id_user !== $user->id_user) {
+                        $notificationId = DB::table('notification')->insertGetId([
+                            'id_receiver' => $taggedUser->id_user,
+                            'id_emitter' => $user->id_user,
+                            'text' => $user->name . ' tagged you in a comment.',
+                            'date' => now()
+                        ], 'id_notification');
+
+                        DB::table('comment_notification')->insert([
+                            'id_notification' => $notificationId,
+                            'id_comment' => $comment->id_comment
+                        ]);
+                    }
                 }
             }
 
-            // Return the new comment with user data
+            // Create notification for post creator (if not commenting on own post and not already notified)
+            if ($post->id_creator !== $user->id_user) {
+                $notificationId = DB::table('notification')->insertGetId([
+                    'id_receiver' => $post->id_creator,
+                    'id_emitter' => $user->id_user,
+                    'text' => $user->name . ' commented on your post.',
+                    'date' => now()
+                ], 'id_notification');
+
+                DB::table('comment_notification')->insert([
+                    'id_notification' => $notificationId,
+                    'id_comment' => $comment->id_comment
+                ]);
+            }
+
+            // Return success immediately - no need for transaction wrapping
             return response()->json([
                 'success' => true,
                 'comment' => [
@@ -576,6 +601,7 @@ class PostController extends Controller
             ]);
         } catch (\Exception $e) {
             \Log::error('Error adding comment: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

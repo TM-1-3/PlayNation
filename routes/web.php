@@ -88,6 +88,8 @@ Route::get('/profile/{id}', [UserController::class, 'show'])->name('profile.show
 
 Route::middleware(['auth'])->group(function () {
 
+    Route::get('/users/autocomplete', [UserController::class, 'autocomplete'])->name('users.autocomplete');
+
     Route::delete('/profile/{id}', [UserController::class, 'destroy'])->name('profile.destroy');
 
     Route::post('/comment/{id}/like', [PostController::class, 'toggleCommentLike'])->name('comment.like');

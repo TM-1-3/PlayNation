@@ -16,6 +16,7 @@
     <script src="{{ asset('js/search.js') }}" defer></script>
     <script src="{{ asset('js/report.js') }}" defer></script>
     <script src="{{ asset('js/filter.js') }}" defer></script>
+    <script src="{{ asset('js/tag.js') }}" defer></script>
     @stack('scripts')
 </head>
 <body class="m-0 p-0 min-h-screen overflow-x-hidden bg-white text-gray-800 font-sans">
