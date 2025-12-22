@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CommentTag extends Model
 {
-    protected $table = 'user_tag';
+    protected $table = 'comment_tag';
     public $timestamps = false;
     
     protected $fillable = ['id_comment', 'id_user'];

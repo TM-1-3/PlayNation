@@ -543,34 +543,36 @@ class PostController extends Controller
             preg_match_all('/@(\w+)/', $commentText, $matches);
             $taggedUsernames = array_unique($matches[1]);
             
+            $notifiedUsers = []; // Track who we've notified to avoid duplicates
+            
             foreach ($taggedUsernames as $username) {
                 $taggedUser = User::where('username', $username)->first();
-                if ($taggedUser) {
-                    // Save tag
-                    DB::table('user_tag')->insert([
+                if ($taggedUser && $taggedUser->id_user !== $user->id_user) {
+                    // Save tag to comment_tag table (CHANGED FROM user_tag)
+                    DB::table('comment_tag')->insert([
                         'id_comment' => $comment->id_comment,
                         'id_user' => $taggedUser->id_user
                     ]);
                     
-                    // Create notification for tagged user (if not tagging self)
-                    if ($taggedUser->id_user !== $user->id_user) {
-                        $notificationId = DB::table('notification')->insertGetId([
-                            'id_receiver' => $taggedUser->id_user,
-                            'id_emitter' => $user->id_user,
-                            'text' => $user->name . ' tagged you in a comment.',
-                            'date' => now()
-                        ], 'id_notification');
+                    // Create notification for tagged user
+                    $notificationId = DB::table('notification')->insertGetId([
+                        'id_receiver' => $taggedUser->id_user,
+                        'id_emitter' => $user->id_user,
+                        'text' => $user->name . ' tagged you in a comment.',
+                        'date' => now()
+                    ], 'id_notification');
 
-                        DB::table('comment_notification')->insert([
-                            'id_notification' => $notificationId,
-                            'id_comment' => $comment->id_comment
-                        ]);
-                    }
+                    DB::table('comment_notification')->insert([
+                        'id_notification' => $notificationId,
+                        'id_comment' => $comment->id_comment
+                    ]);
+                    
+                    $notifiedUsers[] = $taggedUser->id_user;
                 }
             }
 
-            // Create notification for post creator (if not commenting on own post and not already notified)
-            if ($post->id_creator !== $user->id_user) {
+            // Create notification for post creator (if not commenting on own post and not already tagged)
+            if ($post->id_creator !== $user->id_user && !in_array($post->id_creator, $notifiedUsers)) {
                 $notificationId = DB::table('notification')->insertGetId([
                     'id_receiver' => $post->id_creator,
                     'id_emitter' => $user->id_user,
@@ -584,7 +586,7 @@ class PostController extends Controller
                 ]);
             }
 
-            // Return success immediately - no need for transaction wrapping
+            // Return success
             return response()->json([
                 'success' => true,
                 'comment' => [

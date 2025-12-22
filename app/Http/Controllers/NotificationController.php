@@ -22,6 +22,7 @@ class NotificationController extends Controller {
                 'privateMessageNotification',
                 'groupMessageNotification.groupMessage.group',
                 'commentNotification.comment.post',
+                'commentNotification.comment.taggedUsers',
                 'likeCommentNotification.comment.post',
                 'likePostNotification.post'
 
@@ -51,6 +52,7 @@ class NotificationController extends Controller {
                 return true;
             }
             if ($notification->commentNotification) {
+                // Show all comment notifications
                 return true;
             }
             if ($notification->likeCommentNotification) {

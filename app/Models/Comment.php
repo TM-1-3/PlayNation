@@ -36,6 +36,11 @@ class Comment extends Model
 
     public function taggedUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_tag', 'id_comment', 'id_user');
+        return $this->belongsToMany(
+            User::class,
+            'comment_tag',
+            'id_comment',
+            'id_user'
+        );
     }
 }
