@@ -303,6 +303,23 @@ class PostController extends Controller
                 ->where('id_user', $user->id_user)
                 ->delete();
             $liked = false;
+
+            // Remove notification when unliking
+            $notification = DB::table('notification')
+                ->join('like_post_notification', 'notification.id_notification', '=', 'like_post_notification.id_notification')
+                ->where('notification.id_receiver', $post->id_creator)
+                ->where('notification.id_emitter', $user->id_user)
+                ->where('like_post_notification.id_post', $id)
+                ->first();
+
+            if ($notification) {
+                DB::table('like_post_notification')
+                    ->where('id_notification', $notification->id_notification)
+                    ->delete();
+                DB::table('notification')
+                    ->where('id_notification', $notification->id_notification)
+                    ->delete();
+            }
         } else {
             // Like
             DB::table('post_like')->insert([
@@ -310,6 +327,31 @@ class PostController extends Controller
                 'id_user' => $user->id_user
             ]);
             $liked = true;
+
+            // Create notification for post creator (if not liking own post)
+            if ($post->id_creator !== $user->id_user) {
+                // Check if notification already exists to avoid duplicates
+                $existingNotification = DB::table('notification')
+                    ->join('like_post_notification', 'notification.id_notification', '=', 'like_post_notification.id_notification')
+                    ->where('notification.id_receiver', $post->id_creator)
+                    ->where('notification.id_emitter', $user->id_user)
+                    ->where('like_post_notification.id_post', $id)
+                    ->exists();
+
+                if (!$existingNotification) {
+                    $notificationId = DB::table('notification')->insertGetId([
+                        'id_receiver' => $post->id_creator,
+                        'id_emitter' => $user->id_user,
+                        'text' => $user->name . ' liked your post.',
+                        'date' => now()
+                    ], 'id_notification');
+
+                    DB::table('like_post_notification')->insert([
+                        'id_notification' => $notificationId,
+                        'id_post' => $id
+                    ]);
+                }
+            }
         }
 
         // Get updated like count

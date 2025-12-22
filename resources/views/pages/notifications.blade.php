@@ -104,6 +104,11 @@
                                     <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
                                 @endif
                                 <span class="text-gray-600"> liked your comment</span>
+                            @elseif($notification->likePostNotification)
+                                @if($notification->emitter->verifiedUser)
+                                    <i class="fa-solid fa-circle-check text-blue-500 text-[12px]" title="Verified user"></i>
+                                @endif
+                                <span class="text-gray-600"> liked your post</span>
                             @endif
                         </p>
                         
@@ -220,6 +225,18 @@
                     @elseif($notification->likeCommentNotification)
                         <div class="flex gap-2">
                             <a href="{{ route('post.show', $notification->likeCommentNotification->comment->id_post) }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors" title="View post">
+                                View Post
+                            </a>
+                            <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 px-4 rounded transition-colors" title="Mark as read">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            </form>
+                        </div>
+                    @elseif($notification->likePostNotification)
+                        <div class="flex gap-2">
+                            <a href="{{ route('post.show', $notification->likePostNotification->id_post) }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded transition-colors" title="View post">
                                 View Post
                             </a>
                             <form action="{{ route('notifications.read', $notification->id_notification) }}" method="POST">

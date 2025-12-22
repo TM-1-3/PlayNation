@@ -80,4 +80,9 @@ class Notification extends Model
     {
         return $this->hasOne(LikeCommentNotification::class, 'id_notification', 'id_notification');
     }
+
+    public function likePostNotification()
+    {
+        return $this->hasOne(LikePostNotification::class, 'id_notification', 'id_notification');
+    }
 }

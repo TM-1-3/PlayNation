@@ -22,7 +22,8 @@ class NotificationController extends Controller {
                 'privateMessageNotification',
                 'groupMessageNotification.groupMessage.group',
                 'commentNotification.comment.post',
-                'likeCommentNotification.comment.post'
+                'likeCommentNotification.comment.post',
+                'likePostNotification.post'
 
             ]) 
             ->orderByDesc('date')
@@ -53,6 +54,9 @@ class NotificationController extends Controller {
                 return true;
             }
             if ($notification->likeCommentNotification) {
+                return true;
+            }
+            if ($notification->likePostNotification) {
                 return true;
             }
            
