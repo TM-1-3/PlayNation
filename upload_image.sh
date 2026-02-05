@@ -22,16 +22,18 @@
 set -euo pipefail
 
 # Replace with your group's image name
-IMAGE_NAME=gitlab.up.pt:5050/lbaw/lbawYYYY/lbawYYXX
+IMAGE_NAME=gitlab.up.pt:5050/lbaw/lbaw2526/lbaw2551
 
 # Ensure that dependencies are available
 composer install
 php artisan config:clear
 php artisan clear-compiled
 php artisan optimize
+npm run build
 
 # Build & push image
 docker buildx build \
+  --network=host \
   --platform linux/amd64,linux/arm64 \
   --push \
   -t "$IMAGE_NAME" \

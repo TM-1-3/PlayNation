@@ -8,7 +8,7 @@ npm-debug.log
 yarn-error.log
 
 # Composer dependencies (installed in container)
-vendor
+# vendor
 
 # Laravel runtime artifacts
 storage/framework/*

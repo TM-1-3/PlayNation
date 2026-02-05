@@ -37,8 +37,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 
 # Install PHP dependencies inside the container
-COPY composer.json composer.lock ./
-RUN composer install --optimize-autoloader --prefer-dist --no-progress --no-interaction --no-scripts
+# COPY composer.json composer.lock ./
+# RUN composer install --optimize-autoloader --prefer-dist --no-progress --no-interaction --no-scripts
 
 # Copy application source into the image (owned by www-data)
 COPY --chown=www-data:www-data . .
