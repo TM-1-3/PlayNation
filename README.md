@@ -76,7 +76,8 @@ The platform will be responsive to the different devices used and easy to manage
 For PlayNation, the actors are represented in Figure 1 and described in Table 1.
 
 <div align="center">
-![PlayNationActors](uploads/4024163cef2f811b869f06a3edfef9c0/PlayNationActors.jpeg)
+<img width="764" height="675" alt="image" src="https://github.com/user-attachments/assets/23e4dbdb-0d69-4f55-b745-f2720b37f751" />
+
 
 Figure 1: PlayNation actors.
 </div>
