@@ -2815,13 +2815,13 @@ COMMIT;
 
 ---
 
-# EAP: Architecture Specification and Prototype
+## EAP: Architecture Specification and Prototype
 
-## A7: Web Resources Specification
+### A7: Web Resources Specification
 
 This artifact documents and describes the architecture and web API that will be developed for the PlayNation system, indicating the catalog of resources, as well as the respective properties, and the format of JSON responses.
 
-### 1. Overview
+#### 1. Overview
 
 |  Modules                             | Description    |     
 | ----------------------------- | --- | 
@@ -2833,7 +2833,7 @@ This artifact documents and describes the architecture and web API that will be 
 | **M06: Groups** | Web resources dedicated to the management of user groups, providing the necessary features for group creation, modification, and deletion, as well as supporting the interactions between the members inside a group. |
 
 
-### 2. Permissions
+#### 2. Permissions
 
 |  Identifier                             |  Name   |  Description    |
 | ----------------------------- | --- | ---- |
@@ -2844,7 +2844,7 @@ This artifact documents and describes the architecture and web API that will be 
 | **ADM** | Administrator | PlayNation system administrator. |
 
 
-### 3. OpenAPI Specification
+#### 3. OpenAPI Specification
 
 The PlayNation OpenAPI specification file is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/a7_openapi.yaml?ref_type=heads).
 
@@ -5096,13 +5096,13 @@ paths:
 ---
 
 
-## A8: Vertical prototype
+### A8: Vertical prototype
 
 The vertical prototype for the PlayNation social network includes the implementation of high-priority functionalties and user stories deemed necessary to present and validate the architecture of the system as well as increasing the familiarity of the group members with the framework and the technologies used in the development. The functionalities presented in this prototype include authentication ones, such as login, register and logout, search, access features (visitor, authenticated, admin), timelines and posts.
 
-### 1. Implemented Features
+#### 1. Implemented Features
 
-#### 1.1. Implemented User Stories 
+##### 1.1. Implemented User Stories 
 
 | User Story reference | Name      | Priority    | Responsible        | Description                                           |
 | -------------------- | --------- | ----------- | ------------------ | ----------------------------------------------------- |
@@ -5123,13 +5123,18 @@ The vertical prototype for the PlayNation social network includes the implementa
 | US30                | Delete Post | High | Carolina Ferreira | As an Authenticated User I want to delete my own publications so that it is permanently removed from the social network and no longer visible to other users. |
 | US88                | Administer User Accounts | High | Gabriela de Mattos | As an Administrator I want to be able to view, edit, delete and create a user account. |
 
+<div align="center">
+
+Table 77: Implemented User Stories Table
+</div>
 
 
-#### 1.2. Implemented Web Resources
+
+##### 1.2. Implemented Web Resources
 
 The following section identifies the web resources implemented in the prototype.  
 
-##### Module M01: Authentication and Users
+###### Module M01: Authentication and Users
 
 | Web Resource Reference | URL                            |
 | ---------------------- | ------------------------------ |
@@ -5145,8 +5150,13 @@ The following section identifies the web resources implemented in the prototype.
 | R131: Profile Setup Form | GET /profile/setup |
 | R132: Complete Profile Setup | POST /profile/setup |
 
+<div align="center">
 
-##### Module M02: Administration
+Table 78: Implemented Web Resources from Module MO1 Table
+</div>
+
+
+###### Module M02: Administration
 
 | Web Resource Reference | URL                            |
 | ---------------------- | ------------------------------ |
@@ -5158,7 +5168,12 @@ The following section identifies the web resources implemented in the prototype.
 | R208: Admin Search User | GET /admin/user |
 | R209: Admin Delete User | POST /admin/user/{id} |
 
-##### Module M03: Posts
+<div align="center">
+
+Table 79: Implemented Web Resources from Module MO2 Table
+</div>
+
+###### Module M03: Posts
 
 | Web Resource Reference | URL                            |
 | ---------------------- | ------------------------------ | 
@@ -5166,15 +5181,25 @@ The following section identifies the web resources implemented in the prototype.
 | R304: Delete Post | DELETE /post/delete/{id} |
 | R304: Edit Post | POST /post/{id}/edit |
 
-##### Module M04: Search
+<div align="center">
+
+Table 80: Implemented Web Resources from Module MO3 Table
+</div>
+
+###### Module M04: Search
 
 | Web Resource Reference | URL                            |
 | ---------------------- | ------------------------------ | 
 | R401: Search User | GET /api/user |
 | R402: Search Post | GET /api/post |
 
+<div align="center">
 
-### 2. Prototype
+Table 81: Implemented Web Resources from Module MO4 Table
+</div>
+
+
+#### 2. Prototype
 
 Command to start the Docker Image
 
@@ -5183,17 +5208,13 @@ docker pull gitlab.up.pt:5050/lbaw/lbaw2526/lbaw2551
 docker run -d --name lbaw2551 -p 8001:80 gitlab.up.pt:5050/lbaw/lbaw2526/lbaw2551
 ```
 
-#### Credentials for testing
+##### Credentials for testing
 
 **Regular User** email: hugo@email.com; password: password
 
 **Admin** email: admin@sportsnet.com; password: password
 
 The prototype's source code is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551).
-
-### AI Usage Disclaimer
-
-Generative AI was used as an auxiliary tool for code correction and development of css. Images such as the logo were generated by AI.
 
 
 
