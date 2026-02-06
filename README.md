@@ -331,7 +331,8 @@ Table 9: PLayNation technical requirements.
 The PlayNation platform is organized into four main sections: the Static Pages, including general information and settings such as Contact Us, About/Services, and Settings; the User Pages, where users can manage their profiles, posts, friends, groups, messages, and notifications; the Item Pages, which allow users to view profiles, posts, comments, and categories/tags; and the Admin Pages, dedicated to administration tasks such as User Management, Content Moderation, and Verification Requests. All sections are interconnected through the Homepage, which serves as the central hub of navigation within the system.
 
 <div align="center">
-![image](uploads/6a5407bb77941e0f99f03c6bde82a2b0/image.png)
+<img width="787" height="510" alt="image" src="https://github.com/user-attachments/assets/c37ec133-e581-4c3a-aa1f-efd5938455de" />
+
 
 Figure 1: PlayNation sitemap.
 </div>
@@ -342,13 +343,15 @@ Figure 1: PlayNation sitemap.
 In relation to the PlayNation Social Network, the two figures below, 2 and 3, represent the wireframes for the Homepage (UI00) and the Create Post Page (UI16), respectively.
 
 <div align="center">
-![image](uploads/7d17e24a6fb501e4d0df9ddacd0f1017/image.png)
+<img width="799" height="360" alt="image" src="https://github.com/user-attachments/assets/e52d108b-fd75-44b3-ad4c-2e51905cc495" />
+
 
 Figure 2: Homepage (UI00) wireframe.
 </div>
 
 <div align="center">
-![image](uploads/f740b3efb383707e68e81eb06e3b180c/image.png)
+<img width="799" height="360" alt="image" src="https://github.com/user-attachments/assets/46e56f76-767b-478c-8ea3-f94655c26e11" />
+
 
 Figure 3: Create Post (UI16) wireframe.
 </div>
