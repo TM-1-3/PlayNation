@@ -373,7 +373,8 @@ The Conceptual Data Model for the PlayNation social network includes and describ
 The UML diagram below represents the main organizational entities, the relationships between them and the respective multiplicities, domains and attributes, as well as the respective types and constraints, for the **PlayNation** Social Network Platform.
 
 <div align="center">
-![image](uploads/8fb606df3291085a4631b9810bcaf7f4/image.png){width=881 height=600}
+<img width="1087" height="770" alt="image" src="https://github.com/user-attachments/assets/2c6eb162-f42c-432f-88aa-f0f4001e9096" />
+
 
 Figure 1: PlayNation Conceptual Data in UML
 </div>
