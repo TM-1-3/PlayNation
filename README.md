@@ -1,4 +1,28 @@
-## lbaw2551 - PlayNation
+<img src='https://sigarra.up.pt/feup/pt/imagens/LogotipoSI' width="30%"/>
+
+<div align="center">
+🌍 <a href="README.md">English</a> | 🇵🇹 <a href="README.pt.md">Português</a>
+</div>
+
+<h3 align="center">BSc in Informatics and Computing Engineering<br> L.EIC023 - Database and Web Applications Laboratory<br> 2025/2026 </h3>
+
+---
+<h3 align="center"> Collaborators &#129309 </h2>
+
+<div align="center">
+
+| Name          | Number      |
+|---------------|-------------|
+| Carolina Ferreira | up202303547 |
+| Gabriela Silva | up202304064 |
+| João Marques | up202307612 |
+| Tomás Morais  | up202304692 |
+
+Grade : 17,6
+
+</div>
+
+# PlayNation
 
 ## Project theme
 
