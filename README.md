@@ -359,13 +359,15 @@ Figure 3: Create Post (UI16) wireframe.
 
 ---
 
+<a id="ebd"></a>
 ## EBD: Database Specification Component
 
-
+<a id="a4"></a>
 ### A4: Conceptual Data Model
 
 The Conceptual Data Model for the PlayNation social network includes and describes the relevant entities and the relationships between them that are important for the database specification, using UML.
 
+<a id="a41"></a>
 #### 1. Class diagram
 
 The UML diagram below represents the main organizational entities, the relationships between them and the respective multiplicities, domains and attributes, as well as the respective types and constraints, for the **PlayNation** Social Network Platform.
@@ -376,6 +378,7 @@ The UML diagram below represents the main organizational entities, the relations
 Figure 1: PlayNation Conceptual Data in UML
 </div>
 
+<a id="a42"></a>
 #### 2. Additional Business Rules
 
 The table below identifies and describes additional business rules and restrictions that cannot be conveyed in the UML class diagram.
@@ -399,11 +402,12 @@ Table 1: Additional business rules
 
 ---
 
-
+<a id="a5"></a>
 ### A5: Relational Schema, validation and schema refinement
 
 The A5 Artifact presents the database relational schema derived from the corresponding conceptual data model, as well as its validation and sequential normalization.
 
+<a id="a51"></a>
 #### 1. Relational Schema
 
 The following table presents the relational schema obtained from the UML, including attributes, domains, primary and foreign keys and constraints for each tuple.
@@ -464,6 +468,7 @@ The relational schemas are documented using a compact notation where constraints
 - CK = CHECK  
 
 
+<a id="a52"></a>
 #### 2. Domains
 
 Specification of additional domains.
@@ -477,6 +482,7 @@ Specification of additional domains.
 Table 3: PlayNation Domains
 </div>
 
+<a id="a53"></a>
 #### 3. Schema validation 
 
 For the schema validation, all functional dependencies were identified and the normalization of all relation schemas was performed.
@@ -970,11 +976,12 @@ Since each table in the relational schema satisfies Boyce–Codd Normal Form (BC
 
 ---
 
-
+<a id="a6"></a>
 ### A6: Indexes, triggers, transactions and database population
 
 The A6 Artifact contains the SQL scripts for creating and populating the database that will sustain the PlayNation social network system, as well, as the implementation of data integrity and businness rules enforcement through triggers and the identification and characterization of indexes. In adittion, it includes the transitions required to maintain data consistency following any operations in the database.
 
+<a id="a61"></a>
 #### 1. Database Workload
  
 | **Relation reference** | **Relation Name** | **Order of magnitude**        | **Estimated growth** |
@@ -1026,9 +1033,10 @@ The A6 Artifact contains the SQL scripts for creating and populating the databas
 Table 43: PlayNation Database Workload
 </div>
 
-
+<a id="a62"></a>
 #### 2. Proposed Indices
 
+<a id="a62.1"></a>
 ##### 2.1. Performance Indices
  
 | **Index**           | IDX01                                  |
@@ -1089,6 +1097,7 @@ CREATE INDEX idx_notification_receiver_date ON notification USING btree(id_recei
 Table 46: Index 3 Table
 </div>
 
+<a id="a62.2"></a>
 #### 2.2. Full-text Search Indices 
 
  
@@ -1217,7 +1226,7 @@ Table 48: Index 5 Table
 Table 49: Index 6 Table
 </div>
 
-
+<a id="a63"></a>
 ### 3. Triggers
  
 This section describes the use of triggers and user defined functions as core database mechanisms for automation. Specifically, they are used to automatically execute tasks in response to data changes and are typically combined to enforce business rules
@@ -1546,6 +1555,7 @@ EXECUTE FUNCTION check_post_content();
 Table 59: Trigger 10 Table
 </div>                                         
 
+<a id="a64"></a>
 #### 4. Transactions
 
 We implement Transactions to assure the integrity of the data when, to perform an action, many operations are necessary.   
@@ -2008,7 +2018,7 @@ COMMIT;
 Table 76: Transaction 17 Table
 </div>
 
-
+<a id="sql"></a>
 ### Annex A. SQL Code 
 
 The PlayNation Database Schema is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/create.sql?ref_type=heads).
@@ -2016,7 +2026,7 @@ The PlayNation Database Schema is available [here](https://gitlab.up.pt/lbaw/lba
 The PlayNation Database Population Script is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/populate.sql?ref_type=heads).
 
 
-
+<a id="sqla"></a>
 #### A.1. Database schema
 
  ```sql
@@ -2641,7 +2651,7 @@ EXECUTE FUNCTION check_post_content();
 
 
 ```
-
+<a id="sqlb"></a>
 #### A.2. Database population
 
  ```sql
