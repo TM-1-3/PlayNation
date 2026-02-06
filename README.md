@@ -24,7 +24,7 @@ Grade : 17,6
 
 # PlayNation
 
-## Project theme
+## Project Overview
 
 PlayNation is a web-based social network exclusively dedicated to sports enthusiasts.
 This platform is designed to provide users with a personalized space where they can share their fitness lifestyle, follow their favourite modalities, interact with like-minded individuals and actively participate in a vibrant sports community. Additionally, this system might serve as a rich source of fitness knowledge, enabling users to share, discover, learn and explore a wide range of sports-related content while promoting interaction among athletes, fans, teams, coaches and fitness practitioners.
