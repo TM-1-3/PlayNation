@@ -5238,9 +5238,374 @@ The prototype's source code is available [here](https://gitlab.up.pt/lbaw/lbaw25
 
 ---
 
+## PA: Product and Presentation
+
+### A9: Product
+
+The PlayNation system consists of a web-based social network developed with the purpose of connecting people who share the passion for sports. The final product consists of a web application developed using PHP, more specifically the framework Laravel, to manage backend operations, such as routing, caching and file storage, HTML and CSS to create well structured and visually apellative web pages, AJAX to make the system more intuitive and dynamic, and PostgreSQL to create and manage the database that stored all the product's data.
+
+#### 1. Installation
+
+Command to start the Docker Image
+
+```docker
+docker pull gitlab.up.pt:5050/lbaw/lbaw2526/lbaw2551
+docker run -d --name lbaw2551 -p 8001:80 gitlab.up.pt:5050/lbaw/lbaw2526/lbaw2551
+```
+
+#### 2. Usage
+
+##### 2.1. Administration Credentials
+
+| Type     | Username | Email    | Password |
+| -------- | -------- |-------- | -------- |
+| admin    | admin         | admin@sportsnet.com | password |
+
+<div align="center">
+
+Table 82: Administrator Credentials Table
+</div>
+
+##### 2.2. User Credentials
+
+| Type          | Username  | Email | Password |
+| ------------- | --------- | -------- | -------- |
+| regular user  | hvegan    | hugo@email.com | password |
+
+<div align="center">
+
+Table 83: Regular User Credentials Table
+</div>
+
+#### 3. Application Help
+
+As part of the main features of the appliaction, Help related ones developed in order to assist the user in navigating and using the system were also implemented. 
+
+The two most notable ones are the "About" and the FAQ pages. The first one presents the PlayNation social network, more specifically its main features, ensures the user that the sytem is secure, inclusive and optimized, and introduces the development team. 
+
+<div align="center">
+![Captura_de_ecrã_de_2025-12-20_19-06-44](uploads/3dba6e368d28901d2b981e039a45e926/Captura_de_ecrã_de_2025-12-20_19-06-44.png){width=659 height=600} 
+
+"About" Page Screenshot
+</div>
+
+The FAQ page, as the name implies, provides answers for questions that the users might have about the system and its functionalities, such as the differences between private and public accounts, how groups operate and prohibited content. At the bottom of the page, the eamil contact of the development team is provided in order for the users to report technical issues with the application or offer suggestions. The content of this page is correctly grouped and separated by subject, to make it easier for the user to search and find a specific question. 
+
+<div align="center">
+![Captura_de_ecrã_de_2025-12-20_19-07-15](uploads/b02675343fbe77baee86e5d1df2b411f/Captura_de_ecrã_de_2025-12-20_19-07-15.png){width=595 height=600}
+
+"Frequently Asked Questions" Page Screenshot
+</div>
+
+Adittionally, besides these two pages, contextual help is provided inside the application's interface, guiding the user in their desired action. The two most notable examples of the presence of this kind of assistance inside the system are placeholders in form inputs, which clearly specify what information the user should write inside it, and messages that appear when the user hovers a specific element of the interface, that specifically indicate its purpose and waht happens if the user interacts with it. One exmaple for each of these help features is shown in the following screenshots.
+
+<div align="center">
+![Captura_de_ecrã_de_2025-12-20_19-07-53](uploads/ba3c5e1647f20655c643e95b092b8e0e/Captura_de_ecrã_de_2025-12-20_19-07-53.png){width=900 height=506}
+
+Placeholders inside the Login form inputs
+</div>
+<br>
+<div align="center">
+![Captura_de_ecrã_de_2025-12-20_19-08-17](uploads/8c75397feab3b5211126aec910b881e2/Captura_de_ecrã_de_2025-12-20_19-08-17.png){width=395 height=85}
+
+Hover message specifying the purpose of the "Forgot The Password?" hyperlink
+</div>
+
+Feedback messages are also present when the user performs operation with a successfull return, resulting in a "success" message, or an error message if the operation fails (e.g. trying to login with the wrong credentials). 
+
+<div align="center">
+![Captura_de_ecrã_de_2025-12-21_18-05-18](uploads/5ce86645b9acd78f2c9b81c396cfd91c/Captura_de_ecrã_de_2025-12-21_18-05-18.png){width=526 height=86}
+
+Success message indicating that the conversion of a regular user to a verfied one was successfull
+</div>
+<br>
+<div align="center">
+![Captura_de_ecrã_de_2025-12-20_19-08-59](uploads/d4de0defbc299fba0a8f3822636376b1/Captura_de_ecrã_de_2025-12-20_19-08-59.png){width=281 height=258}
+
+Error message indicating that the credentials typed by the user did not match any in the database
+</div>
+
+Being conscient of the occurent of misclicks, or the sudden change of opinion by the user, for specific operations that result in more significant, such as delete ones, before they are actually performed, a pop up window will appear on the screen asking the user for confirmation. This way, a misclick on an element related to these operations is not critical and it is ensured that the user really wants to perform that specific action, resulting in a better user experience.
+
+<div align="center">
+![image](uploads/998af75620cdd3026adacf373126d57c/image.png){width=449 height=155}
+
+Confimation panel that appears when the user clicks in the "Delete Post" BUTTON
+</div>
+
+
+
+#### 4. Input Validation
+
+Validation of user input is performed on both the client side and server side, in order to ensure the consistency of the provided data, as well as the security of the whole system.
+
+In relation to server-side validation, the usage of Laravel's "Illuminate\Http\Request" object, grants access to the "validate" function, which allows the definition of rigorous validation rules for all incoming HTTP requests. The mechanisms used to achieve this were validation rules, such as, "required", "unique", "min" and "max", type enforcement, database checks and file validation (restricting file types and sizes for uploads).
+
+One example is the account registration in the RegisterController, which using the "validate" method, specifies requirements ensured the user inputted data is valid before creating the account, such as the email being unique, the name not being empty and the password having no less than 8 characters.
+
+```php
+$validatedData = $request->validate([
+            'name' => 'required|string|max:250',
+            'username' => 'required|string|max:250|unique:registered_user',
+            'email' => 'required|email|max:250|unique:registered_user',
+            'password' => 'required|min:8|confirmed'
+        ]);
+```
+Client-side validation provides feedback to the user when they try to input data which is incorrect. Going back to the previous example, if the tries to set a password with less than 8 characters, it gives a message indicating the correct format, as shown in the screenshot below.
+
+<div align="center">
+![image](uploads/77774ea3a269a4a83cf8e8579a51bae9/image.png){width=900 height=398}
+
+Message indicating that the password must have, at least, 8 characters
+</div>
+
+#### 5. Check Accessibility and Usability
+
+The results of the aceessibility and usability tests are present in the checklists linked below.
+
+Accessibility: [acessibility.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/acessibility.pdf?ref_type=heads)
+
+Usability: [usability.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/usability.pdf?ref_type=heads) 
+
+#### 6. HTML & CSS Validation
+
+The reports of the HTML and CSS validation are lined below.
+  
+HTML: [htmlValidation.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/htmlValidation.pdf?ref_type=heads)
+
+CSS: [cssValidation.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/cssValidation.pdf?ref_type=heads)  
+
+Note: The errors and warnings that appear in the HTML validation report are referring to Blade syntax, due to the fcat that the tool was meant for pure HTML.
+
+#### 7. Revisions to the Project
+
+In this section are listed the changes that were performed since the inicial project specification, in the various components of the project, in order to successfully achieve the final product.
+
+##### A2: Actors and User Stories
+
+* Changed US50 name from "Friend Request Acceptance Notification" to "Friend Request Result Notification";
+* The ownership of some user stories changed; the final owner of each user story can be seen in the 8.2 section below, as the name in bold.
+
+##### EBD: Database Specification
+
+* Added **password_reset_tokens** table;
+* Removed **profile_visibility_trigger** form the **user_friend** table;
+* Added **admin_block** table.
+
+##### A7: Web Resources Specification
+
+In order to match the implementation and the web navigation routes specified in the **web.php** file, the following changes were made to the **a7_openapi.yaml** file.
+
+- Modifed **/recoverPasswrd**;
+- Deleted **/sendEmail**;
+- Added **/resetPassword/{token}**;
+- Added **/resetPassword**;
+- Renamed **/user/delete/{id}** to **/profile/{id}**;
+- Modified **/profile/{id}/edit**;
+- Moved PUT logic to **/profile/{id}**;
+- Renamed **/friends** to **/profile/{id}/friends**;
+- Renamed **/user/defriend** to **/friend/remove/{id}**;
+- Renamed **/user/{id}/block**;
+- Renamed **/post/create** (POST) to **/post**;
+- Renamed **/post/{id}/edit** (POST) to **/post/{id}** (PUT);
+- Renamed **/post/delete/{id}** to **/post/{id}** (DELETE);
+- Modified **/post/like**;
+- Modified **/comment/create**;
+- Modified **/comment/edit**;
+- Modified **/comment/delete/{id}**;
+- Modified **/comment/like**;
+- Renamed **/group/create** (POST) to **/groups**;
+- Renamed **/group/edit** (POST) to **/groups/{id}** (PUT);
+- Renamed **/group/delete/{id}** to **/groups/{id}** (DELETE);
+- Modified **/group/join** to **/groups/{id}/join**;
+- Modified **/group/leave** to **/groups/{id}/leave**;
+- Modified **/group/cancelJoinRequest** (POST) to **/groups/{id}/request** (DELETE);
+- Modified **/group/acceptJoinRequest** to **/groups/{group}/accept/{user}**;
+- Modified **/group/rejectJoinRequest** (POST) to **/groups/{group}/reject/{user}** (DELETE);
+- Modified **/group/removeMember** (POST) to **/groups/{id}/members/{user}** (DELETE);
+- Modified **/group/invite** to **/groups/{id}/invite**;
+- Modified **/group/acceptInvite** to **/groups/{id}/accept-invite**;
+- Modified **/group/rejectInvite** (POST) to **/groups/{id}/reject-invite** (DELETE);
+- Replaced **/admin/block** and **/admin/unblock** with **/admin/user/{id}/ban** and **/admin/user/{id}/unban**;
+- Added \*\*/admin/user/{id}/verify (POST);
+- Added **/admin/users/{id}/unverify** (DELETE);
+- Added **/admin/user/{id}** (DELETE);
+- Added **/admin/post/{id}** (DELETE);
+- Added **/admin/comment/{id}** (DELETE);
+- Added **/admin/group/{id}** (DELETE);
+- Added **/admin/{type}/{id}/dismiss**;
+- Modified **/messages/conversation/{id}**;
+- Modified **/messages/conversation/create**.
+
+
+#### 8. Implementation Details
+
+##### 8.1. Libraries Used
+
+The following external libraries and frameworks were used for the development of the PlayNation social network:
+
+###### Laravel
+
+**Reference:** https://laravel.com/
+
+**Description of Usage:** This PHP framework for web applictions development was used as the foundation for the backend of the system, as it handles several operations such as routing, database intercations, sessions and caching. Additionally the MVC pattern that it follows makes for a really well structured code.
+
+**Example:** [LoginController.php](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/app/Http/Controllers/Auth/LoginController.php?ref_type=heads) (Laravel handles the authentication logic)
+
+###### Tailwind CSS
+
+**Reference:** https://tailwindcss.com/
+
+**Description of Usage:** This CSS framework was used to for a rapid styling of the developed web pages and developmente of UI, while creating a responsive and consistent design, such as the navigation sidebar present in all of the application. 
+
+**Example:** [home.blade.php](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/resources/views/pages/home.blade.php?ref_type=heads) (presence of classes directly in the HTML markup, such as *flex* or *fa-solid*)
+
+###### Mailtrap
+
+**Reference:** https://mailtrap.io/
+
+**Description of Usage:** This email sandbox service was used to inspect and debug emails sent from the development environment without sending to a real email address and was configured to capture password recovery emails.
+
+**Example:** [ResetPasswordController.php](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/app/Http/Controllers/Auth/RecoverPasswordController.php?ref_type=heads) (triggers the email sending process)
+
+The Mailtrap account where the used Sandbox is present has the following credentials:
+
+**Email:** up202304692@g.uporto.pt
+**Password:** Fahrenheit_451
+
+###### Font Awesome
+
+**Reference:** https://fontawesome.com/
+
+**Description of Usage:** This icon toolkit was used for the inclusion of UI icons in order to improve the visuals of the developed web pages and provide visual clues for the functionalities of some elements, such as a "trash bin" icon for delete buttons.
+
+**Example:** [app.blade.php](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/resources/views/layouts/app.blade.php?ref_type=heads) (presence of icons in each of the sidebar options)
+
+###### Carbon
+
+**Reference:** https://carbon.nesbot.com/
+
+**Description of Usage:** This PHP API extension allows for easy date manipulation and formatting and was used to format post timestamps into readable text for the user.
+
+**Example:** [post.blade.php](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/resources/views/partials/post.blade.php?ref_type=heads) (inclusion of the post timestamp of a post)
 
 
 
 
+##### 8.2 User Stories
+
+This section includes all the Prototype and Product priority user stories implemented by order of implementation.
+
+| US Identifier | Name    | Module | Priority                       | Team Members               | State  |
+| ------------- | ------- | ------ | ------------------------------ | -------------------------- | ------ |
+|  US16          | Sign-in | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US15          | Sign-up | M01: Authentication and Users | Prototype | **Tomás Morais**,                  |   100%  | 
+|  US22          | Logout | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US08          | Exact Match Search | M04: Search | Prototype | **Gabriela Mattos**                 |   100%  | 
+|  US88          | Administer User Accounts | M02: Administration | Prototype | **Gabriela Mattos**                 |   100%  | 
+|  US01          | Public Timeline | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US18          | Visitor Only Access | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US26          | Personalized Timeline | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US02       | View Account | M01: Authentication and Users | Prototype | **João Marques**   |  100%  |
+|  US25          | Edit Profile | M01: Authentication and Users | Prototype | **Gabriela Mattos**   |  100%  |
+|  US24          | Upload/Update Profile Picture | M01: Authentication and Users | Prototype | **Tomás Morais**, Gabriela Mattos   |  100%  |
+|  US09          | Text Search | M04: Search | Prototype | **Gabriela Mattos**   |  100%  |
+|  US03          | Search Account | M04: Search | Prototype | **Gabriela Mattos**   |  100%  |
+|  US05          | Search Post | M04: Search | Prototype | **Gabriela Mattos**   |  100%  |
+|  US27          | Create Post | M03: Posts | Prototype | **Carolina Ferreira**   |  100%  |
+|  US28          | Add Caption to Post | M03: Posts | Prototype | **Carolina Ferreira**   |  100%  |
+|  US59          | Add Topic to Post | M03: Posts | Product | **Carolina Ferreira**   |  100%  |
+|  US29          | Edit Post | M03: Posts | Prototype | **Carolina Ferreira**   |  100%  |
+|  US30          | Delete Post | M03: Posts | Prototype | **Carolina Ferreira**   |  100%  |
+|  US17          | Recover Password | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US75          | Verification Badge | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US60          | Save Posts | M03: Posts | Product | **Gabriela Mattos**   |  100%  |
+|  US61          | Managed Saved Posts | M03: Posts | Product | **Gabriela Mattos**   |  100%  |
+|  US41          | View Group | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US45          | Create Group | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US77          | Group Visibility | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US80          | Edit Group | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US39          | View Friends List | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US37          | Send Friend Request | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US47          | Friend Request Notification | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US68          | View Notifications | M01: Authentication and Users | Product | **Gabriela Mattos**, João Marques, Tomás Morais   |  100%  |
+|  US38          | Manage Received Friend Requests | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US63          | Remove Friend | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US21          | Profile Visibility | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US42          | Search Group | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US66          | Add User to Group | M06: Groups | Product | **João Marques**   |  100%  |
+|  US43         | Leave Group | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US78         | Remove User from Group | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US79         | Manage Group Entering Requests | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US32         | Report Post | M03: Posts | Prototype | **Gabriela Mattos**   |  100%  |
+|  US44         | Post on Group | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US65        | View Conversations with Friends | M01: Authentication and Users | Product | **João Marques**   |  100%  |
+|  US64        | Send Message to Friend | M01: Authentication and Users | Product | **João Marques**   |  100%  |
+|  US62        | Share Post | M03: Posts | Product | **João Marques**   |  100%  |
+|  US04        | View Post | M03: Posts | Prototype | **João Marques**   |  100%  |
+|  US87        | Moderate Groups | M02: Administration | Prototype | **Gabriela Mattos**   |  100%  |
+|  US40        | Report Profile | M01: Authentication and  Users | Prototype | **Gabriela Mattos**   |  100%  |
+|  US46        | Report Group | M06: Groups | Prototype | **Gabriela Mattos**   |  100%  |
+|  US10       | Filter Search | M04: Search | Prototype | **Gabriela Mattos**   |  100%  |
+|  US07       | View Likes on Post | M03: Posts | Prototype | **Carolina Ferreira**   |  100%  |
+|  US31       | Like Post | M03: Posts | Prototype | **Carolina Ferreira**   |  100%  |
+|  US12       | Contextual Information and Tips | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US13       | Contextual Error Messages | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US58       | List of Interested Topics | M01: Authentication and Users | Product | **Tomás Morais**   |  100%  |
+|  US50       | Friend Request Result Notification | M01: Authentication and Users | Product | **Tomás Morais**   |  100%  |
+|  US57       | Mark Notifications as Read | M01: Authentication and Users | Product | **Tomás Morais**   |  100%  |
+|  US06       | View Comments on Post | M05: Comments | Prototype | **Carolina Ferreira**   |  100%  |
+|  US33       | Comment on Post | M05: Comments | Prototype | **Carolina Ferreira**   |  100%  |
+|  US34       | Edit Comment | M05: Comments | Prototype | **Carolina Ferreira**   |  100%  |
+|  US35       | Delete Comment | M05: Comments | Prototype | **Carolina Ferreira**   |  100%  |
+|  US36       | Report Comment | M05: Comments | Prototype | **Gabriela Mattos**   |  100%  |
+|  US14      | Search Comments on Post | M04: Search | Product | **Gabriela Mattos**   |  100%  |
+|  US70      | Like Comment | M05: Comments | Product | **Carolina Ferreira**   |  100%  |
+|  US11      | Product Information | M01: Authentication and Users | Prototype | **João Marques**   |  100%  |
+|  US51      | Group Join Acceptance Notification | M06: Groups | Prototype | **Gabriela Mattos**   |  100%  |
+|  US67      | Private Message Notification | M01: Authentication and Users | Product | **Gabriela Mattos**   |  100%  |
+|  US52      | Group Post Notification | M06: Groups | Prototype | **Gabriela Mattos**   |  100%  |
+|  US81       | Join Group Request Notification | M06: Groups | Prototype | **João Marques**   |  100%  |
+|  US85       | Block User | M02: Administration | Prototype | **João Marques**   |  100%  |
+|  US86       | Unblock User | M02: Administration | Prototype | **João Marques**   |  100%  |
+|  US84     | Ban User | M02: Administration | Prototype | **Gabriela Mattos**   |  100%  |
+|  US71     | Block Profile | M01: Authentication and Users | Prototype | **Gabriela Mattos**   |  100%  |
+|  US83       | Remove Content | M02: Administration | Prototype | **Gabriela Mattos**   |  100%  |
+|  US82       | Manage Reported Content | M02: Administration | Prototype | **Gabriela Mattos**   |  100%  |
+|  US23     | Delete Account | M01: Authentication and Users | Prototype | **Tomás Morais**   |  100%  |
+|  US49       | Comment Post Notification | M05: Comments | Prototype | **Carolina Ferreira**   |  100%  |
+|  US72       | Like Comment Notification | M05: Comments | Innovation | **Carolina Ferreira**   |  100%  |
+|  US48       | Like Post Notification | M01: Authentication and Users | Prototype | **Carolina Ferreira**   |  100%  |
+|  US69       | Tag Account on Post | M05: Comments | Innovation | **Carolina Ferreira**   |  100%  |
+|  US73       | Tagged on Post Notification | M05: Comments | Innovation | **Carolina Ferreira**   |  100%  |
+
+<div align="center">
+
+Table 84: Implemented User Stories Table
+</div>
+
+###### Non-Implemented User Stories
+
+| US Identifier | Name    | Module | Priority                       | Team Members               | State  |
+| ------------- | ------- | ------ | ------------------------------ | -------------------------- | ------ |
+|  US19       | OAuth API Sign-up | M01: Authentication and Users | Innovation | **Tomás Morais**   |  0%  |
+|  US20       | OAuth API Sign-in | M01: Authentication and Users | Innovation | **Tomás Morais**   |  0%  |
+|  US74       | Gmail API Notifications | M01: Authentication and Users | Innovation | **Gabriela Mattos**   |  0%  |
+|  US76       | Enhanced Comment Moderation | M05: Comments | Innovation | **Tomás Morais**   |  0%  |
+
+<div align="center">
+
+Table 85: Non-Implemented User Stories Table
+</div>
+
+### A10: Presentation
+ 
+The goal of this artifact is to present the PLayNation social network product among with its main functionalities and principal characteristics.
+
+#### 1. Product presentation
+
+PlayNation is a web-based social network developed with the purpose of connecting fans, athletes, clubs and people who share the passion for sports, in general. This platform provides users with a personalized space where they can share their thoughts and experienecs with sports, in the form of interactive posts, follow their favourite athletes, clubs and modalities, interact with like-minded individuals , through groups or direct messages, and,  in general, participate in a vibrant sports community. Users will be able to post photos and messages, save and share posts with other users, interact through likes and comments, browse, search and follow other accounts, gather with people with the same interests in themathic groups, be updated with notifications, among many other features. PlayNation offers a safe and inclusive environment for its users, where they can specify the privacy of their content, be ensured of the security of their data, use the app in all kinds of devices and expect zero tolerance to hateful or harmful content.
+
+PlayNation was developed using Laravel, a PHP framework for web applications, to manage backend operations, such as routing, caching and file storage, HTML and CSS, more specifically the Tailwind framework, to create well structured and visually apellative web pages, with an ease of navigation due to the implementation of a sidebar menu bar, which is always present during the user's presence in the system, while also keeping an adaptive design to all kinds of devices. Regarding other technologies, AJAX  was used to make the application more intuitive and dynamic, allowing for automatic effects to be displayed without the need for the user to manually refersh the page, and PostgreSQL to manage the database that stores all the system and user's data in a secure way. 
 
 
