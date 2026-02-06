@@ -5238,12 +5238,15 @@ The prototype's source code is available [here](https://gitlab.up.pt/lbaw/lbaw25
 
 ---
 
+<a id="pa"></a>
 ## PA: Product and Presentation
 
+<a id="a9"></a>
 ### A9: Product
 
 The PlayNation system consists of a web-based social network developed with the purpose of connecting people who share the passion for sports. The final product consists of a web application developed using PHP, more specifically the framework Laravel, to manage backend operations, such as routing, caching and file storage, HTML and CSS to create well structured and visually apellative web pages, AJAX to make the system more intuitive and dynamic, and PostgreSQL to create and manage the database that stored all the product's data.
 
+<a id="a91"></a>
 #### 1. Installation
 
 Command to start the Docker Image
@@ -5253,8 +5256,10 @@ docker pull gitlab.up.pt:5050/lbaw/lbaw2526/lbaw2551
 docker run -d --name lbaw2551 -p 8001:80 gitlab.up.pt:5050/lbaw/lbaw2526/lbaw2551
 ```
 
+<a id="a92"></a>
 #### 2. Usage
 
+<a id="a92.1"></a>
 ##### 2.1. Administration Credentials
 
 | Type     | Username | Email    | Password |
@@ -5266,6 +5271,7 @@ docker run -d --name lbaw2551 -p 8001:80 gitlab.up.pt:5050/lbaw/lbaw2526/lbaw255
 Table 82: Administrator Credentials Table
 </div>
 
+<a id="a92.2"></a>
 ##### 2.2. User Credentials
 
 | Type          | Username  | Email | Password |
@@ -5277,6 +5283,7 @@ Table 82: Administrator Credentials Table
 Table 83: Regular User Credentials Table
 </div>
 
+<a id="a93"></a>
 #### 3. Application Help
 
 As part of the main features of the appliaction, Help related ones developed in order to assist the user in navigating and using the system were also implemented. 
@@ -5334,7 +5341,7 @@ Confimation panel that appears when the user clicks in the "Delete Post" BUTTON
 </div>
 
 
-
+<a id="a94"></a>
 #### 4. Input Validation
 
 Validation of user input is performed on both the client side and server side, in order to ensure the consistency of the provided data, as well as the security of the whole system.
@@ -5359,6 +5366,7 @@ Client-side validation provides feedback to the user when they try to input data
 Message indicating that the password must have, at least, 8 characters
 </div>
 
+<a id="a95"></a>
 #### 5. Check Accessibility and Usability
 
 The results of the aceessibility and usability tests are present in the checklists linked below.
@@ -5367,6 +5375,7 @@ Accessibility: [acessibility.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/
 
 Usability: [usability.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/usability.pdf?ref_type=heads) 
 
+<a id="a96"></a>
 #### 6. HTML & CSS Validation
 
 The reports of the HTML and CSS validation are lined below.
@@ -5377,6 +5386,7 @@ CSS: [cssValidation.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main
 
 Note: The errors and warnings that appear in the HTML validation report are referring to Blade syntax, due to the fcat that the tool was meant for pure HTML.
 
+<a id="a97"></a>
 #### 7. Revisions to the Project
 
 In this section are listed the changes that were performed since the inicial project specification, in the various components of the project, in order to successfully achieve the final product.
@@ -5437,9 +5447,10 @@ In order to match the implementation and the web navigation routes specified in 
 - Modified **/messages/conversation/{id}**;
 - Modified **/messages/conversation/create**.
 
-
+<a id="a98"></a>
 #### 8. Implementation Details
 
+<a id="a98.1"></a>
 ##### 8.1. Libraries Used
 
 The following external libraries and frameworks were used for the development of the PlayNation social network:
@@ -5492,6 +5503,7 @@ The Mailtrap account where the used Sandbox is present has the following credent
 
 
 
+<a id="a98.2"></a>
 ##### 8.2 User Stories
 
 This section includes all the Prototype and Product priority user stories implemented by order of implementation.
@@ -5598,10 +5610,12 @@ Table 84: Implemented User Stories Table
 Table 85: Non-Implemented User Stories Table
 </div>
 
+<a id="a10"></a>
 ### A10: Presentation
  
 The goal of this artifact is to present the PLayNation social network product among with its main functionalities and principal characteristics.
 
+<a id="a101"></a>
 #### 1. Product presentation
 
 PlayNation is a web-based social network developed with the purpose of connecting fans, athletes, clubs and people who share the passion for sports, in general. This platform provides users with a personalized space where they can share their thoughts and experienecs with sports, in the form of interactive posts, follow their favourite athletes, clubs and modalities, interact with like-minded individuals , through groups or direct messages, and,  in general, participate in a vibrant sports community. Users will be able to post photos and messages, save and share posts with other users, interact through likes and comments, browse, search and follow other accounts, gather with people with the same interests in themathic groups, be updated with notifications, among many other features. PlayNation offers a safe and inclusive environment for its users, where they can specify the privacy of their content, be ensured of the security of their data, use the app in all kinds of devices and expect zero tolerance to hateful or harmful content.
