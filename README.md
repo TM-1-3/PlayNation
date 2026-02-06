@@ -63,6 +63,17 @@ Grade : 17,6
   - [Annex A. SQL Code](#sql)
     - [A.1. Database schema](#sqla)
     - [A.2. Database population](#sqlb)
+- [EAP: Architecture Specification and Prototype](#eap)
+  - [A7: Web Resources Specification](#a7)
+    - [1. Overview](#a71)
+    - [2. Permissions](#a72)
+    - [3. OpenAPI Specification](#a73)
+  - [A8: Vertical prototype](#a8)
+    - [1. Implemented Features](#a81)
+      - [1.1. Implemented User Stories](#a81.1)
+      - [1.2. Implemented Web Resources](#a81.2)
+    - [2. Prototype](#a82)
+    - [3. Credentials for Testing](#a83)
     
 
 
