@@ -2815,12 +2815,15 @@ COMMIT;
 
 ---
 
+<a id="eap"></a>
 ## EAP: Architecture Specification and Prototype
 
+<a id="a7"></a>
 ### A7: Web Resources Specification
 
 This artifact documents and describes the architecture and web API that will be developed for the PlayNation system, indicating the catalog of resources, as well as the respective properties, and the format of JSON responses.
 
+<a id="a71"></a>
 #### 1. Overview
 
 |  Modules                             | Description    |     
@@ -2833,6 +2836,7 @@ This artifact documents and describes the architecture and web API that will be 
 | **M06: Groups** | Web resources dedicated to the management of user groups, providing the necessary features for group creation, modification, and deletion, as well as supporting the interactions between the members inside a group. |
 
 
+<a id="a72"></a>
 #### 2. Permissions
 
 |  Identifier                             |  Name   |  Description    |
@@ -2843,7 +2847,7 @@ This artifact documents and describes the architecture and web API that will be 
 | **GRM** | Group Member | An authenticated user who is a member of a specific group. |
 | **ADM** | Administrator | PlayNation system administrator. |
 
-
+<a id="a73"></a>
 #### 3. OpenAPI Specification
 
 The PlayNation OpenAPI specification file is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/a7_openapi.yaml?ref_type=heads).
@@ -5095,13 +5099,15 @@ paths:
 
 ---
 
-
+<a id="a8"></a>
 ### A8: Vertical prototype
 
 The vertical prototype for the PlayNation social network includes the implementation of high-priority functionalties and user stories deemed necessary to present and validate the architecture of the system as well as increasing the familiarity of the group members with the framework and the technologies used in the development. The functionalities presented in this prototype include authentication ones, such as login, register and logout, search, access features (visitor, authenticated, admin), timelines and posts.
 
+<a id="a81"></a>
 #### 1. Implemented Features
 
+<a id="a81.1"></a>
 ##### 1.1. Implemented User Stories 
 
 | User Story reference | Name      | Priority    | Responsible        | Description                                           |
@@ -5129,7 +5135,7 @@ Table 77: Implemented User Stories Table
 </div>
 
 
-
+<a id="a81.2"></a>
 ##### 1.2. Implemented Web Resources
 
 The following section identifies the web resources implemented in the prototype.  
@@ -5198,7 +5204,7 @@ Table 80: Implemented Web Resources from Module MO3 Table
 Table 81: Implemented Web Resources from Module MO4 Table
 </div>
 
-
+<a id="a82"></a>
 #### 2. Prototype
 
 Command to start the Docker Image
@@ -5207,8 +5213,8 @@ Command to start the Docker Image
 docker pull gitlab.up.pt:5050/lbaw/lbaw2526/lbaw2551
 docker run -d --name lbaw2551 -p 8001:80 gitlab.up.pt:5050/lbaw/lbaw2526/lbaw2551
 ```
-
-##### Credentials for testing
+<a id="a83"></a>
+#### 3. Credentials for Testing
 
 **Regular User** email: hugo@email.com; password: password
 
