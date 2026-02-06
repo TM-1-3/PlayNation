@@ -74,6 +74,22 @@ Grade : 17,6
       - [1.2. Implemented Web Resources](#a81.2)
     - [2. Prototype](#a82)
     - [3. Credentials for Testing](#a83)
+- [PA: Product and Presentation](#pa)
+  - [A9: Product](#a9)
+    - [1. Installation](#a91)
+    - [2. Usage](#a92)
+      - [2.1. Administration Credentials](#a92.1)
+      - [2.2. User Credentials](#a92.2)
+    - [3. Application Help](#a93)
+    - [4. Input Validation](#a94)
+    - [5. Check Accessibility and Usability](#a95)
+    - [6. HTML & CSS Validation](#a96)
+    - [7. Revisions to the Project](#a97)
+    - [8. Implementation Details](#a98)
+      - [8.1. Libraries Used](#a98.1)
+      - [8.2 User Stories](#a98.2)
+  - [A10: Presentation](#a10)
+    - [1. Product Presentation](#a101)
     
 
 
@@ -5616,7 +5632,7 @@ Table 85: Non-Implemented User Stories Table
 The goal of this artifact is to present the PLayNation social network product among with its main functionalities and principal characteristics.
 
 <a id="a101"></a>
-#### 1. Product presentation
+#### 1. Product Presentation
 
 PlayNation is a web-based social network developed with the purpose of connecting fans, athletes, clubs and people who share the passion for sports, in general. This platform provides users with a personalized space where they can share their thoughts and experienecs with sports, in the form of interactive posts, follow their favourite athletes, clubs and modalities, interact with like-minded individuals , through groups or direct messages, and,  in general, participate in a vibrant sports community. Users will be able to post photos and messages, save and share posts with other users, interact through likes and comments, browse, search and follow other accounts, gather with people with the same interests in themathic groups, be updated with notifications, among many other features. PlayNation offers a safe and inclusive environment for its users, where they can specify the privacy of their content, be ensured of the security of their data, use the app in all kinds of devices and expect zero tolerance to hateful or harmful content.
 
