@@ -22,8 +22,32 @@ Grade : 17,6
 
 </div>
 
-# PlayNation
+# PlayNation Report
 
+- [Project Overview](#project-overview)
+  - [Credentials for Testing](#credentials)
+  - [Authors](#authors)
+- [ER: Requirements Specification Component](#er)
+  - [A1: PlayNation](#a1)
+  - [A2: Actors and User Stories](#a2)
+    - [1. Actors](#actors)
+    - [2. User Stories](#us)
+       - [2.1. User](#2.1)
+       - [2.2. Unauthenticated User](#2.2)
+       - [2.3. Authenticated User](#2.3)
+       - [2.4. Verified User](#2.4)
+       - [2.5. Group Owner](#2.5)
+       - [2.6. Administrator](#2.6)
+    - [3. Supplementary Requirements](#3)
+       - [3.1. Business Rules](#3.1)
+       - [3.2. Technical Requirements](#3.2)
+       - [3.3. Restrictions](#3.3)
+  - [A3: Information Architecture](#a3)
+    - [1. Sitemap](#a31)
+    - [2. Wireframes](#a32)
+
+
+<a id="project-overview"></a>
 ## Project Overview
 
 PlayNation is a web-based social network exclusively dedicated to sports enthusiasts.
@@ -32,25 +56,30 @@ Its main features support this goal by allowing users to post photos, videos, an
 Users are organized into groups with distinct permissions. These groups include Guests who can only view public content; Basic users, the core registered users who can interact, post, and follow; Verified accounts for official updates regarding athletes and teams; and Administrators who manage all users and content to ensure platform integrity.
 The platform will be responsive to the different devices used and easy to manage, ensuring a pleasant user experience.
 
-## Product 
-
-### Credentials 
+<a id="credentials"></a>
+### Credentials for Testing
 
 **Regular User:** username: hvegan; password: password
 
 **Admin:** username: admin; password: password
 
-## Authors
+<a id="authors"></a>
+### Authors
 
-Carolina Alves Ferreira, up202303547@edu.fe.up.pt
-Gabriela de Mattos Barboza da Silva, up202304064@edu.fe.up.pt
-João Pedro Magalhães Marques, up202307612@edu.fe.up.pt
-Tomás da Silva Morais, up202304692@edu.fe.up.pt
+**Carolina Alves Ferreira**, up202303547@edu.fe.up.pt
 
-# ER: Requirements Specification Component
+**Gabriela de Mattos Barboza da Silva**, up202304064@edu.fe.up.pt
+
+**João Pedro Magalhães Marques**, up202307612@edu.fe.up.pt
+
+**Tomás da Silva Morais**, up202304692@edu.fe.up.pt
+
+<a id="er"></a>
+## ER: Requirements Specification Component
 
 
-## A1: PlayNation
+<a id="a1"></a>
+### A1: PlayNation
 
 In the current digital world where general-purpose social media platforms usually present a convoluted experience for users seeking content related to their specific interests, PlayNation is being developed as a web-based social network exclusively dedicated to sports enthusiasts. 
 
@@ -66,12 +95,12 @@ The platform will be responsive to the different devices used and easy to manage
 
 ---
 
+<a id="a2"></a>
+### A2: Actors and User stories
 
-## A2: Actors and User stories
 
-
-
-### 1. Actors
+<a id="actors"></a>
+#### 1. Actors
 
 For PlayNation, the actors are represented in Figure 1 and described in Table 1.
 
@@ -97,9 +126,11 @@ Figure 1: PlayNation actors.
 Table 1: PlayNation actors description. 
 </div>
 
-### 2. User Stories
+<a id="us"></a>
+#### 2. User Stories
 
-#### 2.1. User
+<a id="2.1"></a>
+##### 2.1. User
 | Identifier   | Name      | Priority    | Responsible        | Description                                           |
 | ------------ | --------- | ----------- | ------------------ | ----------------------------------------------------- |
 |  US01        | Public Timeline | High | Carolina Ferreira | As a User I want to access a timeline that displays popular public content from all users so that I can stay updated with trending posts. |
@@ -121,7 +152,8 @@ Table 1: PlayNation actors description.
 Table 2: User user stories. 
 </div>
 
-#### 2.2. Unauthenticated User
+<a id="2.2"></a>
+##### 2.2. Unauthenticated User
 
 | Identifier   | Name      | Priority    | Responsible        | Description                                           |
 | ------------ | --------- | ----------- | ------------------ | ----------------------------------------------------- |
@@ -136,7 +168,8 @@ Table 2: User user stories.
 Table 3: Unauthenticated User user stories. 
 </div>
 
-#### 2.3. Autheticated User
+<a id="2.3"></a>
+##### 2.3. Autheticated User
 
 | Identifier   | Name      | Priority    | Responsible        | Description                                           |
 | ------------ | --------- | ----------- | ------------------ | ----------------------------------------------------- |
@@ -195,7 +228,8 @@ Table 3: Unauthenticated User user stories.
 Table 4: Authenticated User user stories. 
 </div>
 
-#### 2.4. Verified User
+<a id="2.4"></a>
+##### 2.4. Verified User
 
 | Identifier   | Name      | Priority    | Responsible        | Description                                           |
 | ------------ | --------- | ----------- | ------------------ | ----------------------------------------------------- |
@@ -206,7 +240,8 @@ Table 4: Authenticated User user stories.
 Table 5: Verified User user stories. 
 </div>
 
-#### 2.5. Group Owner
+<a id="2.5"></a>
+##### 2.5. Group Owner
 
 | Identifier   | Name      | Priority    | Responsible        | Description                                           |
 | ------------ | --------- | ----------- | ------------------ | ----------------------------------------------------- |
@@ -220,6 +255,7 @@ Table 5: Verified User user stories.
 Table 6: Group Owner user stories. 
 </div>
 
+<a id="2.6"></a>
 #### 2.6. Administrator
 
 | Identifier   | Name      | Priority    | Responsible        | Description                                           |
@@ -236,9 +272,11 @@ Table 6: Group Owner user stories.
 Table 7: Administrator user stories. 
 </div>
 
-### 3. Supplementary Requirements
+<a id="3"></a>
+#### 3. Supplementary Requirements
 
-#### 3.1. Business rules
+<a id="3.1"></a>
+##### 3.1. Business rules
 
 | Identifier | Name          | Description    |
 | ---------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------|
@@ -253,7 +291,8 @@ Table 7: Administrator user stories.
 Table 8: PlayNation business rules. 
 </div>
 
-#### 3.2. Technical requirements
+<a id="3.2"></a>
+##### 3.2. Technical requirements
 
 | Identifier | Name          | Description    |
 | ---------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------|
@@ -271,7 +310,8 @@ Table 8: PlayNation business rules.
 Table 9: PLayNation technical requirements. 
 </div>
 
-#### 3.3. Restrictions
+<a id="3.3"></a>
+##### 3.3. Restrictions
 
 | Identifier | Name          | Description    |
 | ---------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------|
@@ -280,12 +320,13 @@ Table 9: PLayNation technical requirements.
 ---
 
 
-## A3: Information Architecture
+<a id="a3"></a>
+### A3: Information Architecture
 
 
 
-
-### 1. Sitemap
+<a id="a31"></a>
+#### 1. Sitemap
 
 The PlayNation platform is organized into four main sections: the Static Pages, including general information and settings such as Contact Us, About/Services, and Settings; the User Pages, where users can manage their profiles, posts, friends, groups, messages, and notifications; the Item Pages, which allow users to view profiles, posts, comments, and categories/tags; and the Admin Pages, dedicated to administration tasks such as User Management, Content Moderation, and Verification Requests. All sections are interconnected through the Homepage, which serves as the central hub of navigation within the system.
 
@@ -295,8 +336,8 @@ The PlayNation platform is organized into four main sections: the Static Pages, 
 Figure 1: PlayNation sitemap.
 </div>
 
-
-### 2. Wireframes
+<a id="a32"></a>
+#### 2. Wireframes
 
 In relation to the PlayNation Social Network, the two figures below, 2 and 3, represent the wireframes for the Homepage (UI00) and the Create Post Page (UI16), respectively.
 
