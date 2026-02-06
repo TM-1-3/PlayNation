@@ -1247,6 +1247,11 @@ FOR EACH ROW
 EXECUTE FUNCTION check_profile_visibility();
 ```
 
+<div align="center">
+
+Table 50: Trigger 1 Table
+</div>
+
 
 | **Trigger**      | TRIGGER02                              |
 | ---              | ---                                    |
@@ -1273,6 +1278,11 @@ FOR EACH ROW
 EXECUTE FUNCTION check_group_visibility();
 ```
 
+<div align="center">
+
+Table 51: Trigger 2 Table
+</div>
+
 | **Trigger**      | TRIGGER03                              |
 | ---              | ---                                    |
 | **Description**  | Users cannot send a request to join a group if they are already a member of that group (BR07) |
@@ -1297,6 +1307,11 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_duplicate_group_join();
 ```
 
+<div align="center">
+
+Table 52: Trigger 3 Table
+</div>
+
 | **Trigger**      | TRIGGER04                              |
 | ---              | ---                                    |
 | **Description**  | A user cannot establish a friendship connection with their own user account (BR08) |
@@ -1318,6 +1333,11 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_self_friendship();
 ```
 
+<div align="center">
+
+Table 53: Trigger 4 Table
+</div>
+
 | **Trigger**      | TRIGGER05                             |
 | ---              | ---                                    |
 | **Description**  | A user cannot send a friend request to themselves (BR09) |
@@ -1338,6 +1358,11 @@ BEFORE INSERT ON user_friend_request
 FOR EACH ROW
 EXECUTE FUNCTION prevent_self_friend_request();
 ```
+
+<div align="center">
+
+Table 54: Trigger 5 Table
+</div>
 
 | **Trigger**      | TRIGGER06                              |
 | ---              | ---                                    |
@@ -1363,6 +1388,11 @@ BEFORE INSERT ON user_friend_request
 FOR EACH ROW
 EXECUTE FUNCTION prevent_existing_friend_request();
 ```
+
+<div align="center">
+
+Table 55: Trigger 6 Table
+</div>
 
 | **Trigger**      | TRIGGER07                              |
 | ---              | ---                                    |
@@ -1414,6 +1444,11 @@ FOR EACH ROW
 EXECUTE FUNCTION check_post_interaction_access();
 ```
 
+<div align="center">
+
+Table 56: Trigger 7 Table
+</div>
+
 | **Trigger**      | TRIGGER08                              |
 | ---              | ---                                    |
 | **Description**  | A user is only authorized to post on a group if they are a member of that specific group (BR13) |
@@ -1437,6 +1472,11 @@ BEFORE INSERT ON group_message
 FOR EACH ROW
 EXECUTE FUNCTION check_group_post_permission();
 ```
+
+<div align="center">
+
+Table 57: Trigger 8 Table
+</div>
 
 | **Trigger**      | TRIGGER09                              |
 | ---              | ---                                    |
@@ -1476,6 +1516,11 @@ FOR EACH ROW
 EXECUTE FUNCTION prevent_duplicate_likes();
 ```
 
+<div align="center">
+
+Table 58: Trigger 9 Table
+</div>
+
 | **Trigger**      | TRIGGER10                              |
 | ---              | ---                                    |
 | **Description**  | Any new post must contain at least one of the following elements: a description (text content) or an image (BR15) |
@@ -1495,7 +1540,11 @@ CREATE TRIGGER post_content_trigger
 BEFORE INSERT OR UPDATE ON post
 FOR EACH ROW
 EXECUTE FUNCTION check_post_content();
-```                                            
+```
+<div align="center">
+
+Table 59: Trigger 10 Table
+</div>                                         
 
 #### 4. Transactions
 
@@ -1521,6 +1570,11 @@ VALUES (currval(pg_get_serial_sequence('notification', 'id_notification')), NULL
 
 COMMIT;
 ```
+
+<div align="center">
+
+Table 60: Transaction 1 Table
+</div>
 
 | Transaction   | TRAN02                    |
 | --------------- | ----------------------------------- |
@@ -1550,6 +1604,11 @@ VALUES (currval(pg_get_serial_sequence('notification', 'id_notification')));
 COMMIT;
 ```
 
+<div align="center">
+
+Table 61: Transaction 2 Table
+</div>
+
 | Transaction   | TRAN03                    |
 | --------------- | ----------------------------------- |
 | Justification   | Remove friend: delete both directional friendship rows to avoid asymmetric state.   |
@@ -1564,6 +1623,11 @@ WHERE (id_user = $id_user AND id_friend = $id_friend) OR (id_user = $id_friend A
 
 COMMIT;
 ```
+
+<div align="center">
+
+Table 62: Transaction 3 Table
+</div>
 
 | Transaction   | TRAN04                    |
 | --------------- | ----------------------------------- |
@@ -1582,6 +1646,11 @@ VALUES (currval(pg_get_serial_sequence('post', 'id_post')), $id_label);
 
 COMMIT;
 ```
+
+<div align="center">
+
+Table 63: Transaction 4 Table
+</div>
 
 | Transaction   | TRAN05                    |
 | --------------- | ----------------------------------- |
@@ -1604,6 +1673,11 @@ VALUES (currval(pg_get_serial_sequence('notification', 'id_notification')), $id_
 COMMIT;
 ```
 
+<div align="center">
+
+Table 64: Transaction 5 Table
+</div>
+
 | Transaction   | TRAN06                    |
 | --------------- | ----------------------------------- |
 | Justification   | Comment on post: create comment then notification referencing that comment atomically to ensure correct ids.     |
@@ -1624,6 +1698,11 @@ VALUES (currval(pg_get_serial_sequence('notification', 'id_notification')), curr
 
 COMMIT;
 ```
+
+<div align="center">
+
+Table 65: Transaction 6 Table
+</div>
 
 | Transaction   | TRAN07                    |
 | --------------- | ----------------------------------- |
@@ -1649,6 +1728,11 @@ VALUES (currval(pg_get_serial_sequence('notification', 'id_notification')), curr
 COMMIT;
 ```
 
+<div align="center">
+
+Table 66: Transaction 7 Table
+</div>
+
 | Transaction   | TRAN08                    |
 | --------------- | ----------------------------------- |
 | Justification   | Send message to friend: send plain private message and notification atomically to ensure consistent references.     |
@@ -1672,6 +1756,11 @@ VALUES (currval(pg_get_serial_sequence('notification', 'id_notification')), curr
 
 COMMIT;
 ```
+
+<div align="center">
+
+Table 67: Transaction 8 Table
+</div>
 
 | Transaction   | TRAN09                    |
 | --------------- | ----------------------------------- |
@@ -1717,6 +1806,11 @@ END;
 $$ LANGUAGE plpgsql;
 ```
 
+<div align="center">
+
+Table 68: Transaction 9 Table
+</div>
+
 | Transaction   | TRAN10                    |
 | --------------- | ----------------------------------- |
 | Justification   | Create group: create it, ensure owner exists and add owner membership atomically to avoid partial group state.
@@ -1740,6 +1834,11 @@ VALUES (currval(pg_get_serial_sequence('groups', 'id_group')), $id_group_owner);
 COMMIT;
 ```
 
+<div align="center">
+
+Table 69: Transaction 10 Table
+</div>
+
 | Transaction   | TRAN11                    |
 | --------------- | ----------------------------------- |
 | Justification   | Send request to join group: create join request and notification together so owner can act on a valid request.|
@@ -1760,6 +1859,11 @@ VALUES (currval(pg_get_serial_sequence('notification', 'id_notification')), $id_
 
 COMMIT;
 ```
+
+<div align="center">
+
+Table 70: Transaction 11 Table
+</div>
 
 | Transaction   | TRAN12                    |
 | --------------- | ----------------------------------- |
@@ -1789,6 +1893,11 @@ VALUES (currval(pg_get_serial_sequence('notification', 'id_notification')), $id_
 COMMIT;
 ```
 
+<div align="center">
+
+Table 71: Transaction 12 Table
+</div>
+
 | Transaction   | TRAN13                    |
 | --------------- | ----------------------------------- |
 | Justification   | Report post: insert report and link to post; READ COMMITTED is enough for independent reporting inserts. The same logic is applied to Report a comment, Report a profile and to Report a group. |
@@ -1807,6 +1916,11 @@ VALUES (currval(pg_get_serial_sequence('report', 'id_report')), $id_post);
 COMMIT;
 ```
 
+<div align="center">
+
+Table 72: Transaction 13 Table
+</div>
+
 | Transaction   | TRAN14                    |
 | --------------- | ----------------------------------- |
 | Justification   | Delete account: delete user and rely on cascades; run atomically to avoid concurrent recreation or partial cleanup. |
@@ -1821,6 +1935,11 @@ WHERE id_user = $id_user;
 
 COMMIT;
 ```
+
+<div align="center">
+
+Table 73: Transaction 14 Table
+</div>
 
 | Transaction   | TRAN15                    |
 | --------------- | ----------------------------------- |
@@ -1841,6 +1960,11 @@ OR (id_user = $id_blocked AND id_friend = $id_user);
 COMMIT;
 ```
 
+<div align="center">
+
+Table 74: Transaction 15 Table
+</div>
+
 | Transaction   | TRAN16                    |
 | --------------- | ----------------------------------- |
 | Justification   | Unblock a user: remove block record atomically so dependent operations see a consistent block state.  |
@@ -1855,6 +1979,11 @@ WHERE id_user = $id_user AND id_blocked = $id_blocked;
 
 COMMIT;
 ```
+
+<div align="center">
+
+Table 75: Transaction 16 Table
+</div>
 
 | Transaction   | TRAN17                    |
 | --------------- | ----------------------------------- |
@@ -1873,6 +2002,11 @@ VALUES ($id_receiver, NULL, $text, NOW(), FALSE);
 
 COMMIT;
 ```
+
+<div align="center">
+
+Table 76: Transaction 17 Table
+</div>
 
 
 ### Annex A. SQL Code 
