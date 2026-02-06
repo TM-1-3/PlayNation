@@ -45,6 +45,25 @@ Grade : 17,6
   - [A3: Information Architecture](#a3)
     - [1. Sitemap](#a31)
     - [2. Wireframes](#a32)
+- [EBD: Database Specification Component](#ebd)
+  - [A4: Conceptual Data Model](#a4)
+    - [1. Class diagram](#a41)
+    - [2. Additional Business Rules](#a42)
+  - [A5: Relational Schema, Validation and Schema Refinement](#a5)
+    - [1. Relational Schema](#a51)
+    - [2. Domains](#a52)
+    - [3. Schema validation](#a53)
+  - [A6: Indexes, Triggers, Transactions and Database Population](#a6)
+    - [1. Database Workload](#a61)
+    - [2. Proposed Indices](#a62)
+      - [2.1. Performance Indices](#a62.1)
+      - [2.2. Full-text Search Indices](#a62.2)
+    - [3. Triggers](#a63)
+    - [4. Transactions](#a64)
+  - [Annex A. SQL Code](#sql)
+    - [A.1. Database schema](#sqla)
+    - [A.2. Database population](#sqlb)
+    
 
 
 <a id="project-overview"></a>
