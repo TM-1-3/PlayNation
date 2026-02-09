@@ -5307,39 +5307,44 @@ As part of the main features of the appliaction, Help related ones developed in 
 The two most notable ones are the "About" and the FAQ pages. The first one presents the PlayNation social network, more specifically its main features, ensures the user that the sytem is secure, inclusive and optimized, and introduces the development team. 
 
 <div align="center">
-![Captura_de_ecrã_de_2025-12-20_19-06-44](uploads/3dba6e368d28901d2b981e039a45e926/Captura_de_ecrã_de_2025-12-20_19-06-44.png){width=659 height=600} 
+<img width="940" height="856" alt="image" src="https://github.com/user-attachments/assets/2c5c7d5f-2224-408a-ba77-dd3c0cad5efe" />
 
-"About" Page Screenshot
+
+Figure 4: "About" Page Screenshot
 </div>
 
 The FAQ page, as the name implies, provides answers for questions that the users might have about the system and its functionalities, such as the differences between private and public accounts, how groups operate and prohibited content. At the bottom of the page, the eamil contact of the development team is provided in order for the users to report technical issues with the application or offer suggestions. The content of this page is correctly grouped and separated by subject, to make it easier for the user to search and find a specific question. 
 
 <div align="center">
-![Captura_de_ecrã_de_2025-12-20_19-07-15](uploads/b02675343fbe77baee86e5d1df2b411f/Captura_de_ecrã_de_2025-12-20_19-07-15.png){width=595 height=600}
+<img width="940" height="941" alt="image" src="https://github.com/user-attachments/assets/c332508a-30de-4008-b406-866f99cec716" />
 
-"Frequently Asked Questions" Page Screenshot
+
+Figure 5: "Frequently Asked Questions" Page Screenshot
 </div>
 
 Adittionally, besides these two pages, contextual help is provided inside the application's interface, guiding the user in their desired action. The two most notable examples of the presence of this kind of assistance inside the system are placeholders in form inputs, which clearly specify what information the user should write inside it, and messages that appear when the user hovers a specific element of the interface, that specifically indicate its purpose and waht happens if the user interacts with it. One exmaple for each of these help features is shown in the following screenshots.
 
 <div align="center">
-![Captura_de_ecrã_de_2025-12-20_19-07-53](uploads/ba3c5e1647f20655c643e95b092b8e0e/Captura_de_ecrã_de_2025-12-20_19-07-53.png){width=900 height=506}
+<img width="1105" height="620" alt="image" src="https://github.com/user-attachments/assets/a2c59814-1510-4256-96b2-9b5ff84633a6" />
 
-Placeholders inside the Login form inputs
+
+Figure 6: Placeholders inside the Login form inputs
 </div>
 <br>
 <div align="center">
-![Captura_de_ecrã_de_2025-12-20_19-08-17](uploads/8c75397feab3b5211126aec910b881e2/Captura_de_ecrã_de_2025-12-20_19-08-17.png){width=395 height=85}
+<img width="391" height="80" alt="image" src="https://github.com/user-attachments/assets/e9b4e5fb-e7de-46d0-829f-b73106ecc8d9" />
 
-Hover message specifying the purpose of the "Forgot The Password?" hyperlink
+
+Figure 7: Hover message specifying the purpose of the "Forgot The Password?" hyperlink
 </div>
 
 Feedback messages are also present when the user performs operation with a successfull return, resulting in a "success" message, or an error message if the operation fails (e.g. trying to login with the wrong credentials). 
 
 <div align="center">
-![Captura_de_ecrã_de_2025-12-21_18-05-18](uploads/5ce86645b9acd78f2c9b81c396cfd91c/Captura_de_ecrã_de_2025-12-21_18-05-18.png){width=526 height=86}
+<img width="523" height="83" alt="image" src="https://github.com/user-attachments/assets/cdf02fd9-df25-4b80-a195-c816865c5dcc" />
 
-Success message indicating that the conversion of a regular user to a verfied one was successfull
+
+Figure 8: Success message indicating that the conversion of a regular user to a verfied one was successfull
 </div>
 <br>
 <div align="center">
@@ -5351,9 +5356,10 @@ Error message indicating that the credentials typed by the user did not match an
 Being conscient of the occurent of misclicks, or the sudden change of opinion by the user, for specific operations that result in more significant, such as delete ones, before they are actually performed, a pop up window will appear on the screen asking the user for confirmation. This way, a misclick on an element related to these operations is not critical and it is ensured that the user really wants to perform that specific action, resulting in a better user experience.
 
 <div align="center">
-![image](uploads/998af75620cdd3026adacf373126d57c/image.png){width=449 height=155}
+<img width="275" height="251" alt="image" src="https://github.com/user-attachments/assets/33458112-2985-45d1-b300-e6a8b6d5288f" />
 
-Confimation panel that appears when the user clicks in the "Delete Post" BUTTON
+
+Figure 9: Confimation panel that appears when the user clicks in the "Delete Post" BUTTON
 </div>
 
 
@@ -5377,9 +5383,10 @@ $validatedData = $request->validate([
 Client-side validation provides feedback to the user when they try to input data which is incorrect. Going back to the previous example, if the tries to set a password with less than 8 characters, it gives a message indicating the correct format, as shown in the screenshot below.
 
 <div align="center">
-![image](uploads/77774ea3a269a4a83cf8e8579a51bae9/image.png){width=900 height=398}
+<img width="1097" height="497" alt="image" src="https://github.com/user-attachments/assets/b991d5eb-0c3f-4ca1-b87c-398356de91d0" />
 
-Message indicating that the password must have, at least, 8 characters
+
+Figure 10: Message indicating that the password must have, at least, 8 characters
 </div>
 
 <a id="a95"></a>
