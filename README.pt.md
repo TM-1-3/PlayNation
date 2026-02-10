@@ -2068,9 +2068,9 @@ Tabela 76: Tabela da Transação 17
 <a id="sql"></a>
 ### Anexo A. Código SQL 
 
-O esquema de banco de dados PlayNation está disponível [aqui](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/create.sql?ref_type=heads).
+O esquema de banco de dados PlayNation está disponível [aqui](https://github.com/TM-1-3/PlayNation/blob/main/database/create.sql).
 
-O script de população do banco de dados PlayNation está disponível [aqui](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/populate.sql?ref_type=heads).
+O script de população do banco de dados PlayNation está disponível [aqui](https://github.com/TM-1-3/PlayNation/blob/main/database/populate.sql).
 
 
 <a id="sqla"></a>
@@ -2877,7 +2877,7 @@ Este artefato documenta e descreve a arquitetura e API web que será desenvolvid
 <a id="a73"></a>
 #### 3. Especificação OpenAPI
 
-O arquivo de especificação PlayNation OpenAPI está disponível [aqui](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/a7_openapi.yaml?ref_type=heads).
+O arquivo de especificação PlayNation OpenAPI está disponível [aqui](https://github.com/TM-1-3/PlayNation/blob/main/docs/a7_openapi.yaml).
 
 ```yaml
 openapi: 3.0.0
@@ -5247,8 +5247,6 @@ docker run -d --name lbaw2551 -p 8001:80 gitlab.up.pt:5050/lbaw/lbaw2526/lbaw255
 
 E-mail do **administrador**: admin@sportsnet.com; senha: senha
 
-O código fonte do protótipo está disponível [aqui](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551).
-
 
 
 
@@ -5364,9 +5362,9 @@ Figura 9: Painel de confirmação que aparece quando o usuário clica no BOTÃO 
 
 
 <a id="a94"></a>
-#### 4. Validação de entrada
+#### 4. Validação de input
 
-A validação da entrada do usuário é realizada tanto no lado do cliente quanto no lado do servidor, de forma a garantir a consistência dos dados fornecidos, bem como a segurança de todo o sistema.
+A validação de input do usuário é realizada tanto no lado do cliente quanto no lado do servidor, de forma a garantir a consistência dos dados fornecidos, bem como a segurança de todo o sistema.
 
 Em relação à validação do lado do servidor, a utilização do objeto "Illuminate\Http\Request" do Laravel concede acesso à função "validate", que permite a definição de regras de validação rigorosas para todas as solicitações HTTP recebidas. Os mecanismos utilizados para conseguir isso foram regras de validação, como "obrigatório", "único", "mínimo" e "máximo", aplicação de tipo, verificação de banco de dados e validação de arquivo (restringindo tipos e tamanhos de arquivo para uploads).
 
@@ -5394,18 +5392,18 @@ Figura 10: Mensagem indicando que a senha deve ter, no mínimo, 8 caracteres
 
 Os resultados dos testes de acessibilidade e usabilidade estão presentes nas listas de verificação abaixo.
 
-Acessibilidade: [acessibilidade.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/acessibility.pdf?ref_type=heads)
+Acessibilidade: [acessibilidade.pdf](https://github.com/TM-1-3/PlayNation/blob/main/docs/acessibility.pdf)
 
-Usabilidade: [usabilidade.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/usability.pdf?ref_type=heads) 
+Usabilidade: [usabilidade.pdf](https://github.com/TM-1-3/PlayNation/blob/main/docs/usability.pdf) 
 
 <a id="a96"></a>
 #### 6. Validação de HTML e CSS
 
 Os relatórios de validação de HTML e CSS estão listados abaixo.
   
-HTML: [htmlValidação.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/htmlValidation.pdf?ref_type=heads)
+HTML: [htmlValidação.pdf](https://github.com/TM-1-3/PlayNation/blob/main/docs/htmlValidation.pdf)
 
-CSS: [cssValidação.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/cssValidation.pdf?ref_type=heads)  
+CSS: [cssValidação.pdf](https://github.com/TM-1-3/PlayNation/blob/main/docs/cssValidation.pdf)  
 
 Nota: Os erros e avisos que aparecem no relatório de validação HTML referem-se à sintaxe do Blade, devido ao fato de que a ferramenta foi projetada para HTML puro.
 
@@ -5644,4 +5642,5 @@ O objetivo deste artefato é apresentar o produto da rede social PLayNation com 
 PlayNation é uma rede social web desenvolvida com o objetivo de conectar torcedores, atletas, clubes e pessoas que compartilham a paixão pelo esporte em geral. Esta plataforma oferece aos usuários um espaço personalizado onde podem compartilhar seus pensamentos e experiências com o esporte, na forma de postagens interativas, acompanhar seus atletas, clubes e modalidades favoritas, interagir com pessoas que pensam como você, por meio de grupos ou mensagens diretas, e, em geral, participar de uma comunidade esportiva vibrante. Os usuários poderão postar fotos e mensagens, salvar e compartilhar posts com outros usuários, interagir através de curtidas e comentários, navegar, pesquisar e seguir outras contas, reunir-se com pessoas com os mesmos interesses em grupos temáticos, ser atualizado com notificações, entre muitas outras funcionalidades. PlayNation oferece um ambiente seguro e inclusivo para seus usuários, onde eles podem especificar a privacidade de seu conteúdo, ter certeza da segurança de seus dados, usar o aplicativo em todos os tipos de dispositivos e esperar tolerância zero a conteúdo de ódio ou prejudicial.
 
 O PlayNation foi desenvolvido utilizando Laravel, um framework PHP para aplicações web, para gerenciar operações de backend, como roteamento, cache e armazenamento de arquivos, HTML e CSS, mais especificamente o framework Tailwind, para criar páginas web bem estruturadas e visualmente apelativas, com facilidade de navegação devido à implementação de uma barra de menu lateral, que está sempre presente durante a presença do usuário no sistema, mantendo também um design adaptável a todos os tipos de dispositivos. Em relação às demais tecnologias, utilizou-se AJAX para tornar a aplicação mais intuitiva e dinâmica, permitindo a exibição de efeitos automáticos sem a necessidade do usuário consultar manualmente a página, e PostgreSQL para gerenciar o banco de dados que armazena todos os dados do sistema e do usuário de forma segura. 
+
 
