@@ -2068,9 +2068,9 @@ Table 76: Transaction 17 Table
 <a id="sql"></a>
 ### Annex A. SQL Code 
 
-The PlayNation Database Schema is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/create.sql?ref_type=heads).
+The PlayNation Database Schema is available [here](https://github.com/TM-1-3/PlayNation/blob/main/database/create.sql).
 
-The PlayNation Database Population Script is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/populate.sql?ref_type=heads).
+The PlayNation Database Population Script is available [here](https://github.com/TM-1-3/PlayNation/blob/main/database/populate.sql).
 
 
 <a id="sqla"></a>
@@ -2877,7 +2877,7 @@ This artifact documents and describes the architecture and web API that will be 
 <a id="a73"></a>
 #### 3. OpenAPI Specification
 
-The PlayNation OpenAPI specification file is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/docs/a7_openapi.yaml?ref_type=heads).
+The PlayNation OpenAPI specification file is available [here](https://github.com/TM-1-3/PlayNation/blob/main/docs/a7_openapi.yaml).
 
 ```yaml
 openapi: 3.0.0
@@ -5247,8 +5247,6 @@ docker run -d --name lbaw2551 -p 8001:80 gitlab.up.pt:5050/lbaw/lbaw2526/lbaw255
 
 **Admin** email: admin@sportsnet.com; password: password
 
-The prototype's source code is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551).
-
 
 
 
@@ -5394,18 +5392,18 @@ Figure 10: Message indicating that the password must have, at least, 8 character
 
 The results of the aceessibility and usability tests are present in the checklists linked below.
 
-Accessibility: [acessibility.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/acessibility.pdf?ref_type=heads)
+Accessibility: [acessibility.pdf](https://github.com/TM-1-3/PlayNation/blob/main/docs/acessibility.pdf)
 
-Usability: [usability.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/usability.pdf?ref_type=heads) 
+Usability: [usability.pdf](https://github.com/TM-1-3/PlayNation/blob/main/docs/usability.pdf) 
 
 <a id="a96"></a>
 #### 6. HTML & CSS Validation
 
 The reports of the HTML and CSS validation are lined below.
   
-HTML: [htmlValidation.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/htmlValidation.pdf?ref_type=heads)
+HTML: [htmlValidation.pdf](https://github.com/TM-1-3/PlayNation/blob/main/docs/htmlValidation.pdf)
 
-CSS: [cssValidation.pdf](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/cssValidation.pdf?ref_type=heads)  
+CSS: [cssValidation.pdf](https://github.com/TM-1-3/PlayNation/blob/main/docs/cssValidation.pdf)  
 
 Note: The errors and warnings that appear in the HTML validation report are referring to Blade syntax, due to the fcat that the tool was meant for pure HTML.
 
