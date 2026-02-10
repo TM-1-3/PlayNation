@@ -2877,7 +2877,7 @@ This artifact documents and describes the architecture and web API that will be 
 <a id="a73"></a>
 #### 3. OpenAPI Specification
 
-The PlayNation OpenAPI specification file is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/a7_openapi.yaml?ref_type=heads).
+The PlayNation OpenAPI specification file is available [here](https://gitlab.up.pt/lbaw/lbaw2526/lbaw2551/-/blob/main/docs/a7_openapi.yaml?ref_type=heads).
 
 ```yaml
 openapi: 3.0.0
