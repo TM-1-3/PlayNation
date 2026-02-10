@@ -45,7 +45,7 @@ Nota: 17,6
   - [A3: Arquitetura da Informação](#a3)
     - [1. Mapa do site](#a31)
     - [2. Wireframes](#a32)
-- [EBD: Componente de Especificação de Banco de Dados](#ebd)
+- [EBD: Componente de Especificação de Base de Dados](#ebd)
   - [A4: Modelo de Dados Conceituais](#a4)
     - [1. Diagrama de classes](#a41)
     - [2. Regras comerciais adicionais](#a42)
@@ -53,16 +53,16 @@ Nota: 17,6
     - [1. Esquema Relacional](#a51)
     - [2. Domínios](#a52)
     - [3. Validação de esquema](#a53)
-  - [A6: Índices, gatilhos, transações e população de banco de dados](#a6)
-    - [1. Carga de trabalho do banco de dados](#a61)
+  - [A6: Índices, gatilhos, transações e população de base de dados](#a6)
+    - [1. Carga de trabalho da base de dados](#a61)
     - [2. Índices Propostos](#a62)
       - [2.1. Índices de Desempenho](#a62.1)
       - [2.2. Índices de pesquisa de texto completo](#a62.2)
     - [3. Gatilhos](#a63)
     - [4. Transações](#a64)
   - [Anexo A. Código SQL](#sql)
-    - [A.1. Esquema de banco de dados](#sqla)
-    - [A.2. População do banco de dados](#sqlb)
+    - [A.1. Esquema da base de dados](#sqla)
+    - [A.2. População da base de dados](#sqlb)
 - [EAP: Especificação de Arquitetura e Protótipo](#eap)
   - [A7: Especificação de recursos da Web](#a7)
     - [1. Visão geral](#a71)
@@ -406,12 +406,12 @@ Figura 3: Criar wireframe de postagem (UI16).
 ---
 
 <a id="ebd"></a>
-## EBD: Componente de Especificação de Banco de Dados
+## EBD: Componente de Especificação da Base de Dados
 
 <a id="a4"></a>
 ### A4: Modelo de Dados Conceituais
 
-O Modelo de Dados Conceituais para a rede social PlayNation inclui e descreve as entidades relevantes e os relacionamentos entre elas que são importantes para a especificação do banco de dados, usando UML.
+O Modelo de Dados Conceituais para a rede social PlayNation inclui e descreve as entidades relevantes e os relacionamentos entre elas que são importantes para a especificação da base de dados, usando UML.
 
 <a id="a41"></a>
 #### 1. Diagrama de classes
@@ -452,7 +452,7 @@ Tabela 1: Regras de negócios adicionais
 <a id="a5"></a>
 ### A5: Esquema Relacional, validação e refinamento de esquema
 
-O Artefato A5 apresenta o esquema relacional do banco de dados derivado do modelo de dados conceitual correspondente, bem como sua validação e normalização sequencial.
+O Artefato A5 apresenta o esquema relacional da base de dados derivado do modelo de dados conceitual correspondente, bem como sua validação e normalização sequencial.
 
 <a id="a51"></a>
 #### 1. Esquema Relacional
@@ -1024,12 +1024,12 @@ Como cada tabela no esquema relacional satisfaz a forma normal de Boyce-Codd (BC
 ---
 
 <a id="a6"></a>
-### A6: Índices, gatilhos, transações e população de banco de dados
+### A6: Índices, gatilhos, transações e população da base de dados
 
-O Artefato A6 contém os scripts SQL para criação e preenchimento do banco de dados que sustentará o sistema de rede social PlayNation, bem como a implementação da integridade dos dados e aplicação de regras de negócios por meio de gatilhos e identificação e caracterização de índices. Além disso, inclui as transições necessárias para manter a consistência dos dados após quaisquer operações no banco de dados.
+O Artefato A6 contém os scripts SQL para criação e preenchimento da base de dados que sustentará o sistema de rede social PlayNation, bem como a implementação da integridade dos dados e aplicação de regras de negócios por meio de gatilhos e identificação e caracterização de índices. Além disso, inclui as transições necessárias para manter a consistência dos dados após quaisquer operações na base de dados.
 
 <a id="a61"></a>
-#### 1. Carga de trabalho do banco de dados
+#### 1. Carga de trabalho da base de dados
  
 | **Referência de relação** | **Nome da relação** | **Ordem de grandeza** | **Crescimento estimado** |
 | ------------------ | ------------- | ------------------------- | -------- |
@@ -1077,7 +1077,7 @@ O Artefato A6 contém os scripts SQL para criação e preenchimento do banco de 
 
 <div align="center">
 
-Tabela 43: Carga de trabalho do banco de dados PlayNation
+Tabela 43: Carga de trabalho da base de dados PlayNation
 </div>
 
 <a id="a62"></a>
@@ -2068,13 +2068,13 @@ Tabela 76: Tabela da Transação 17
 <a id="sql"></a>
 ### Anexo A. Código SQL 
 
-O esquema de banco de dados PlayNation está disponível [aqui](https://github.com/TM-1-3/PlayNation/blob/main/database/create.sql).
+O esquema da base de dados PlayNation está disponível [aqui](https://github.com/TM-1-3/PlayNation/blob/main/database/create.sql).
 
-O script de população do banco de dados PlayNation está disponível [aqui](https://github.com/TM-1-3/PlayNation/blob/main/database/populate.sql).
+O script de população da base de dados PlayNation está disponível [aqui](https://github.com/TM-1-3/PlayNation/blob/main/database/populate.sql).
 
 
 <a id="sqla"></a>
-#### A.1. Esquema de banco de dados
+#### A.1. Esquema da base de dados
 
  ```sql
 CREATE SCHEMA IF NOT EXISTS lbaw2551;
@@ -2699,7 +2699,7 @@ EXECUTE FUNCTION check_post_content();
 
 ```
 <a id="sqlb"></a>
-#### A.2. População do banco de dados
+#### A.2. População da base de dados
 
  ```sql
 BEGIN;
